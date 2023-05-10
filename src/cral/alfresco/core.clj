@@ -14,7 +14,9 @@
 (defn- get-url []
   (str (:scheme @config) "://" (:host @config) ":" (:port @config) "/" (:path @config)))
 
-(defn get-node [ticket node-id & [query-params]]
+(defn get-node
+  "Get node metadata"
+  [ticket node-id & [query-params]]
   (utils/keywordize-kebab
     (get
       (json/read-str
@@ -26,23 +28,30 @@
             )))
       "entry")))
 
-(defn update-node [ticket node-id body]
+(defn update-node
+  "Update a node"
+  [ticket node-id body]
   (client/put
     (str (get-url) "/nodes/" node-id)
     {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
      :body body}))
 
-(defn delete-node [ticket node-id]
+(defn delete-node
+  "Delete a node"
+  [ticket node-id]
   (client/delete
     (str (get-url) "/nodes/" node-id)
     {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}}
     )
   )
 
-(defn create-node [ticket parent-id body & [query-params]]
+(defn create-node
+  "Create a node"
+  [ticket parent-id body & [query-params]]
   (client/post
     (str (get-url) "/nodes/" parent-id)
     ))
 
-(defn upload-content [ticket node-id body])
+(defn upload-content
+  [ticket node-id body])
 
