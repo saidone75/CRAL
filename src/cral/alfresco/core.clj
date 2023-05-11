@@ -1,7 +1,7 @@
 (ns cral.alfresco.core
   (:import (java.util Base64)))
 
-(require '[clojure.string :as s]
+(require '[clojure.string :as str]
          '[clojure.data.json :as json]
          '[clj-http.lite.client :as client]
          '[cral.utils.utils :as utils])
@@ -15,7 +15,7 @@
   (str (:scheme @config) "://" (:host @config) ":" (:port @config) "/" (:path @config)))
 
 (defn get-node
-  "Get node metadata"
+  "Get node metadata."
   [ticket node-id & [query-params]]
   (utils/keywordize-kebab
     (get
@@ -29,7 +29,7 @@
       "entry")))
 
 (defn update-node
-  "Update a node"
+  "Update a node."
   [ticket node-id body]
   (client/put
     (str (get-url) "/nodes/" node-id)
@@ -37,7 +37,7 @@
      :body body}))
 
 (defn delete-node
-  "Delete a node"
+  "Delete a node."
   [ticket node-id]
   (client/delete
     (str (get-url) "/nodes/" node-id)
@@ -46,7 +46,7 @@
   )
 
 (defn create-node
-  "Create a node"
+  "Create a node."
   [ticket parent-id body & [query-params]]
   (client/post
     (str (get-url) "/nodes/" parent-id)

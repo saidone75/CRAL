@@ -18,7 +18,7 @@
   (str (:scheme @config) "://" (:host @config) ":" (:port @config) "/" (:path @config)))
 
 (defn get-ticket
-  "Create a ticket"
+  "Create a ticket."
   [username password]
   (utils/keywordize-kebab
     (get
@@ -35,11 +35,11 @@
                    {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}})))
 
 (defn validate-ticket
-  "Validate a ticket"
+  "Validate a ticket."
   [ticket]
   (*-ticket client/get ticket))
 
 (defn delete-ticket
-  "Delete a ticket"
+  "Delete a ticket."
   [ticket]
   (*-ticket client/delete ticket))
