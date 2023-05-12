@@ -20,7 +20,7 @@
 (defrecord QueryBody [^Query query ^Paging paging])
 (defn make-query-body
   [^Query query ^Paging & paging]
-  map->QueryBody {:query query :paging paging})
+  (map->QueryBody {:query query :paging paging}))
 
 (defn search
   "Searches Alfresco"

@@ -23,7 +23,7 @@
 
 (defn- *-keywordize-keys
   [m *-case]
-  (let [f (fn [[k v]] [(*-case (str k)) v])]
+  (let [f (fn [[k v]] [(keyword (*-case k)) v])]
     ;; only apply to maps
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 

@@ -26,7 +26,5 @@
               (let [ticket (auth/get-ticket "admin" "admin")
                     query (search/make-query "PATH:'app:company_home/app:guest_home'")
                     query-body (search/make-query-body query)]
-                (json/write-str (utils/camel-case-stringify-keys query-body))
-                (search/search ticket query-body)
-                )
+                (search/search ticket query-body))
               [:list :entries]))))
