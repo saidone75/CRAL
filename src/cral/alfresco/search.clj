@@ -7,6 +7,14 @@
          '[cral.alfresco.config :as config]
          '[cral.utils.utils :as utils])
 
+(defrecord Query [language user-query query])
+(defrecord Paging [max-items skip-count])
+(defrecord QueryBody [^Query query ^Paging paging])
+
+(defn make-query
+  [query]
+  map->Query {:query query})
+
 (defn search
   "Searches Alfresco"
   [ticket body]
