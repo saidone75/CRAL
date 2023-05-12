@@ -4,7 +4,8 @@
             [cral.core :refer :all]
             [cral.alfresco.core :as core]
             [cral.alfresco.search :as search]
-            [cral.alfresco.auth :as auth]))
+            [cral.alfresco.auth :as auth]
+            [cral.utils.utils :as utils]))
 
 (deftest get-ticket
   (let [ticket (auth/get-ticket "admin" "admin")]
@@ -22,6 +23,10 @@
   []
   (:entry (first
             (get-in
-              (let [ticket (auth/get-ticket "admin" "admin")]
-                (search/search ticket {"query" {"query" "PATH:'app:company_home/app:guest_home'"}}))
+              (let [ticket (auth/get-ticket "admin" "admin")
+                    query (search/make-query "PATH:'app:company_home/app:guest_home'")
+                    query-body (search/make-query-body query)]
+                (json/write-str (utils/camel-case-stringify-keys query-body))
+                (search/search ticket query-body)
+                )
               [:list :entries]))))
