@@ -1,8 +1,6 @@
 (ns cral.utils.utils
-  (:require [clojure.string :as s]))
-
-(require '[clojure.string :as str]
-         '[clojure.walk :as walk])
+  (:require [clojure.string :as str]
+            [clojure.walk :as walk]))
 
 (defn kebab-case
   "Turn a camelCase string into kebab-case."

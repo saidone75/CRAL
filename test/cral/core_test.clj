@@ -4,8 +4,7 @@
             [cral.core :refer :all]
             [cral.alfresco.core :as core]
             [cral.alfresco.search :as search]
-            [cral.alfresco.auth :as auth]
-            [cral.utils.utils :as utils]))
+            [cral.alfresco.auth :as auth]))
 
 (deftest get-ticket
   (let [ticket (auth/get-ticket "admin" "admin")]
