@@ -1,5 +1,6 @@
 (ns cral.alfresco.core
-  (:import (java.util Base64))
+  (:import (clojure.lang PersistentArrayMap PersistentVector)
+           (java.util Base64))
   (:require [clojure.data.json :as json]
             [clj-http.lite.client :as client]
             [cral.alfresco.config :as config]
@@ -18,6 +19,38 @@
              :query-params query-params}
             )))
       "entry")))
+
+(defrecord LocallySet
+  [^String authority-id
+   ^String name
+   ^String access-status])
+
+(defn make-locally-set
+  [authority-id name access-status]
+  (map->LocallySet {:authority-id authority-id :name name :access-status access-status}))
+
+(defrecord Permissions
+  [^Boolean is-inheritance-enabled
+   ^PersistentVector locally-set])
+
+(defn make-permissions [is-inhericance-enabled & locally-set]
+  (map->Permissions {:is-inheritance-enabled is-inhericance-enabled
+                     :locally-set            locally-set}))
+
+(defn add-locally-set [^Permissions permissions ^LocallySet locally-set]
+  (assoc-in permissions [:locally-set] (conj (:locally-set permissions) locally-set)))
+
+(let [permissions (make-permissions true)
+      locally-set (make-locally-set "admin" "Contributor" true)]
+  (-> permissions
+      (add-locally-set locally-set)
+      (add-locally-set (make-locally-set "guest" "Consumer" true))))
+
+(defrecord NodeBodyUpdate
+  [^String name
+   ^String node-type
+   ^PersistentVector aspect-names
+   ^PersistentArrayMap properties])
 
 (defn update-node
   "Update a node."
