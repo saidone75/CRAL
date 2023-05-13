@@ -1,4 +1,5 @@
 (ns cral.core-test
+  (:import (java.util UUID))
   (:require [clojure.data.json :as json]
             [clojure.test :refer :all]
             [cral.core :refer :all]
@@ -30,11 +31,16 @@
     )
   )
 
-
+(deftest delete-node
+  (let [ticket (auth/get-ticket "admin" "admin")
+        parent-id (:id (get-guest-home))
+        node-body-create (core/make-node-body-create (.toString (UUID/randomUUID)) "cm:content")
+        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
+    (is (= 204 (:status (core/delete-node ticket node-id))))))
 
 (deftest get-node
   (let [ticket (auth/get-ticket "admin" "admin")]
-    (core/get-node ticket "ff7eab38-1bea-4285-bd7d-7dcfdee17edc" {:include ["path"]})))
+    (core/get-node ticket "eeaee95d-c647-4927-b74f-c6566d34f85d")))
 
 (deftest update-node
   (let [ticket (auth/get-ticket "admin" "admin")]

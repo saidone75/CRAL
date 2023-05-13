@@ -6,19 +6,31 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils]))
 
+(defn- ok-response
+  [r]
+  {:status (:status r)
+   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))))
+             (utils/kebab-keywordize-keys (json/read-str (:body r)))
+             nil)})
+
+(defn- ex-response
+  [e]
+  (let [ex-data (ex-data e)
+        body (utils/kebab-keywordize-keys (json/read-str (:body ex-data)))]
+    {:status  (:status ex-data)
+     :message (get-in body [:error :brief-summary])
+     :body    body}))
+
 (defn get-node
   "Get node metadata."
   [ticket node-id & [query-params]]
-  (utils/kebab-keywordize-keys
-    (get
-      (json/read-str
-        (:body
-          (client/get
-            (str (config/get-url 'core) "/nodes/" node-id)
-            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-             :query-params query-params}
-            )))
-      "entry")))
+  (try
+    (let [response (client/get
+                     (str (config/get-url 'core) "/nodes/" node-id)
+                     {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+                      :query-params query-params})]
+      (ok-response response))
+    (catch Exception e (ex-response e))))
 
 (defrecord LocallySet
   [^String authority-id
@@ -40,12 +52,6 @@
 (defn add-locally-set [^Permissions permissions ^LocallySet locally-set]
   (assoc-in permissions [:locally-set] (conj (:locally-set permissions) locally-set)))
 
-(defrecord NodeBodyUpdate
-  [^String name
-   ^String node-type
-   ^PersistentVector aspect-names
-   ^PersistentHashMap properties])
-
 (defrecord NodeBodyCreate
   [^String name
    ^String node-type
@@ -66,13 +72,24 @@
                      {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
                       :body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
                       :content-type :json})]
-      {:status (:status response)
-       :body   (utils/kebab-keywordize-keys (json/read-str :body response))})
-    (catch Exception e (let [ex-data (ex-data e)
-                             body (utils/kebab-keywordize-keys (json/read-str (:body ex-data)))]
-                         {:status  (:status ex-data)
-                          :message (get-in body [:error :error-key])
-                          :body    body}))))
+      (ok-response response))
+    (catch Exception e (ex-response e))))
+
+(defn delete-node
+  "Delete a node."
+  [ticket node-id]
+  (try
+    (let [response (client/delete
+                     (str (config/get-url 'core) "/nodes/" node-id)
+                     {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}})]
+      (ok-response response))
+    (catch Exception e (ex-response e))))
+
+(defrecord NodeBodyUpdate
+  [^String name
+   ^String node-type
+   ^PersistentVector aspect-names
+   ^PersistentHashMap properties])
 
 (defn update-node
   "Update a node."
@@ -82,14 +99,7 @@
     {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
      :body    body}))
 
-(defn delete-node
-  "Delete a node."
-  [ticket node-id]
-  (client/delete
-    (str (config/get-url 'core) "/nodes/" node-id)
-    {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}}
-    )
-  )
+
 
 (defn upload-content
   [ticket node-id body])
