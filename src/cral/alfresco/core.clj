@@ -33,24 +33,21 @@
   [^Boolean is-inheritance-enabled
    ^PersistentVector locally-set])
 
-(defn make-permissions [is-inhericance-enabled & locally-set]
-  (map->Permissions {:is-inheritance-enabled is-inhericance-enabled
+(defn make-permissions [is-inheritance-enabled & locally-set]
+  (map->Permissions {:is-inheritance-enabled is-inheritance-enabled
                      :locally-set            locally-set}))
 
 (defn add-locally-set [^Permissions permissions ^LocallySet locally-set]
   (assoc-in permissions [:locally-set] (conj (:locally-set permissions) locally-set)))
-
-(let [permissions (make-permissions true)
-      locally-set (make-locally-set "admin" "Contributor" true)]
-  (-> permissions
-      (add-locally-set locally-set)
-      (add-locally-set (make-locally-set "guest" "Consumer" true))))
 
 (defrecord NodeBodyUpdate
   [^String name
    ^String node-type
    ^PersistentVector aspect-names
    ^PersistentArrayMap properties])
+
+(defrecord NodeBodyCreate
+  [])
 
 (defn update-node
   "Update a node."
