@@ -24,10 +24,13 @@
 (deftest create-node
   (let [ticket (auth/get-ticket "admin" "admin")
         parent-id (:id (get-guest-home))
-        node-body-create (core/make-node-body-create "test" "cm:content")]
-    (-> (core/create-node ticket parent-id node-body-create)
-        (:body)
-        (json/read-str))))
+        node-body-create (core/make-node-body-create "test" "cm:content" {"cm:workingCopyOwner" "saidone"})]
+    (utils/camel-case-stringify-keys node-body-create)
+    (core/create-node ticket parent-id node-body-create)
+    )
+  )
+
+
 
 (deftest get-node
   (let [ticket (auth/get-ticket "admin" "admin")]

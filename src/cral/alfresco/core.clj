@@ -1,5 +1,5 @@
 (ns cral.alfresco.core
-  (:import (clojure.lang PersistentArrayMap PersistentVector)
+  (:import (clojure.lang PersistentHashMap PersistentVector)
            (java.util Base64))
   (:require [clojure.data.json :as json]
             [clj-http.lite.client :as client]
@@ -44,24 +44,35 @@
   [^String name
    ^String node-type
    ^PersistentVector aspect-names
-   ^PersistentArrayMap properties])
+   ^PersistentHashMap properties])
 
 (defrecord NodeBodyCreate
   [^String name
-   ^String node-type])
+   ^String node-type
+   ^PersistentHashMap properties])
 
 (defn make-node-body-create
-  [^String name ^String node-type]
-  (map->NodeBodyCreate {:name name :node-type node-type}))
+  ([^String name ^String node-type]
+   (map->NodeBodyCreate {:name name :node-type node-type :properties nil}))
+  ([^String name ^String node-type ^PersistentHashMap properties]
+   (map->NodeBodyCreate {:name name :node-type node-type :properties properties})))
 
 (defn create-node
   "Create a node."
   [ticket parent-id ^NodeBodyCreate node-body-create]
-  (client/post
-    (str (config/get-url 'core) "/nodes/" parent-id "/children")
-    {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-     :body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
-     :content-type :json}))
+  (try
+    (let [response (client/post
+                     (str (config/get-url 'core) "/nodes/" parent-id "/children")
+                     {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+                      :body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
+                      :content-type :json})]
+      {:status (:status response)
+       :body   (utils/kebab-keywordize-keys (json/read-str :body response))})
+    (catch Exception e (let [ex-data (ex-data e)
+                             body (utils/kebab-keywordize-keys (json/read-str (:body ex-data)))]
+                         {:status  (:status ex-data)
+                          :message (get-in body [:error :error-key])
+                          :body    body}))))
 
 (defn update-node
   "Update a node."
