@@ -1,8 +1,6 @@
 (ns cral.utils.utils
-  (:require [clojure.string :as s]))
-
-(require '[clojure.string :as str]
-         '[clojure.walk :as walk])
+  (:require [clojure.string :as str]
+            [clojure.walk :as walk]))
 
 (defn kebab-case
   "Turn a camelCase string into kebab-case."
@@ -15,11 +13,13 @@
 (defn camel-case
   "Turn a kebab-case string into camelCase."
   [s]
-  (->> s
-       (#(str/split % #"-"))
-       (map #(str/capitalize %))
-       (str/join)
-       (#(str (str/lower-case (subs % 0 1)) (subs % 1)))))
+  (let [s (str/split s #"-")]
+    (if (> (count s) 1)
+      (->> s
+           (map #(str/capitalize %))
+           (str/join)
+           (#(str (str/lower-case (subs % 0 1)) (subs % 1))))
+      (first s))))
 
 (defn- *-keywordize-keys
   [m *-case]

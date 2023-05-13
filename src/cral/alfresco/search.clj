@@ -1,11 +1,9 @@
 (ns cral.alfresco.search
-  (:import (java.util Base64)))
-
-(require '[clojure.string :as str]
-         '[clojure.data.json :as json]
-         '[clj-http.lite.client :as client]
-         '[cral.alfresco.config :as config]
-         '[cral.utils.utils :as utils])
+  (:import (java.util Base64))
+  (:require [clojure.data.json :as json]
+            [clj-http.lite.client :as client]
+            [cral.alfresco.config :as config]
+            [cral.utils.utils :as utils]))
 
 (defrecord Query [language user-query query])
 (defn make-query
