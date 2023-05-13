@@ -47,7 +47,21 @@
    ^PersistentArrayMap properties])
 
 (defrecord NodeBodyCreate
-  [])
+  [^String name
+   ^String node-type])
+
+(defn make-node-body-create
+  [^String name ^String node-type]
+  (map->NodeBodyCreate {:name name :node-type node-type}))
+
+(defn create-node
+  "Create a node."
+  [ticket parent-id ^NodeBodyCreate node-body-create]
+  (client/post
+    (str (config/get-url 'core) "/nodes/" parent-id "/children")
+    {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+     :body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
+     :content-type :json}))
 
 (defn update-node
   "Update a node."
@@ -65,13 +79,6 @@
     {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}}
     )
   )
-
-(defn create-node
-  "Create a node."
-  [ticket parent-id body & [query-params]]
-  (client/post
-    (str (config/get-url 'core) "/nodes/" parent-id)
-    ))
 
 (defn upload-content
   [ticket node-id body])
