@@ -93,14 +93,16 @@
 
 (defn update-node
   "Update a node."
-  [ticket node-id body]
-  (client/put
-    (str (config/get-url 'core) "/nodes/" node-id)
-    {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-     :body    body}))
-
-
+  [ticket node-id ^NodeBodyUpdate make-node-body-update]
+  (try
+    (let [response
+          (client/put
+            (str (config/get-url 'core) "/nodes/" node-id)
+            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+             :body         (json/write-str (utils/camel-case-stringify-keys make-node-body-update))
+             :content-type :json})]
+      (ok-response response))
+    (catch Exception e (ex-response e))))
 
 (defn upload-content
   [ticket node-id body])
-
