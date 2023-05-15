@@ -1,11 +1,10 @@
 (ns cral.core-test
-  (:require [clojure.data.json :as json]
-            [clojure.test :refer :all]
+  (:import (java.util UUID))
+  (:require [clojure.test :refer :all]
             [cral.core :refer :all]
             [cral.alfresco.core :as core]
             [cral.alfresco.search :as search]
-            [cral.alfresco.auth :as auth]
-            [cral.utils.utils :as utils]))
+            [cral.alfresco.auth :as auth]))
 
 (defn get-guest-home
   []
@@ -24,21 +23,21 @@
 (deftest create-node
   (let [ticket (auth/get-ticket "admin" "admin")
         parent-id (:id (get-guest-home))
-        node-body-create (core/make-node-body-create "test" "cm:content" {"cm:workingCopyOwner" "saidone"})]
-    (utils/camel-case-stringify-keys node-body-create)
-    (core/create-node ticket parent-id node-body-create)
-    )
-  )
-
-
-
-(deftest get-node
-  (let [ticket (auth/get-ticket "admin" "admin")]
-    (core/get-node ticket "ff7eab38-1bea-4285-bd7d-7dcfdee17edc" {:include ["path"]})))
+        node-body-create (core/make-node-body-create (.toString (UUID/randomUUID)) "cm:content")]
+    (is (= 201) (:status (core/create-node ticket parent-id node-body-create)))))
 
 (deftest update-node
-  (let [ticket (auth/get-ticket "admin" "admin")]
-    (core/update-node ticket "ff7eab38-1bea-4285-bd7d-7dcfdee17edc" (json/write-str {:properties {"cm:title" "ciao"}}))))
+  (let [ticket (auth/get-ticket "admin" "admin")
+        parent-id (:id (get-guest-home))
+        node-body-create (core/make-node-body-create (.toString (UUID/randomUUID)) "cm:content")
+        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
+        new-name (.toString (UUID/randomUUID))]
+    (core/update-node ticket node-id (core/map->NodeBodyUpdate {:name new-name}))
+    (is (= new-name (get-in (core/get-node ticket node-id) [:body :entry :name])))))
 
-
-
+(deftest delete-node
+  (let [ticket (auth/get-ticket "admin" "admin")
+        parent-id (:id (get-guest-home))
+        node-body-create (core/make-node-body-create (.toString (UUID/randomUUID)) "cm:content")
+        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
+    (is (= 204 (:status (core/delete-node ticket node-id))))))
