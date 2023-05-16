@@ -13,7 +13,7 @@
               (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
                     search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
                 (search/search ticket search-request))
-              [:list :entries]))))
+              [:body :list :entries]))))
 
 (deftest get-ticket
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])]

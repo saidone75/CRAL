@@ -10,10 +10,11 @@
   "Get node metadata."
   [ticket node-id & [query-params]]
   (try
-    (let [response (client/get
-                     (str (config/get-url 'core) "/nodes/" node-id)
-                     {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-                      :query-params query-params})]
+    (let [response
+          (client/get
+            (str (config/get-url 'core) "/nodes/" node-id)
+            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+             :query-params query-params})]
       (utils/ok-response response))
     (catch Exception e (utils/ex-response e))))
 
@@ -35,11 +36,12 @@
   "Create a node."
   [ticket parent-id ^NodeBodyCreate node-body-create]
   (try
-    (let [response (client/post
-                     (str (config/get-url 'core) "/nodes/" parent-id "/children")
-                     {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-                      :body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
-                      :content-type :json})]
+    (let [response
+          (client/post
+            (str (config/get-url 'core) "/nodes/" parent-id "/children")
+            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+             :body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
+             :content-type :json})]
       (utils/ok-response response))
     (catch Exception e (utils/ex-response e))))
 
@@ -47,9 +49,10 @@
   "Delete a node."
   [ticket node-id]
   (try
-    (let [response (client/delete
-                     (str (config/get-url 'core) "/nodes/" node-id)
-                     {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}})]
+    (let [response
+          (client/delete
+            (str (config/get-url 'core) "/nodes/" node-id)
+            {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}})]
       (utils/ok-response response))
     (catch Exception e (utils/ex-response e))))
 
