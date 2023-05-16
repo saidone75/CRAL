@@ -19,6 +19,17 @@
       (utils/ok-response response))
     (catch Exception e (utils/ex-response e))))
 
+(defn get-node-content
+  "Get node content."
+  [ticket node-id & [query-params]]
+  (let [response
+        (client/get
+          (str (config/get-url 'core) "/nodes/" node-id "/content")
+          {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+           :query-params query-params
+           :as           :byte-array})]
+    response))
+
 (defrecord LocallySet
   [^String authority-id
    ^String name
@@ -87,3 +98,4 @@
              :body    content})]
       (utils/ok-response response))
     (catch Exception e (utils/ex-response e))))
+
