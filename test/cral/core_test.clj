@@ -11,9 +11,8 @@
   (:entry (first
             (get-in
               (let [ticket (auth/get-ticket "admin" "admin")
-                    query (search/map->Query {:query "PATH:'app:company_home/app:guest_home'"})
-                    query-body (search/map->QueryBody {:query query})]
-                (search/search ticket query-body))
+                    search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
+                (search/search ticket search-request))
               [:list :entries]))))
 
 (deftest get-ticket
