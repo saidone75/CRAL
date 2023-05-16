@@ -1,5 +1,6 @@
 (ns cral.core-test
-  (:import (java.util UUID))
+  (:import (java.util UUID)
+           (java.io File))
   (:require [clojure.test :refer :all]
             [cral.core :refer :all]
             [cral.alfresco.core :as core]
@@ -33,6 +34,15 @@
         new-name (.toString (UUID/randomUUID))]
     (core/update-node ticket node-id (core/map->NodeBodyUpdate {:name new-name}))
     (is (= new-name (get-in (core/get-node ticket node-id) [:body :entry :name])))))
+
+(deftest update-content
+  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+        parent-id (:id (get-guest-home))
+        node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
+        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
+        content (File/createTempFile "tmp" "txt")]
+    (spit content "hello")
+    (core/update-node-content ticket node-id content)))
 
 (deftest delete-node
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])

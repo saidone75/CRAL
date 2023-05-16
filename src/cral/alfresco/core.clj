@@ -1,5 +1,6 @@
 (ns cral.alfresco.core
   (:import (clojure.lang PersistentHashMap PersistentVector)
+           (java.io File)
            (java.util Base64))
   (:require [clojure.data.json :as json]
             [clj-http.lite.client :as client]
@@ -75,5 +76,14 @@
       (utils/ok-response response))
     (catch Exception e (utils/ex-response e))))
 
-(defn upload-content
-  [ticket node-id body])
+(defn update-node-content
+  "Upload node content."
+  [ticket node-id ^File content]
+  (try
+    (let [response
+          (client/put
+            (str (config/get-url 'core) "/nodes/" node-id "/content")
+            {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
+             :body    content})]
+      (utils/ok-response response))
+    (catch Exception e (utils/ex-response e))))
