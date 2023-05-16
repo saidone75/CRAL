@@ -1,12 +1,8 @@
 (ns cral.permissions-test
   (:require [clojure.test :refer :all]
-            [cral.utils.utils :as utils]
-            [cral.alfresco.core :as core]
-            [cral.alfresco.search :as search]
-            [cral.alfresco.auth :as auth]))
+            [cral.alfresco.core :as core]))
 
-(let [permissions (core/make-permissions true)]
-  (utils/camel-case-stringify-keys
-    (-> permissions
-        (core/add-locally-set (core/make-locally-set "admin" "Contributor" true))
-        (core/add-locally-set (core/make-locally-set "guest" "Consumer" true)))))
+(let [permissions (core/map->Permissions {:is-inheritance-enabled false})]
+  (->> permissions
+       (#(update % :locally-set conj (core/map->LocallySet {:authority-id "admin" :name "Contributor" :access-status "ALLOWED"})))
+       (#(update % :locally-set conj (core/map->LocallySet {:authority-id "guest" :name "Consumer" :access-status "ALLOWED"})))))

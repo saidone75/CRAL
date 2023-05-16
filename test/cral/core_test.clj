@@ -11,8 +11,8 @@
   (:entry (first
             (get-in
               (let [ticket (auth/get-ticket "admin" "admin")
-                    query (search/make-query "PATH:'app:company_home/app:guest_home'")
-                    query-body (search/make-query-body query)]
+                    query (search/map->Query {:query "PATH:'app:company_home/app:guest_home'"})
+                    query-body (search/map->QueryBody {:query query})]
                 (search/search ticket query-body))
               [:list :entries]))))
 
@@ -23,13 +23,13 @@
 (deftest create-node
   (let [ticket (auth/get-ticket "admin" "admin")
         parent-id (:id (get-guest-home))
-        node-body-create (core/make-node-body-create (.toString (UUID/randomUUID)) "cm:content")]
+        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})]
     (is (= 201) (:status (core/create-node ticket parent-id node-body-create)))))
 
 (deftest update-node
   (let [ticket (auth/get-ticket "admin" "admin")
         parent-id (:id (get-guest-home))
-        node-body-create (core/make-node-body-create (.toString (UUID/randomUUID)) "cm:content")
+        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
         new-name (.toString (UUID/randomUUID))]
     (core/update-node ticket node-id (core/map->NodeBodyUpdate {:name new-name}))
@@ -38,6 +38,6 @@
 (deftest delete-node
   (let [ticket (auth/get-ticket "admin" "admin")
         parent-id (:id (get-guest-home))
-        node-body-create (core/make-node-body-create (.toString (UUID/randomUUID)) "cm:content")
+        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
     (is (= 204 (:status (core/delete-node ticket node-id))))))

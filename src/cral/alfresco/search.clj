@@ -5,20 +5,9 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils]))
 
-(defrecord Query [language user-query query])
-(defn make-query
-  [query & [language user-query]]
-  (map->Query {:query query :language language :user-query user-query}))
-
-(defrecord Paging [max-items skip-count])
-(defn make-paging
-  [max-items skip-count]
-  (map->Paging {:max-items max-items :skip-count skip-count}))
-
+(defrecord Query [^String language ^String user-query ^String query])
+(defrecord Paging [^Integer max-items ^Integer skip-count])
 (defrecord QueryBody [^Query query ^Paging paging])
-(defn make-query-body
-  [^Query query ^Paging & paging]
-  (map->QueryBody {:query query :paging paging}))
 
 (defn search
   "Searches Alfresco"
