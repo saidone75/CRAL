@@ -1,6 +1,7 @@
 (ns cral.utils.utils
   (:require [clojure.string :as str]
-            [clojure.walk :as walk]))
+            [clojure.walk :as walk]
+            [clojure.data.json :as json]))
 
 (defn kebab-case
   "Turn a camelCase string into kebab-case."
@@ -43,3 +44,20 @@
   (let [f (fn [[k v]] [(camel-case (if (keyword? k) (subs (str k) 1) k)) v])]
     ;; only apply to maps
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
+
+(defn ok-response
+  "Build a successful response."
+  [r]
+  {:status (:status r)
+   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))))
+             (kebab-keywordize-keys (json/read-str (:body r)))
+             nil)})
+
+(defn ex-response
+  "Build a response from a client exception."
+  [e]
+  (let [ex-data (ex-data e)
+        body (kebab-keywordize-keys (json/read-str (:body ex-data)))]
+    {:status  (:status ex-data)
+     :message (get-in body [:error :brief-summary])
+     :body    body}))

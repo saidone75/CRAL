@@ -10,23 +10,23 @@
   []
   (:entry (first
             (get-in
-              (let [ticket (auth/get-ticket "admin" "admin")
+              (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
                     search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
                 (search/search ticket search-request))
               [:list :entries]))))
 
 (deftest get-ticket
-  (let [ticket (auth/get-ticket "admin" "admin")]
+  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])]
     (is (not (nil? (:id ticket))))))
 
 (deftest create-node
-  (let [ticket (auth/get-ticket "admin" "admin")
+  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})]
     (is (= 201) (:status (core/create-node ticket parent-id node-body-create)))))
 
 (deftest update-node
-  (let [ticket (auth/get-ticket "admin" "admin")
+  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
@@ -35,7 +35,7 @@
     (is (= new-name (get-in (core/get-node ticket node-id) [:body :entry :name])))))
 
 (deftest delete-node
-  (let [ticket (auth/get-ticket "admin" "admin")
+  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
