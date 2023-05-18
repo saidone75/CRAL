@@ -3,6 +3,7 @@
            (java.io File))
   (:require [clojure.test :refer :all]
             [clojure.string :as str]
+            [clojure.java.io :as io]
             [cral.core :refer :all]
             [cral.alfresco.core :as core]
             [cral.alfresco.search :as search]
@@ -46,30 +47,35 @@
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
-        content (File/createTempFile "tmp." ".txt")]
-    (spit content "hello")
-    (core/update-node-content ticket node-id content)
-    (is (= "hello" (:body (core/get-node-content ticket node-id))))
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
+    (spit file-to-be-uploaded "hello")
+    (core/update-node-content ticket node-id file-to-be-uploaded)
+    (is (= "hello" (apply str (map char (:body (core/get-node-content ticket node-id))))))
     ;; clean up
-    (core/delete-node ticket node-id)))
+    (core/delete-node ticket node-id)
+    (io/delete-file file-to-be-uploaded)))
 
-;; FIXME
 (deftest download-content
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
-        content (File/createTempFile "tmp." ".txt")
-        response (core/get-node-content ticket node-id)]
-    (spit content "hello")
-    (core/update-node-content ticket node-id content)
-    (->> (core/get-node-content ticket node-id)
-         (#(get-in % [:headers "content-disposition"]))
-         (#(second (re-matches #".*\"([^\"]+)\".*" (second (str/split % #";")))))
-         (#(File. (str (System/getProperty "java.io.tmpdir") "/" %)))
-         (#(with-open [w (clojure.java.io/output-stream %)]
-             (.write w (:body response))
-             (println (.getPath %)))))))
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
+    (spit file-to-be-uploaded "hello")
+    (core/update-node-content ticket node-id file-to-be-uploaded)
+    (let [response (core/get-node-content ticket node-id)
+          downloaded-file (->> response
+                               (#(get-in % [:headers "content-disposition"]))
+                               (#(second (re-matches #".*\"([^\"]+)\".*" (second (str/split % #";")))))
+                               (#(File. (str (System/getProperty "java.io.tmpdir") "/" %)))
+                               (#(with-open [w (clojure.java.io/output-stream %)]
+                                   (.write w (bytes (:body response)))
+                                   %)))]
+      (is (= (slurp (.getPath downloaded-file)) (apply str (map char (:body (core/get-node-content ticket node-id))))))
+      ;;clean up
+      (core/delete-node ticket node-id)
+      (io/delete-file file-to-be-uploaded)
+      (io/delete-file downloaded-file))))
 
 (deftest delete-node
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
