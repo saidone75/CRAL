@@ -21,21 +21,14 @@
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])]
     (is (not (nil? (:id ticket))))))
 
-;; FIXME
-(let [node-id "75edc814-d2fe-41bc-99b6-fd953f1ddb15"
-      ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
-      response (core/get-node-content ticket node-id)
-      file-name (second (re-matches #".*\"([^\"]+)\".*" (second (str/split (get-in response [:headers "content-disposition"]) #";"))))
-      file (File. (str (System/getProperty "java.io.tmpdir") "/" file-name))]
-  (with-open [w (clojure.java.io/output-stream file)]
-    (.write w (:body response)))
-  (println (.getPath file)))
-
 (deftest create-node
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})]
-    (is (= 201) (:status (core/create-node ticket parent-id node-body-create)))))
+        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        create-node-response (core/create-node ticket parent-id node-body-create)]
+    (is (= 201) (:status create-node-response))
+    ;; clean up
+    (core/delete-node ticket (get-in create-node-response [:body :entry :id]))))
 
 (deftest update-node
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
@@ -44,7 +37,9 @@
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
         new-name (.toString (UUID/randomUUID))]
     (core/update-node ticket node-id (core/map->NodeBodyUpdate {:name new-name}))
-    (is (= new-name (get-in (core/get-node ticket node-id) [:body :entry :name])))))
+    (is (= new-name (get-in (core/get-node ticket node-id) [:body :entry :name])))
+    ;; clean up
+    (core/delete-node ticket node-id)))
 
 (deftest update-content
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
@@ -53,7 +48,28 @@
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
         content (File/createTempFile "tmp." ".txt")]
     (spit content "hello")
-    (core/update-node-content ticket node-id content)))
+    (core/update-node-content ticket node-id content)
+    (is (= "hello" (:body (core/get-node-content ticket node-id))))
+    ;; clean up
+    (core/delete-node ticket node-id)))
+
+;; FIXME
+(deftest download-content
+  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+        parent-id (:id (get-guest-home))
+        node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
+        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
+        content (File/createTempFile "tmp." ".txt")
+        response (core/get-node-content ticket node-id)]
+    (spit content "hello")
+    (core/update-node-content ticket node-id content)
+    (->> (core/get-node-content ticket node-id)
+         (#(get-in % [:headers "content-disposition"]))
+         (#(second (re-matches #".*\"([^\"]+)\".*" (second (str/split % #";")))))
+         (#(File. (str (System/getProperty "java.io.tmpdir") "/" %)))
+         (#(with-open [w (clojure.java.io/output-stream %)]
+             (.write w (:body response))
+             (println (.getPath %)))))))
 
 (deftest delete-node
   (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
