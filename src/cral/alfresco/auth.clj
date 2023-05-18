@@ -5,7 +5,7 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils]))
 
-(defn get-ticket
+(defn create-ticket
   "Create a ticket."
   [username password]
   (try

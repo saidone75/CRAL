@@ -13,17 +13,17 @@
   []
   (:entry (first
             (get-in
-              (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+              (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
                     search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
                 (search/search ticket search-request))
               [:body :list :entries]))))
 
-(deftest get-ticket
-  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])]
+(deftest create-ticket
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])]
     (is (not (nil? (:id ticket))))))
 
 (deftest create-node
-  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         create-node-response (core/create-node ticket parent-id node-body-create)]
@@ -32,7 +32,7 @@
     (core/delete-node ticket (get-in create-node-response [:body :entry :id]))))
 
 (deftest update-node
-  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
@@ -43,7 +43,7 @@
     (core/delete-node ticket node-id)))
 
 (deftest update-content
-  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
@@ -56,7 +56,7 @@
     (io/delete-file file-to-be-uploaded)))
 
 (deftest download-content
-  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
@@ -78,7 +78,7 @@
       (io/delete-file downloaded-file))))
 
 (deftest delete-node
-  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]

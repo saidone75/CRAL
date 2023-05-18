@@ -5,7 +5,7 @@
             [cral.core :refer :all]))
 
 (deftest search
-  (let [ticket (get-in (auth/get-ticket "admin" "admin") [:body :entry])
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         response
         (->> (search/map->RequestQuery {:query "PATH:'app:company_home'"})
              (#(search/map->SearchRequest {:query %}))
