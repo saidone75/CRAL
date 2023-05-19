@@ -19,23 +19,19 @@
     (catch Exception e (utils/ex-response e))))
 
 (defn- *-ticket [method ticket]
-  (method (str (config/get-url 'auth) "/tickets/-me-")
-          {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}}))
+  (try
+    (let [response
+          (method (str (config/get-url 'auth) "/tickets/-me-")
+                  {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}})]
+      (utils/ok-response response))
+    (catch Exception e (utils/ex-response e))))
 
 (defn validate-ticket
   "Validate a ticket."
   [ticket]
-  (try
-    (let [response
-          (*-ticket client/get ticket)]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (*-ticket client/get ticket))
 
 (defn delete-ticket
   "Delete a ticket."
   [ticket]
-  (try
-    (let [response
-          (*-ticket client/delete ticket)]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (*-ticket client/delete ticket))

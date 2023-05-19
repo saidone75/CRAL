@@ -48,10 +48,11 @@
 (defn ok-response
   "Build a successful response."
   [r]
-  {:status (:status r)
-   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))))
-             (kebab-keywordize-keys (json/read-str (:body r)))
-             nil)})
+  {:status  (:status r)
+   :headers (:headers r)
+   :body    (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
+              (kebab-keywordize-keys (json/read-str (:body r)))
+              (:body r))})
 
 (defn ex-response
   "Build a response from a client exception."

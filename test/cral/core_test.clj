@@ -83,3 +83,10 @@
         node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
     (is (= 204 (:status (core/delete-node ticket node-id))))))
+
+(deftest list-node-children
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
+        company-home-id (get-in (first (get-in (search/search ticket (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])]
+    company-home-id
+    )
+  )
