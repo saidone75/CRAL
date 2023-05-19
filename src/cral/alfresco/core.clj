@@ -7,6 +7,9 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils]))
 
+(defn call-rest
+  [] )
+
 (defn get-node
   "Get node metadata."
   [ticket node-id & [query-params]]
