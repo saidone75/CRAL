@@ -1,26 +1,31 @@
 (ns cral.alfresco.core
+  (:require [clj-http.lite.client :as client]
+            [clojure.data.json :as json]
+            [cral.alfresco.config :as config]
+            [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (java.io File)
-           (java.util Base64))
-  (:require [clojure.data.json :as json]
-            [clj-http.lite.client :as client]
-            [cral.alfresco.config :as config]
-            [cral.utils.utils :as utils]))
+           (java.util Base64)))
 
-(defn call-rest
-  [] )
+(defn- add-auth
+  [ticket req]
+  (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))))
+
+(defn- call-rest
+  [method url ticket req]
+  (try
+    (let [response (method url (add-auth ticket req))]
+      (utils/ok-response response))
+    (catch Exception e (utils/ex-response e))))
 
 (defn get-node
   "Get node metadata."
   [ticket node-id & [query-params]]
-  (try
-    (let [response
-          (client/get
-            (str (config/get-url 'core) "/nodes/" node-id)
-            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-             :query-params query-params})]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (call-rest
+    client/get
+    (str (config/get-url 'core) "/nodes/" node-id)
+    ticket
+    {:query-params query-params}))
 
 (defrecord NodeBodyUpdate
   [^String name
@@ -113,4 +118,3 @@
              :body    content})]
       (utils/ok-response response))
     (catch Exception e (utils/ex-response e))))
-
