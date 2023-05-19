@@ -88,13 +88,12 @@
 (defn get-node-content
   "Get node content."
   [ticket node-id & [query-params]]
-  (let [response
-        (client/get
-          (str (config/get-url 'core) "/nodes/" node-id "/content")
-          {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-           :query-params query-params
-           :as           :byte-array})]
-    response))
+  (call-rest
+    client/get
+    (str (config/get-url 'core) "/nodes/" node-id "/content")
+    ticket
+    {:query-params query-params
+     :as           :byte-array}))
 
 (defn update-node-content
   "Upload node content."
