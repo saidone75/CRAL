@@ -45,38 +45,30 @@
 (defn update-node
   "Update a node."
   [ticket node-id ^NodeBodyUpdate node-body-update]
-  (try
-    (let [response
-          (client/put
-            (str (config/get-url 'core) "/nodes/" node-id)
-            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-             :body         (json/write-str (utils/camel-case-stringify-keys node-body-update))
-             :content-type :json})]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (call-rest
+    client/put
+    (str (config/get-url 'core) "/nodes/" node-id)
+    ticket
+    {:body         (json/write-str (utils/camel-case-stringify-keys node-body-update))
+     :content-type :json}))
 
 (defn delete-node
   "Delete a node."
   [ticket node-id]
-  (try
-    (let [response
-          (client/delete
-            (str (config/get-url 'core) "/nodes/" node-id)
-            {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}})]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (call-rest
+    client/delete
+    (str (config/get-url 'core) "/nodes/" node-id)
+    ticket
+    {}))
 
 (defn list-node-children
   "List node children."
   [ticket node-id & [query-params]]
-  (try
-    (let [response
-          (client/get
-            (str (config/get-url 'core) "/nodes/" node-id "/children")
-            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-             :query-params query-params})]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (call-rest
+    client/get
+    (str (config/get-url 'core) "/nodes/" node-id "/children")
+    ticket
+    {:query-params query-params}))
 
 (defrecord NodeBodyCreate
   [^String name
@@ -86,15 +78,12 @@
 (defn create-node
   "Create a node."
   [ticket parent-id ^NodeBodyCreate node-body-create]
-  (try
-    (let [response
-          (client/post
-            (str (config/get-url 'core) "/nodes/" parent-id "/children")
-            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-             :body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
-             :content-type :json})]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (call-rest
+    client/post
+    (str (config/get-url 'core) "/nodes/" parent-id "/children")
+    ticket
+    {:body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
+     :content-type :json}))
 
 (defn get-node-content
   "Get node content."
@@ -110,11 +99,8 @@
 (defn update-node-content
   "Upload node content."
   [ticket node-id ^File content]
-  (try
-    (let [response
-          (client/put
-            (str (config/get-url 'core) "/nodes/" node-id "/content")
-            {:headers {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-             :body    content})]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (call-rest
+    client/put
+    (str (config/get-url 'core) "/nodes/" node-id "/content")
+    ticket
+    {:body content}))
