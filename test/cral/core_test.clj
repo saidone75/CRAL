@@ -18,15 +18,6 @@
                 (search/search ticket search-request))
               [:body :list :entries]))))
 
-(deftest create-node
-  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
-        parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
-        create-node-response (core/create-node ticket parent-id node-body-create)]
-    (is (= 201) (:status create-node-response))
-    ;; clean up
-    (core/delete-node ticket (get-in create-node-response [:body :entry :id]))))
-
 (deftest update-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
@@ -38,20 +29,31 @@
     ;; clean up
     (core/delete-node ticket node-id)))
 
-(deftest update-content
+(deftest delete-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
-        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
-        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
-    (spit file-to-be-uploaded "hello")
-    (core/update-node-content ticket node-id file-to-be-uploaded)
-    (is (= "hello" (apply str (map char (:body (core/get-node-content ticket node-id))))))
-    ;; clean up
-    (core/delete-node ticket node-id)
-    (io/delete-file file-to-be-uploaded)))
+        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
+    (is (= 204 (:status (core/delete-node ticket node-id))))))
 
-(deftest download-content
+(deftest list-node-children
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
+        company-home-id (get-in (first (get-in (search/search ticket (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
+        list-node-children-response (core/list-node-children ticket company-home-id)]
+    (is (= 200 (:status list-node-children-response)))
+    (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
+    (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
+
+(deftest create-node
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
+        parent-id (:id (get-guest-home))
+        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        create-node-response (core/create-node ticket parent-id node-body-create)]
+    (is (= 201) (:status create-node-response))
+    ;; clean up
+    (core/delete-node ticket (get-in create-node-response [:body :entry :id]))))
+
+(deftest get-node-content
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
         node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
@@ -73,18 +75,15 @@
       (io/delete-file file-to-be-uploaded)
       (io/delete-file downloaded-file))))
 
-(deftest delete-node
+(deftest update-node-content
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
-        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
-    (is (= 204 (:status (core/delete-node ticket node-id))))))
-
-(deftest list-node-children
-  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
-        company-home-id (get-in (first (get-in (search/search ticket (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
-        list-node-children-response (core/list-node-children ticket company-home-id)]
-    (is (= 200 (:status list-node-children-response)))
-    (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
-    (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
-
+        node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
+        node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
+    (spit file-to-be-uploaded "hello")
+    (core/update-node-content ticket node-id file-to-be-uploaded)
+    (is (= "hello" (apply str (map char (:body (core/get-node-content ticket node-id))))))
+    ;; clean up
+    (core/delete-node ticket node-id)
+    (io/delete-file file-to-be-uploaded)))
