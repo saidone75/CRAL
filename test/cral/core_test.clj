@@ -87,3 +87,8 @@
     ;; clean up
     (core/delete-node ticket node-id)
     (io/delete-file file-to-be-uploaded)))
+
+(deftest list-parents
+  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
+        node-id (:id (get-guest-home))]
+    (is (= "Company Home" (get-in (first (get-in (core/list-parents ticket node-id) [:body :list :entries])) [:entry :name])))))
