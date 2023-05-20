@@ -4,24 +4,12 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
-           (java.io File)
-           (java.util Base64)))
-
-(defn- add-auth
-  [ticket req]
-  (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))))
-
-(defn- call-rest
-  [method url ticket req]
-  (try
-    (let [response (method url (add-auth ticket req))]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+           (java.io File)))
 
 (defn get-node
   "Get node metadata."
   [ticket node-id & [query-params]]
-  (call-rest
+  (utils/call-rest
     client/get
     (str (config/get-url 'core) "/nodes/" node-id)
     ticket
@@ -45,7 +33,7 @@
 (defn update-node
   "Update a node."
   [ticket node-id ^NodeBodyUpdate node-body-update]
-  (call-rest
+  (utils/call-rest
     client/put
     (str (config/get-url 'core) "/nodes/" node-id)
     ticket
@@ -55,7 +43,7 @@
 (defn delete-node
   "Delete a node."
   [ticket node-id]
-  (call-rest
+  (utils/call-rest
     client/delete
     (str (config/get-url 'core) "/nodes/" node-id)
     ticket
@@ -64,7 +52,7 @@
 (defn list-node-children
   "List node children."
   [ticket node-id & [query-params]]
-  (call-rest
+  (utils/call-rest
     client/get
     (str (config/get-url 'core) "/nodes/" node-id "/children")
     ticket
@@ -78,7 +66,7 @@
 (defn create-node
   "Create a node."
   [ticket parent-id ^NodeBodyCreate node-body-create]
-  (call-rest
+  (utils/call-rest
     client/post
     (str (config/get-url 'core) "/nodes/" parent-id "/children")
     ticket
@@ -88,7 +76,7 @@
 (defn get-node-content
   "Get node content."
   [ticket node-id & [query-params]]
-  (call-rest
+  (utils/call-rest
     client/get
     (str (config/get-url 'core) "/nodes/" node-id "/content")
     ticket
@@ -98,7 +86,7 @@
 (defn update-node-content
   "Upload node content."
   [ticket node-id ^File content]
-  (call-rest
+  (utils/call-rest
     client/put
     (str (config/get-url 'core) "/nodes/" node-id "/content")
     ticket

@@ -1,7 +1,8 @@
 (ns cral.utils.utils
   (:require [clojure.string :as str]
             [clojure.walk :as walk]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json])
+  (:import (java.util Base64)))
 
 (defn kebab-case
   "Turn a camelCase string into kebab-case."
@@ -62,3 +63,14 @@
     {:status  (:status ex-data)
      :message (get-in body [:error :brief-summary])
      :body    body}))
+
+(defn- add-auth
+  [ticket req]
+  (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))))
+
+(defn call-rest
+  [method url ticket req]
+  (try
+    (let [response (method url (add-auth ticket req))]
+      (ok-response response))
+    (catch Exception e (ex-response e))))

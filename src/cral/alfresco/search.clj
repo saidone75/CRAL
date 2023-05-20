@@ -1,7 +1,6 @@
 (ns cral.alfresco.search
-  (:import (java.util Base64))
-  (:require [clojure.data.json :as json]
-            [clj-http.lite.client :as client]
+  (:require [clj-http.lite.client :as client]
+            [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils]))
 
@@ -12,12 +11,9 @@
 (defn search
   "Searches Alfresco"
   [ticket ^SearchRequest search-request]
-  (try
-    (let [response
-          (client/post
-            (str (config/get-url 'search) "/search")
-            {:headers      {"Authorization" (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))}
-             :body         (json/write-str (utils/camel-case-stringify-keys search-request))
-             :content-type :json})]
-      (utils/ok-response response))
-    (catch Exception e (utils/ex-response e))))
+  (utils/call-rest
+    client/post
+    (str (config/get-url 'search) "/search")
+    ticket
+    {:body         (json/write-str (utils/camel-case-stringify-keys search-request))
+     :content-type :json}))
