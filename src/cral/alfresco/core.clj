@@ -46,8 +46,7 @@
   (utils/call-rest
     client/delete
     (format "%s/nodes/%s" (config/get-url 'core) node-id)
-    ticket
-    {}))
+    ticket))
 
 (defn list-node-children
   "List node children."
