@@ -13,7 +13,7 @@
   [ticket ^SearchRequest search-request]
   (utils/call-rest
     client/post
-    (str (config/get-url 'search) "/search")
+    (format "%s/search" (config/get-url 'search))
     ticket
     {:body         (json/write-str (utils/camel-case-stringify-keys search-request))
      :content-type :json}))

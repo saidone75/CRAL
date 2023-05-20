@@ -11,7 +11,7 @@
   [ticket node-id & [query-params]]
   (utils/call-rest
     client/get
-    (str (config/get-url 'core) "/nodes/" node-id)
+    (format "%s/nodes/%s" (config/get-url 'core) node-id)
     ticket
     {:query-params query-params}))
 
@@ -35,7 +35,7 @@
   [ticket node-id ^NodeBodyUpdate node-body-update]
   (utils/call-rest
     client/put
-    (str (config/get-url 'core) "/nodes/" node-id)
+    (format "%s/nodes/%s" (config/get-url 'core) node-id)
     ticket
     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-update))
      :content-type :json}))
@@ -45,7 +45,7 @@
   [ticket node-id]
   (utils/call-rest
     client/delete
-    (str (config/get-url 'core) "/nodes/" node-id)
+    (format "%s/nodes/%s" (config/get-url 'core) node-id)
     ticket
     {}))
 
@@ -54,7 +54,7 @@
   [ticket node-id & [query-params]]
   (utils/call-rest
     client/get
-    (str (config/get-url 'core) "/nodes/" node-id "/children")
+    (format "%s/nodes/%s/children" (config/get-url 'core) node-id)
     ticket
     {:query-params query-params}))
 
@@ -68,7 +68,7 @@
   [ticket parent-id ^NodeBodyCreate node-body-create]
   (utils/call-rest
     client/post
-    (str (config/get-url 'core) "/nodes/" parent-id "/children")
+    (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
     ticket
     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
      :content-type :json}))
@@ -78,7 +78,7 @@
   [ticket node-id & [query-params]]
   (utils/call-rest
     client/get
-    (str (config/get-url 'core) "/nodes/" node-id "/content")
+    (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
     ticket
     {:query-params query-params
      :as           :byte-array}))
@@ -88,6 +88,6 @@
   [ticket node-id ^File content]
   (utils/call-rest
     client/put
-    (str (config/get-url 'core) "/nodes/" node-id "/content")
+    (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
     ticket
     {:body content}))
