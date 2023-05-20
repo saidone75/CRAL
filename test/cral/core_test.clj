@@ -18,10 +18,6 @@
                 (search/search ticket search-request))
               [:body :list :entries]))))
 
-(deftest create-ticket
-  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])]
-    (is (not (nil? (:id ticket))))))
-
 (deftest create-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
@@ -86,7 +82,9 @@
 
 (deftest list-node-children
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
-        company-home-id (get-in (first (get-in (search/search ticket (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])]
-    company-home-id
-    )
-  )
+        company-home-id (get-in (first (get-in (search/search ticket (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
+        list-node-children-response (core/list-node-children ticket company-home-id)]
+    (is (= 200 (:status list-node-children-response)))
+    (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
+    (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
+
