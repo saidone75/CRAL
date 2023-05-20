@@ -6,6 +6,11 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (java.io File)))
 
+(defrecord QueryParams
+  [^PersistentVector include
+   ^String relative-path
+   ^PersistentVector fields])
+
 (defrecord NodeBodyUpdate
   [^String name
    ^String node-type
