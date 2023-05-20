@@ -66,7 +66,9 @@
 
 (defn- add-auth
   [ticket req]
-  (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket))))))
+  (if (nil? ticket)
+    req
+    (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket)))))))
 
 (defn call-rest
   [method url ticket req]
