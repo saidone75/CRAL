@@ -71,7 +71,7 @@
     (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket)))))))
 
 (defn call-rest
-  [method url ticket req]
+  [method url ticket & [req]]
   (try
     (let [response (method url (add-auth ticket req))]
       (ok-response response))

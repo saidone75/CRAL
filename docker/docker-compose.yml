@@ -1,11 +1,8 @@
 version: '2'
 services:
   alfresco:
-    image: anp-acs:development
+    image: alfresco/alfresco-content-repository-community:7.4.0.1
     mem_limit: 1500m
-    build:
-      dockerfile: ./Dockerfile
-      context: ../src/docker
     environment:
       JAVA_TOOL_OPTIONS: "
             -Dencryption.keystore.type=JCEKS
@@ -56,13 +53,10 @@ services:
       - "50800:50800"
       - "50801:50801"
     volumes:
-      - anp-acs-volume:/usr/local/tomcat/alf_data
+      - cral-acs-volume:/usr/local/tomcat/alf_data
   share:
-    image: anp-share:development
+    image: alfresco/alfresco-share:7.4.0.1
     mem_limit: 512m
-    build:
-      dockerfile: ./Dockerfile-share
-      context: ../src/docker
     environment:
       REPO_HOST: alfresco
       REPO_PORT: 8080
@@ -79,7 +73,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - anp-db-volume:/var/lib/postgresql/data
+      - cral-db-volume:/var/lib/postgresql/data
   solr6:
     image: alfresco/alfresco-search-services:2.0.7
     mem_limit: 1g
@@ -101,7 +95,7 @@ services:
     ports:
       - "8083:8983" # Browser port
     volumes:
-      - anp-ass-volume:/opt/alfresco-search-services/data
+      - cral-ass-volume:/opt/alfresco-search-services/data
   activemq:
     image: alfresco/alfresco-activemq:5.16.5-jre11-centos7
     ports:
@@ -110,9 +104,9 @@ services:
       - 61616:61616 # OpenWire
       - 61613:61613 # STOMP
 volumes:
-  anp-acs-volume:
+  cral-acs-volume:
     external: true
-  anp-db-volume:
+  cral-db-volume:
     external: true
-  anp-ass-volume:
+  cral-ass-volume:
     external: true

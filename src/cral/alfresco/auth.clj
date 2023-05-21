@@ -9,7 +9,7 @@
   [username password]
   (utils/call-rest
     client/post
-    (str (config/get-url 'auth) "/tickets")
+    (format "%s/tickets" (config/get-url 'auth))
     nil
     {:content-type :json
      :body         (json/write-str {
@@ -19,7 +19,7 @@
 (defn- *-ticket [method ticket]
   (utils/call-rest
     method
-    (str (config/get-url 'auth) "/tickets/-me-")
+    (format "%s/tickets/-me-" (config/get-url 'auth))
     ticket
     {}))
 

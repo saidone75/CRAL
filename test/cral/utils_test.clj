@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [cral.utils.utils :as utils]))
 
-(deftest camel-to-kebab
+(deftest kebab-case
   (is (= "kebab-case") (utils/kebab-case "kebabCase")))
 
 (deftest kebab-keywordize-keys

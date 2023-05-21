@@ -6,15 +6,6 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (java.io File)))
 
-(defn get-node
-  "Get node metadata."
-  [ticket node-id & [query-params]]
-  (utils/call-rest
-    client/get
-    (str (config/get-url 'core) "/nodes/" node-id)
-    ticket
-    {:query-params query-params}))
-
 (defrecord NodeBodyUpdate
   [^String name
    ^String node-type
@@ -30,12 +21,26 @@
   [^Boolean is-inheritance-enabled
    ^PersistentVector locally-set])
 
+(defrecord NodeBodyCreate
+  [^String name
+   ^String node-type
+   ^PersistentHashMap properties])
+
+(defn get-node
+  "Get node metadata."
+  [ticket node-id & [query-params]]
+  (utils/call-rest
+    client/get
+    (format "%s/nodes/%s" (config/get-url 'core) node-id)
+    ticket
+    {:query-params query-params}))
+
 (defn update-node
   "Update a node."
   [ticket node-id ^NodeBodyUpdate node-body-update]
   (utils/call-rest
     client/put
-    (str (config/get-url 'core) "/nodes/" node-id)
+    (format "%s/nodes/%s" (config/get-url 'core) node-id)
     ticket
     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-update))
      :content-type :json}))
@@ -45,30 +50,24 @@
   [ticket node-id]
   (utils/call-rest
     client/delete
-    (str (config/get-url 'core) "/nodes/" node-id)
-    ticket
-    {}))
+    (format "%s/nodes/%s" (config/get-url 'core) node-id)
+    ticket))
 
 (defn list-node-children
   "List node children."
   [ticket node-id & [query-params]]
   (utils/call-rest
     client/get
-    (str (config/get-url 'core) "/nodes/" node-id "/children")
+    (format "%s/nodes/%s/children" (config/get-url 'core) node-id)
     ticket
     {:query-params query-params}))
-
-(defrecord NodeBodyCreate
-  [^String name
-   ^String node-type
-   ^PersistentHashMap properties])
 
 (defn create-node
   "Create a node."
   [ticket parent-id ^NodeBodyCreate node-body-create]
   (utils/call-rest
     client/post
-    (str (config/get-url 'core) "/nodes/" parent-id "/children")
+    (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
     ticket
     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
      :content-type :json}))
@@ -78,7 +77,7 @@
   [ticket node-id & [query-params]]
   (utils/call-rest
     client/get
-    (str (config/get-url 'core) "/nodes/" node-id "/content")
+    (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
     ticket
     {:query-params query-params
      :as           :byte-array}))
@@ -88,6 +87,15 @@
   [ticket node-id ^File content]
   (utils/call-rest
     client/put
-    (str (config/get-url 'core) "/nodes/" node-id "/content")
+    (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
     ticket
     {:body content}))
+
+(defn list-parents
+  "List parents"
+  [ticket node-id & [query-params]]
+  (utils/call-rest
+    client/get
+    (format "%s/nodes/%s/parents" (config/get-url 'core) node-id)
+    ticket
+    {:query-params query-params}))
