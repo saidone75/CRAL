@@ -31,9 +31,9 @@ echo "Usage: %0 {start|stop|purge|tail}"
 EXIT /B %ERRORLEVEL%
 
 :start
-    docker volume create anp-acs-volume
-    docker volume create anp-db-volume
-    docker volume create anp-ass-volume
+    docker volume create cral-acs-volume
+    docker volume create cral-db-volume
+    docker volume create cral-ass-volume
     docker-compose -f "%COMPOSE_FILE_PATH%" up --build -d
 EXIT /B 0
 :down
@@ -45,6 +45,6 @@ EXIT /B 0
     docker-compose -f "%COMPOSE_FILE_PATH%" logs -f
 EXIT /B 0
 :purge
-    docker volume rm -f anp-acs-volume
-    docker volume rm -f anp-db-volume
-    docker volume rm -f anp-ass-volume
+    docker volume rm -f cral-acs-volume
+    docker volume rm -f cral-db-volume
+    docker volume rm -f cral-ass-volume
