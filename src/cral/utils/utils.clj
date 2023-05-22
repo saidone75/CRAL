@@ -72,6 +72,7 @@
      :body    body}))
 
 (defn- add-auth
+  "Add authorization header from ticket."
   [ticket req]
   (if (nil? ticket)
     req
