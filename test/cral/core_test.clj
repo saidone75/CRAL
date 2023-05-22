@@ -21,7 +21,7 @@
 (deftest get-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         guest-home-id (:id (get-guest-home))]
-    (core/get-node ticket guest-home-id (core/map->QueryParams {:include "permissions,path"}))))
+    (core/get-node ticket guest-home-id (core/map->QueryParams {:include ["path" "permissions"]}))))
 
 (deftest update-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])

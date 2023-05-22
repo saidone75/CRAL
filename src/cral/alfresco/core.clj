@@ -40,7 +40,7 @@
      client/get
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (remove #(nil? (val %)) (utils/camel-case-stringify-keys query-params)))})))
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))})))
 
 (defn update-node
   "Update a node."
