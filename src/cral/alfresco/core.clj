@@ -8,8 +8,13 @@
            (java.io File)))
 
 (defrecord QueryParams
-  [^PersistentVector include
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^String where
+   ^PersistentVector include
    ^String relative-path
+   ^Boolean include-source
    ^PersistentVector fields
    ^Boolean permanent])
 
