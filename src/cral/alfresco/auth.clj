@@ -20,7 +20,7 @@
                                     :userId   username
                                     :password password})}))
 
-(defn- *-ticket [method ticket]
+(defn- *-ticket [method ^Ticket ticket]
   (utils/call-rest
     method
     (format "%s/tickets/-me-" (config/get-url 'auth))
@@ -29,10 +29,10 @@
 
 (defn validate-ticket
   "Validate a ticket."
-  [ticket]
+  [^Ticket ticket]
   (*-ticket client/get ticket))
 
 (defn delete-ticket
   "Delete a ticket."
-  [ticket]
+  [^Ticket ticket]
   (*-ticket client/delete ticket))

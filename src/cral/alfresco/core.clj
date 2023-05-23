@@ -4,12 +4,14 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
+           (cral.alfresco.auth Ticket)
            (java.io File)))
 
 (defrecord QueryParams
   [^PersistentVector include
    ^String relative-path
-   ^PersistentVector fields])
+   ^PersistentVector fields
+   ^Boolean permanent])
 
 (defrecord NodeBodyUpdate
   [^String name
@@ -33,9 +35,9 @@
 
 (defn get-node
   "Get node metadata."
-  ([ticket node-id]
+  ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
-  ([ticket node-id ^QueryParams query-params]
+  ([^Ticket ticket ^String node-id ^QueryParams query-params]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -44,9 +46,9 @@
 
 (defn update-node
   "Update a node."
-  ([ticket node-id ^NodeBodyUpdate node-body-update]
+  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update]
    (update-node ticket node-id node-body-update nil))
-  ([ticket node-id ^NodeBodyUpdate node-body-update ^QueryParams query-params]
+  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update ^QueryParams query-params]
    (utils/call-rest
      client/put
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -57,11 +59,14 @@
 
 (defn delete-node
   "Delete a node."
-  [ticket node-id]
-  (utils/call-rest
-    client/delete
-    (format "%s/nodes/%s" (config/get-url 'core) node-id)
-    ticket))
+  ([^Ticket ticket ^String node-id]
+   (delete-node ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^QueryParams query-params]
+   (utils/call-rest
+     client/delete
+     (format "%s/nodes/%s" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))})))
 
 (defn list-node-children
   "List node children."
