@@ -7,7 +7,19 @@
            (cral.alfresco.auth Ticket)
            (java.io File)))
 
-(defrecord QueryParams
+(defrecord QueryParamsGetNode
+  [^PersistentVector include
+   ^String relative-path
+   ^PersistentVector fields])
+
+(defrecord QueryParamsUpdateNode
+  [^Boolean permanent])
+
+(defrecord QueryParamsDeleteNode
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+(defrecord QueryParamsListNodeChildren
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector order-by
@@ -15,8 +27,7 @@
    ^PersistentVector include
    ^String relative-path
    ^Boolean include-source
-   ^PersistentVector fields
-   ^Boolean permanent])
+   ^PersistentVector fields])
 
 (defrecord NodeBodyUpdate
   [^String name
@@ -42,7 +53,7 @@
   "Get node metadata."
   ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^QueryParams query-params]
+  ([^Ticket ticket ^String node-id ^QueryParamsGetNode query-params]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -53,7 +64,7 @@
   "Update a node."
   ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update]
    (update-node ticket node-id node-body-update nil))
-  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update ^QueryParams query-params]
+  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update ^QueryParamsUpdateNode query-params]
    (utils/call-rest
      client/put
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -66,7 +77,7 @@
   "Delete a node."
   ([^Ticket ticket ^String node-id]
    (delete-node ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^QueryParams query-params]
+  ([^Ticket ticket ^String node-id ^QueryParamsDeleteNode query-params]
    (utils/call-rest
      client/delete
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -77,7 +88,7 @@
   "List node children."
   ([^Ticket ticket ^String node-id]
    (list-node-children ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^QueryParams query-params]
+  ([^Ticket ticket ^String node-id ^QueryParamsListNodeChildren query-params]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/children" (config/get-url 'core) node-id)
@@ -86,7 +97,7 @@
 
 (defn create-node
   "Create a node."
-  [ticket parent-id ^NodeBodyCreate node-body-create]
+  [^Ticket ticket ^String parent-id ^NodeBodyCreate node-body-create]
   (utils/call-rest
     client/post
     (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
