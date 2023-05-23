@@ -75,12 +75,14 @@
 
 (defn list-node-children
   "List node children."
-  [ticket node-id & [query-params]]
-  (utils/call-rest
-    client/get
-    (format "%s/nodes/%s/children" (config/get-url 'core) node-id)
-    ticket
-    {:query-params query-params}))
+  ([^Ticket ticket ^String node-id]
+   (list-node-children ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^QueryParams query-params]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/children" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))})))
 
 (defn create-node
   "Create a node."
