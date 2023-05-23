@@ -6,6 +6,11 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (java.io File)))
 
+(defrecord QueryParams
+  [^PersistentVector include
+   ^String relative-path
+   ^PersistentVector fields])
+
 (defrecord NodeBodyUpdate
   [^String name
    ^String node-type
@@ -28,12 +33,14 @@
 
 (defn get-node
   "Get node metadata."
-  [ticket node-id & [query-params]]
-  (utils/call-rest
-    client/get
-    (format "%s/nodes/%s" (config/get-url 'core) node-id)
-    ticket
-    {:query-params query-params}))
+  ([ticket node-id]
+   (get-node ticket node-id nil))
+  ([ticket node-id ^QueryParams query-params]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))})))
 
 (defn update-node
   "Update a node."

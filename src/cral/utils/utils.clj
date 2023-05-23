@@ -46,6 +46,13 @@
     ;; only apply to maps
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
+(defn join-vector-vals
+  "Recursively transforms all map vector values to comma separated string."
+  [m]
+  (let [f (fn [[k v]] [k (if (vector? v) (str/join "," v) v)])]
+    ;; only apply to maps
+    (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
+
 (defn ok-response
   "Build a successful response."
   [r]
@@ -65,6 +72,7 @@
      :body    body}))
 
 (defn- add-auth
+  "Add authorization header from ticket."
   [ticket req]
   (if (nil? ticket)
     req
@@ -73,6 +81,6 @@
 (defn call-rest
   [method url ticket & [req]]
   (try
-    (let [response (method url (add-auth ticket req))]
+    (let [response (method url (add-auth ticket (join-vector-vals req)))]
       (ok-response response))
     (catch Exception e (ex-response e))))
