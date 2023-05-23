@@ -13,7 +13,7 @@
   []
   (:entry (first
             (get-in
-              (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
+              (let [ticket (auth/map->Ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry]))
                     search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
                 (search/search ticket search-request))
               [:body :list :entries]))))

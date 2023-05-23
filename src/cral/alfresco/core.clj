@@ -44,13 +44,16 @@
 
 (defn update-node
   "Update a node."
-  [ticket node-id ^NodeBodyUpdate node-body-update]
-  (utils/call-rest
-    client/put
-    (format "%s/nodes/%s" (config/get-url 'core) node-id)
-    ticket
-    {:body         (json/write-str (utils/camel-case-stringify-keys node-body-update))
-     :content-type :json}))
+  ([ticket node-id ^NodeBodyUpdate node-body-update]
+   (update-node ticket node-id node-body-update nil))
+  ([ticket node-id ^NodeBodyUpdate node-body-update ^QueryParams query-params]
+   (utils/call-rest
+     client/put
+     (format "%s/nodes/%s" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-update))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json})))
 
 (defn delete-node
   "Delete a node."
