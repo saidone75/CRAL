@@ -43,6 +43,14 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord ListParentsQueryParams
+  [^String where
+   ^PersistentVector include
+   ^Integer skip-count
+   ^Integer max-items
+   ^Boolean include-source
+   ^PersistentVector fields])
+
 (defrecord NodeBodyUpdate
   [^String name
    ^String node-type
@@ -145,9 +153,11 @@
 
 (defn list-parents
   "List parents"
-  [ticket node-id & [query-params]]
-  (utils/call-rest
-    client/get
-    (format "%s/nodes/%s/parents" (config/get-url 'core) node-id)
-    ticket
-    {:query-params query-params}))
+  ([^Ticket ticket ^String node-id]
+   (list-parents ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListParentsQueryParams query-params]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/parents" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))})))
