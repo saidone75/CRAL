@@ -10,7 +10,7 @@
 
 (defn create-ticket
   "Create a ticket."
-  [username password]
+  [^String username ^String password]
   (utils/call-rest
     client/post
     (format "%s/tickets" (config/get-url 'auth))
@@ -24,8 +24,7 @@
   (utils/call-rest
     method
     (format "%s/tickets/-me-" (config/get-url 'auth))
-    ticket
-    {}))
+    ticket))
 
 (defn validate-ticket
   "Validate a ticket."

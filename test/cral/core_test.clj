@@ -22,7 +22,7 @@
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         guest-home-id (:id (get-guest-home))]
     ;; well known fields for query parameters defined in core/QueryParamsGetNode
-    (core/get-node ticket guest-home-id (core/map->QueryParamsGetNode {:include ["path" "permissions"]}))
+    (core/get-node ticket guest-home-id (core/map->GetNodeQueryParams {:include ["path" "permissions"]}))
     ;; but plain maps can be used as well
     (core/get-node ticket guest-home-id {:include ["path" "permissions"]})))
 

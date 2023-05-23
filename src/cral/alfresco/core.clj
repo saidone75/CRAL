@@ -7,19 +7,19 @@
            (cral.alfresco.auth Ticket)
            (java.io File)))
 
-(defrecord QueryParamsGetNode
+(defrecord GetNodeQueryParams
   [^PersistentVector include
    ^String relative-path
    ^PersistentVector fields])
 
-(defrecord QueryParamsUpdateNode
+(defrecord UpdateNodeQueryParams
   [^Boolean permanent])
 
-(defrecord QueryParamsDeleteNode
+(defrecord DeleteNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord QueryParamsListNodeChildren
+(defrecord ListNodeChildrenQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector order-by
@@ -27,6 +27,20 @@
    ^PersistentVector include
    ^String relative-path
    ^Boolean include-source
+   ^PersistentVector fields])
+
+(defrecord UpdateNodeContentQueryParams
+  [^Boolean major-version
+   ^String comment
+   ^String name
+   ^PersistentVector include
+   ^PersistentVector fields])
+
+(defrecord CreateNodeQueryParams
+  [^Boolean auto-rename
+   ^Boolean major-version
+   ^Boolean versioning-enabled
+   ^PersistentVector include
    ^PersistentVector fields])
 
 (defrecord NodeBodyUpdate
@@ -53,7 +67,7 @@
   "Get node metadata."
   ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^QueryParamsGetNode query-params]
+  ([^Ticket ticket ^String node-id ^GetNodeQueryParams query-params]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -64,7 +78,7 @@
   "Update a node."
   ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update]
    (update-node ticket node-id node-body-update nil))
-  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update ^QueryParamsUpdateNode query-params]
+  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update ^UpdateNodeQueryParams query-params]
    (utils/call-rest
      client/put
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -77,7 +91,7 @@
   "Delete a node."
   ([^Ticket ticket ^String node-id]
    (delete-node ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^QueryParamsDeleteNode query-params]
+  ([^Ticket ticket ^String node-id ^DeleteNodeQueryParams query-params]
    (utils/call-rest
      client/delete
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -88,7 +102,7 @@
   "List node children."
   ([^Ticket ticket ^String node-id]
    (list-node-children ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^QueryParamsListNodeChildren query-params]
+  ([^Ticket ticket ^String node-id ^ListNodeChildrenQueryParams query-params]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/children" (config/get-url 'core) node-id)
@@ -97,32 +111,37 @@
 
 (defn create-node
   "Create a node."
-  [^Ticket ticket ^String parent-id ^NodeBodyCreate node-body-create]
-  (utils/call-rest
-    client/post
-    (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
-    ticket
-    {:body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
-     :content-type :json}))
+  ([^Ticket ticket ^String parent-id ^NodeBodyCreate node-body-create]
+   (create-node ticket parent-id node-body-create nil))
+  ([^Ticket ticket ^String parent-id ^NodeBodyCreate node-body-create ^CreateNodeQueryParams query-params]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json})))
 
 (defn get-node-content
   "Get node content."
-  [ticket node-id & [query-params]]
+  [^Ticket ticket ^String node-id]
   (utils/call-rest
     client/get
     (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
     ticket
-    {:query-params query-params
-     :as           :byte-array}))
+    {:as :byte-array}))
 
 (defn update-node-content
   "Upload node content."
-  [ticket node-id ^File content]
-  (utils/call-rest
-    client/put
-    (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
-    ticket
-    {:body content}))
+  ([^Ticket ticket ^String node-id ^File content]
+   (update-node-content ticket node-id content nil))
+  ([^Ticket ticket ^String node-id ^File content ^UpdateNodeContentQueryParams query-params]
+   (utils/call-rest
+     client/put
+     (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
+     ticket
+     {:body         content
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))})))
 
 (defn list-parents
   "List parents"

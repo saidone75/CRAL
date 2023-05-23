@@ -2,7 +2,9 @@
   (:require [clojure.string :as str]
             [clojure.walk :as walk]
             [clojure.data.json :as json])
-  (:import (java.util Base64)))
+  (:import (clojure.lang PersistentHashMap)
+           (cral.alfresco.auth Ticket)
+           (java.util Base64)))
 
 (defn kebab-case
   "Turn a camelCase string into kebab-case."
@@ -79,8 +81,10 @@
     (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket)))))))
 
 (defn call-rest
-  [method url ticket & [req]]
-  (try
-    (let [response (method url (add-auth ticket (join-vector-vals req)))]
-      (ok-response response))
-    (catch Exception e (ex-response e))))
+  ([method ^String url ^Ticket ticket]
+   (call-rest method url ticket nil))
+  ([method ^String url ^Ticket ticket ^PersistentHashMap req]
+   (try
+     (let [response (method url (add-auth ticket (join-vector-vals req)))]
+       (ok-response response))
+     (catch Exception e (ex-response e)))))
