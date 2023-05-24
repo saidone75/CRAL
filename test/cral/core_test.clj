@@ -5,6 +5,7 @@
             [clojure.string :as str]
             [clojure.java.io :as io]
             [cral.core :refer :all]
+            [cral.alfresco.model :as model]
             [cral.alfresco.core :as core]
             [cral.alfresco.search :as search]
             [cral.alfresco.auth :as auth]))
@@ -13,7 +14,7 @@
   []
   (:entry (first
             (get-in
-              (let [ticket (auth/map->Ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry]))
+              (let [ticket (model/map->Ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry]))
                     search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
                 (search/search ticket search-request))
               [:body :list :entries]))))
@@ -21,15 +22,18 @@
 (deftest get-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         guest-home-id (:id (get-guest-home))]
-    (core/get-node ticket guest-home-id (core/map->QueryParams {:include ["path" "permissions"]}))))
+    ;; well known fields for query parameters defined in core/QueryParamsGetNode
+    (core/get-node ticket guest-home-id (model/map->GetNodeQueryParams {:include ["path" "permissions"]}))
+    ;; but plain maps can be used as well
+    (core/get-node ticket guest-home-id {:include ["path" "permissions"]})))
 
 (deftest update-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        node-body-create (model/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
         new-name (.toString (UUID/randomUUID))]
-    (core/update-node ticket node-id (core/map->NodeBodyUpdate {:name new-name}))
+    (core/update-node ticket node-id (model/map->NodeBodyUpdate {:name new-name}))
     (is (= new-name (get-in (core/get-node ticket node-id) [:body :entry :name])))
     ;; clean up
     (core/delete-node ticket node-id)))
@@ -37,7 +41,7 @@
 (deftest delete-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        node-body-create (model/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])]
     (is (= 204 (:status (core/delete-node ticket node-id))))))
 
@@ -52,7 +56,7 @@
 (deftest create-node
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        node-body-create (model/map->NodeBodyCreate {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         create-node-response (core/create-node ticket parent-id node-body-create)]
     (is (= 201) (:status create-node-response))
     ;; clean up
@@ -61,7 +65,7 @@
 (deftest get-node-content
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
+        node-body-create (model/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
     (spit file-to-be-uploaded "hello")
@@ -83,7 +87,7 @@
 (deftest update-node-content
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
         parent-id (:id (get-guest-home))
-        node-body-create (core/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
+        node-body-create (model/map->NodeBodyCreate {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id node-body-create) [:body :entry :id])
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
     (spit file-to-be-uploaded "hello")

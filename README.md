@@ -1,2 +1,2 @@
 # CRAL
-♫ faccio il tifo per la Spal, a tressette gioco al CRAL ♫
+♫ faccio il tifo per la S.P.A.L. / a tressette gioco al CRAL ♫
