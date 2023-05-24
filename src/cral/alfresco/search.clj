@@ -2,7 +2,8 @@
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
-            [cral.utils.utils :as utils]))
+            [cral.utils.utils :as utils])
+  (:import (cral.alfresco.model Ticket)))
 
 (defrecord RequestQuery [^String language ^String user-query ^String query])
 (defrecord Paging [^Integer max-items ^Integer skip-count])
@@ -10,7 +11,7 @@
 
 (defn search
   "Searches Alfresco"
-  [ticket ^SearchRequest search-request]
+  [^Ticket ticket ^SearchRequest search-request]
   (utils/call-rest
     client/post
     (format "%s/search" (config/get-url 'search))
