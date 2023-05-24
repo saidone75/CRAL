@@ -3,73 +3,8 @@
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap PersistentVector)
-           (cral.alfresco.model Ticket)
+  (:import (cral.alfresco.model CreateNodeQueryParams DeleteNodeQueryParams GetNodeQueryParams ListNodeChildrenQueryParams ListParentsQueryParams NodeBodyCreate NodeBodyUpdate Ticket UpdateNodeContentQueryParams UpdateNodeQueryParams)
            (java.io File)))
-
-(defrecord GetNodeQueryParams
-  [^PersistentVector include
-   ^String relative-path
-   ^PersistentVector fields])
-
-(defrecord UpdateNodeQueryParams
-  [^Boolean permanent])
-
-(defrecord DeleteNodeQueryParams
-  [^PersistentVector include
-   ^PersistentVector fields])
-
-(defrecord ListNodeChildrenQueryParams
-  [^Integer skip-count
-   ^Integer max-items
-   ^PersistentVector order-by
-   ^String where
-   ^PersistentVector include
-   ^String relative-path
-   ^Boolean include-source
-   ^PersistentVector fields])
-
-(defrecord UpdateNodeContentQueryParams
-  [^Boolean major-version
-   ^String comment
-   ^String name
-   ^PersistentVector include
-   ^PersistentVector fields])
-
-(defrecord CreateNodeQueryParams
-  [^Boolean auto-rename
-   ^Boolean major-version
-   ^Boolean versioning-enabled
-   ^PersistentVector include
-   ^PersistentVector fields])
-
-(defrecord ListParentsQueryParams
-  [^String where
-   ^PersistentVector include
-   ^Integer skip-count
-   ^Integer max-items
-   ^Boolean include-source
-   ^PersistentVector fields])
-
-(defrecord NodeBodyUpdate
-  [^String name
-   ^String node-type
-   ^PersistentVector aspect-names
-   ^PersistentHashMap properties])
-
-(defrecord LocallySet
-  [^String authority-id
-   ^String name
-   ^String access-status])
-
-(defrecord Permissions
-  [^Boolean is-inheritance-enabled
-   ^PersistentVector locally-set])
-
-(defrecord NodeBodyCreate
-  [^String name
-   ^String node-type
-   ^PersistentHashMap properties])
 
 (defn get-node
   "Get node metadata."
