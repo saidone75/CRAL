@@ -5,9 +5,9 @@
             [clojure.string :as str]
             [clojure.java.io :as io]
             [cral.core :refer :all]
+            [cral.alfresco.model :as model]
             [cral.alfresco.core :as core]
             [cral.alfresco.search :as search]
-            [cral.alfresco.model :as model]
             [cral.alfresco.auth :as auth]))
 
 (defn get-guest-home
