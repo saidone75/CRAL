@@ -7,13 +7,14 @@
             [cral.core :refer :all]
             [cral.alfresco.core :as core]
             [cral.alfresco.search :as search]
+            [cral.alfresco.model :as model]
             [cral.alfresco.auth :as auth]))
 
 (defn get-guest-home
   []
   (:entry (first
             (get-in
-              (let [ticket (auth/map->Ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry]))
+              (let [ticket (model/map->Ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry]))
                     search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
                 (search/search ticket search-request))
               [:body :list :entries]))))

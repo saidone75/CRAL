@@ -1,9 +1,10 @@
 (ns cral.utils.utils
-  (:require [clojure.string :as str]
+  (:require [clojure.data.json :as json]
+            [clojure.string :as str]
             [clojure.walk :as walk]
-            [clojure.data.json :as json])
+            [cral.alfresco.model])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.auth Ticket)
+           (cral.alfresco.model Ticket)
            (java.util Base64)))
 
 (defn kebab-case

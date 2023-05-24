@@ -4,7 +4,7 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
-           (cral.alfresco.auth Ticket)
+           (cral.alfresco.model Ticket)
            (java.io File)))
 
 (defrecord GetNodeQueryParams

@@ -2,11 +2,8 @@
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
-            [cral.utils.utils :as utils]))
-
-(defrecord Ticket
-  [^String id
-   ^String user-id])
+            [cral.utils.utils :as utils])
+  (:import (cral.alfresco.model Ticket)))
 
 (defn create-ticket
   "Create a ticket."
