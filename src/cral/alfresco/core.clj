@@ -3,7 +3,16 @@
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
-  (:import (cral.alfresco.model CreateNodeQueryParams DeleteNodeQueryParams GetNodeQueryParams ListNodeChildrenQueryParams ListParentsQueryParams NodeBodyCreate NodeBodyUpdate Ticket UpdateNodeContentQueryParams UpdateNodeQueryParams)
+  (:import (cral.alfresco.model CreateNodeQueryParams
+                                DeleteNodeQueryParams
+                                GetNodeQueryParams
+                                ListNodeChildrenQueryParams
+                                ListParentsQueryParams
+                                NodeBodyCreate
+                                NodeBodyUpdate
+                                Ticket
+                                UpdateNodeContentQueryParams
+                                UpdateNodeQueryParams)
            (java.io File)))
 
 (defn get-node
