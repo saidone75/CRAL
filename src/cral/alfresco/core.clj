@@ -3,13 +3,13 @@
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
-  (:import (cral.alfresco.model CreateNodeQueryParams
+  (:import (cral.alfresco.model CopyNodeQueryParams CreateNodeQueryParams
                                 DeleteNodeQueryParams
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
-                                NodeCreateBody
-                                NodeUpdateBody
+                                CopyNodeBody CreateNodeBody
+                                UpdateNodeBody
                                 Ticket
                                 UpdateNodeContentQueryParams
                                 UpdateNodeQueryParams)
@@ -28,14 +28,14 @@
 
 (defn update-node
   "Update a node."
-  ([^Ticket ticket ^String node-id ^NodeUpdateBody node-body-update]
-   (update-node ticket node-id node-body-update nil))
-  ([^Ticket ticket ^String node-id ^NodeUpdateBody node-body-update ^UpdateNodeQueryParams query-params]
+  ([^Ticket ticket ^String node-id ^UpdateNodeBody body]
+   (update-node ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^UpdateNodeBody body ^UpdateNodeQueryParams query-params]
    (utils/call-rest
      client/put
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
      ticket
-     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-update))
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
       :content-type :json})))
 
@@ -63,14 +63,27 @@
 
 (defn create-node
   "Create a node."
-  ([^Ticket ticket ^String parent-id ^NodeCreateBody node-body-create]
-   (create-node ticket parent-id node-body-create nil))
-  ([^Ticket ticket ^String parent-id ^NodeCreateBody node-body-create ^CreateNodeQueryParams query-params]
+  ([^Ticket ticket ^String parent-id ^CreateNodeBody body]
+   (create-node ticket parent-id body nil))
+  ([^Ticket ticket ^String parent-id ^CreateNodeBody body ^CreateNodeQueryParams query-params]
    (utils/call-rest
      client/post
      (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
      ticket
-     {:body         (json/write-str (utils/camel-case-stringify-keys node-body-create))
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json})))
+
+(defn copy-node
+  "Copy node."
+  ([^Ticket ticket ^String node-id ^CopyNodeBody body]
+   (copy-node ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^CopyNodeBody body ^CopyNodeQueryParams query-params]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/copy" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
       :content-type :json})))
 
@@ -96,7 +109,7 @@
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))})))
 
 (defn list-parents
-  "List parents"
+  "List parents."
   ([^Ticket ticket ^String node-id]
    (list-parents ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListParentsQueryParams query-params]
