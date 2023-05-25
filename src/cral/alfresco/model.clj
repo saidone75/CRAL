@@ -49,7 +49,7 @@
    ^Boolean include-source
    ^PersistentVector fields])
 
-(defrecord NodeBodyUpdate
+(defrecord NodeUpdateBody
   [^String name
    ^String node-type
    ^PersistentVector aspect-names
@@ -64,7 +64,7 @@
   [^Boolean is-inheritance-enabled
    ^PersistentVector locally-set])
 
-(defrecord NodeBodyCreate
+(defrecord NodeCreateBody
   [^String name
    ^String node-type
    ^PersistentHashMap properties])

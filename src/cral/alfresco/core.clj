@@ -8,8 +8,8 @@
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
-                                NodeBodyCreate
-                                NodeBodyUpdate
+                                NodeCreateBody
+                                NodeUpdateBody
                                 Ticket
                                 UpdateNodeContentQueryParams
                                 UpdateNodeQueryParams)
@@ -28,9 +28,9 @@
 
 (defn update-node
   "Update a node."
-  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update]
+  ([^Ticket ticket ^String node-id ^NodeUpdateBody node-body-update]
    (update-node ticket node-id node-body-update nil))
-  ([^Ticket ticket ^String node-id ^NodeBodyUpdate node-body-update ^UpdateNodeQueryParams query-params]
+  ([^Ticket ticket ^String node-id ^NodeUpdateBody node-body-update ^UpdateNodeQueryParams query-params]
    (utils/call-rest
      client/put
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
@@ -63,9 +63,9 @@
 
 (defn create-node
   "Create a node."
-  ([^Ticket ticket ^String parent-id ^NodeBodyCreate node-body-create]
+  ([^Ticket ticket ^String parent-id ^NodeCreateBody node-body-create]
    (create-node ticket parent-id node-body-create nil))
-  ([^Ticket ticket ^String parent-id ^NodeBodyCreate node-body-create ^CreateNodeQueryParams query-params]
+  ([^Ticket ticket ^String parent-id ^NodeCreateBody node-body-create ^CreateNodeQueryParams query-params]
    (utils/call-rest
      client/post
      (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
