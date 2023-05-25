@@ -94,7 +94,8 @@
     client/get
     (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
     ticket
-    {:as :byte-array}))
+    {:as :byte-array}
+    true))
 
 (defn update-node-content
   "Upload node content."
