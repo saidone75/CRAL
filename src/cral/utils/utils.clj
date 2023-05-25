@@ -58,12 +58,14 @@
 
 (defn ok-response
   "Build a successful response."
-  [r]
-  {:status  (:status r)
-   :headers (:headers r)
-   :body    (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
-              (kebab-keywordize-keys (json/read-str (:body r)))
-              (:body r))})
+  [r headers]
+  (let [response {:status (:status r)
+                  :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
+                            (kebab-keywordize-keys (json/read-str (:body r)))
+                            (:body r))}]
+    (if (true? headers)
+      (assoc response :headers (:headers r))
+      response)))
 
 (defn ex-response
   "Build a response from a client exception."
@@ -83,9 +85,11 @@
 
 (defn call-rest
   ([method ^String url ^Ticket ticket]
-   (call-rest method url ticket nil))
+   (call-rest method url ticket nil false))
   ([method ^String url ^Ticket ticket ^PersistentHashMap req]
+   (call-rest method url ticket req false))
+  ([method ^String url ^Ticket ticket ^PersistentHashMap req ^Boolean headers]
    (try
      (let [response (method url (add-auth ticket (join-vector-vals req)))]
-       (ok-response response))
+       (ok-response response headers))
      (catch Exception e (ex-response e)))))
