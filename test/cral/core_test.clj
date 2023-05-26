@@ -4,6 +4,7 @@
   (:require [clojure.test :refer :all]
             [clojure.string :as str]
             [clojure.java.io :as io]
+            [taoensso.timbre :as timbre]
             [cral.core :refer :all]
             [cral.alfresco.model :as model]
             [cral.alfresco.core :as core]
@@ -12,6 +13,8 @@
 
 (def user "admin")
 (def pass "admin")
+
+(timbre/set-config! {:min-level :info})
 
 (defn get-guest-home
   []
