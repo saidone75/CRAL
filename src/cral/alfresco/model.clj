@@ -45,6 +45,10 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord MoveNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord ListParentsQueryParams
   [^String where
    ^PersistentVector include
@@ -74,5 +78,9 @@
    ^PersistentHashMap properties])
 
 (defrecord CopyNodeBody
+  [^String target-parent-id
+   ^String name])
+
+(defrecord MoveNodeBody
   [^String target-parent-id
    ^String name])
