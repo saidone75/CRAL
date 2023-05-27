@@ -60,7 +60,7 @@
 (defn ok-response
   "Build a successful response."
   [r headers]
-  (timbre/debug (with-out-str (clojure.pprint/pprint r)))
+  (timbre/trace (with-out-str (clojure.pprint/pprint r)))
   (let [response {:status (:status r)
                   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
                             (kebab-keywordize-keys (json/read-str (:body r)))
@@ -72,7 +72,7 @@
 (defn ex-response
   "Build a response from a client exception."
   [e]
-  (timbre/debug (with-out-str (clojure.pprint/pprint e)))
+  (timbre/trace (with-out-str (clojure.pprint/pprint e)))
   (let [ex-data (ex-data e)
         body (kebab-keywordize-keys (json/read-str (:body ex-data)))]
     {:status  (:status ex-data)
