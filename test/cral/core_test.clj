@@ -75,9 +75,22 @@
         new-parent-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:folder"})) [:body :entry :id])
         copy-node-body (model/map->CopyNodeBody {:target-parent-id new-parent-id :name (.toString (UUID/randomUUID))})
         copy-node-response (core/copy-node ticket created-node-id copy-node-body)]
+    ;; check if node has been copied
     (is (= (get-in copy-node-response [:body :entry :parent-id]) new-parent-id))
     ;; clean up
     (core/delete-node ticket created-node-id)
+    (core/delete-node ticket new-parent-id)))
+
+(deftest move-node
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-id (:id (get-guest-home))
+        created-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        new-parent-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:folder"})) [:body :entry :id])
+        move-node-body (model/map->MoveNodeBody {:target-parent-id new-parent-id})
+        move-node-response (core/move-node ticket created-node-id move-node-body)]
+    ;; check if node has been moved
+    (is (= (get-in move-node-response [:body :entry :parent-id]) new-parent-id))
+    ;; clean up
     (core/delete-node ticket new-parent-id)))
 
 (deftest get-node-content

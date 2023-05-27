@@ -10,7 +10,10 @@
                                 CreateNodeQueryParams
                                 DeleteNodeQueryParams
                                 GetNodeQueryParams
-                                ListNodeChildrenQueryParams ListParentsQueryParams
+                                ListNodeChildrenQueryParams
+                                ListParentsQueryParams
+                                MoveNodeBody
+                                MoveNodeQueryParams
                                 Ticket
                                 UpdateNodeBody
                                 UpdateNodeContentQueryParams
@@ -89,6 +92,20 @@
    (utils/call-rest
      client/post
      (format "%s/nodes/%s/copy" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
+     (:return-headers opts))))
+
+(defn move-node
+  "Move node."
+  ([^Ticket ticket ^String node-id ^MoveNodeBody body]
+   (move-node ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^MoveNodeBody body ^MoveNodeQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/move" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
