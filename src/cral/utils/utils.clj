@@ -59,20 +59,20 @@
 
 (defn ok-response
   "Build a successful response."
-  [r headers]
-  (timbre/debug (with-out-str (clojure.pprint/pprint r)))
+  [r return-headers]
+  (timbre/trace (with-out-str (clojure.pprint/pprint r)))
   (let [response {:status (:status r)
                   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
                             (kebab-keywordize-keys (json/read-str (:body r)))
                             (:body r))}]
-    (if (true? headers)
+    (if (true? return-headers)
       (assoc response :headers (:headers r))
       response)))
 
 (defn ex-response
   "Build a response from a client exception."
   [e]
-  (timbre/debug (with-out-str (clojure.pprint/pprint e)))
+  (timbre/trace (with-out-str (clojure.pprint/pprint e)))
   (let [ex-data (ex-data e)
         body (kebab-keywordize-keys (json/read-str (:body ex-data)))]
     {:status  (:status ex-data)
@@ -91,8 +91,8 @@
    (call-rest method url ticket nil false))
   ([method ^String url ^Ticket ticket ^PersistentHashMap req]
    (call-rest method url ticket req false))
-  ([method ^String url ^Ticket ticket ^PersistentHashMap req ^Boolean headers]
+  ([method ^String url ^Ticket ticket ^PersistentHashMap req ^Boolean return-headers]
    (try
      (let [response (method url (add-auth ticket (join-vector-vals req)))]
-       (ok-response response headers))
+       (ok-response response return-headers))
      (catch Exception e (ex-response e)))))
