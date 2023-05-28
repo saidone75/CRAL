@@ -12,7 +12,8 @@
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
-                                MoveNodeBody
+                                LockNodeBody
+                                LockNodeQueryParams MoveNodeBody
                                 MoveNodeQueryParams
                                 Ticket
                                 UpdateNodeBody
@@ -92,6 +93,20 @@
    (utils/call-rest
      client/post
      (format "%s/nodes/%s/copy" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
+     (:return-headers opts))))
+
+(defn lock-node
+  "Lock node."
+  ([^Ticket ticket ^String node-id ^LockNodeBody body]
+   (lock-node ticket node-id body nil))
+  ([^Ticket ticket ^Strig node-id ^LockNodeBody body ^LockNodeQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/lock" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))

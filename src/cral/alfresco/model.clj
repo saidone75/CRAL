@@ -45,6 +45,10 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord LockNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord MoveNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
@@ -80,6 +84,11 @@
 (defrecord CopyNodeBody
   [^String target-parent-id
    ^String name])
+
+(defrecord LockNodeBody
+  [^Integer time-to-expire
+   ^String type
+   ^String lifetime])
 
 (defrecord MoveNodeBody
   [^String target-parent-id
