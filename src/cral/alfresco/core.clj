@@ -16,7 +16,7 @@
                                 LockNodeQueryParams MoveNodeBody
                                 MoveNodeQueryParams
                                 Ticket
-                                UpdateNodeBody
+                                UnLockNodeQueryParams UpdateNodeBody
                                 UpdateNodeContentQueryParams
                                 UpdateNodeQueryParams)
            (java.io File)))
@@ -110,6 +110,19 @@
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
+     (:return-headers opts))))
+
+(defn unlock-node
+  "Unlock a node."
+  ([^Ticket ticket ^String node-id]
+   (unlock-node ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^UnLockNodeQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/unlock" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
       :content-type :json}
      (:return-headers opts))))
 

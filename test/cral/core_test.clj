@@ -81,6 +81,14 @@
     (core/delete-node ticket created-node-id)
     (core/delete-node ticket new-parent-id)))
 
+(deftest lock-node
+  ;; TODO
+  )
+
+(deftest unlock-node
+  ;; TODO
+  )
+
 (deftest move-node
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (:id (get-guest-home))
