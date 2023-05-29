@@ -49,6 +49,10 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord UnLockNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord MoveNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
