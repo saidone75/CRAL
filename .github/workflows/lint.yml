@@ -1,0 +1,2 @@
+- name: Clojure Lint Action
+  uses: nnichols/clojure-lint-action@v2
