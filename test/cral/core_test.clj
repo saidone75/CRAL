@@ -140,3 +140,5 @@
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         node-id (:id (get-guest-home))]
     (is (= "Company Home" (get-in (first (get-in (core/list-parents ticket node-id) [:body :list :entries])) [:entry :name])))))
+
+(deftest create-node-assoc)
