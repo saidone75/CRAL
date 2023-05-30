@@ -3,9 +3,10 @@
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap)
+  (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.alfresco.model CopyNodeBody
                                 CopyNodeQueryParams
+                                CreateNodeAssocsQueryParams
                                 CreateNodeBody
                                 CreateNodeQueryParams
                                 DeleteNodeQueryParams
@@ -173,4 +174,18 @@
      (format "%s/nodes/%s/parents" (config/get-url 'core) node-id)
      ticket
      {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
+     (:return-headers opts))))
+
+(defn create-node-assocs
+  "Create node associations."
+  ([^Ticket ticket ^String node-id ^PersistentVector body]
+   (create-node-assocs ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateNodeAssocsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/targets" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
      (:return-headers opts))))

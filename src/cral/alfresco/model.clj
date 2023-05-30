@@ -65,6 +65,9 @@
    ^Boolean include-source
    ^PersistentVector fields])
 
+(defrecord CreateNodeAssocsQueryParams
+  [^PersistentVector fields])
+
 (defrecord UpdateNodeBody
   [^String name
    ^String node-type
@@ -97,3 +100,7 @@
 (defrecord MoveNodeBody
   [^String target-parent-id
    ^String name])
+
+(defrecord CreateNodeAssocsBody
+  [^String target-id
+   ^String assoc-type])
