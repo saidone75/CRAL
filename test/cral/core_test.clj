@@ -134,7 +134,7 @@
         create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id create-node-body) [:body :entry :id])
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
-    (spit file-to-be-uploaded "hello")
+    (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
     (core/update-node-content ticket node-id file-to-be-uploaded)
     (let [response (core/get-node-content ticket node-id)
           downloaded-file (->> response
@@ -155,10 +155,11 @@
         parent-id (:id (get-guest-home))
         create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id create-node-body) [:body :entry :id])
-        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
-    (spit file-to-be-uploaded "hello")
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+        file-content (.toString (UUID/randomUUID))]
+    (spit file-to-be-uploaded file-content)
     (core/update-node-content ticket node-id file-to-be-uploaded)
-    (is (= "hello" (apply str (map char (:body (core/get-node-content ticket node-id))))))
+    (is (= file-content (apply str (map char (:body (core/get-node-content ticket node-id))))))
     ;; clean up
     (is (= 204 (:status (core/delete-node ticket node-id))))
     (io/delete-file file-to-be-uploaded)))
