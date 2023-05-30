@@ -9,5 +9,5 @@ jobs:
       - name: clj-kondo
         uses: nnichols/clojure-lint-action@v2
         with:
-          github_token: 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
+          github_token: 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
           reporter: github-pr-review
