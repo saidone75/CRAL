@@ -82,8 +82,18 @@
     (core/delete-node ticket new-parent-id)))
 
 (deftest lock-node
-  ;; TODO
-  )
+  (let
+    [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+     parent-id (:id (get-guest-home))
+     node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+     lock-node-body (model/map->LockNodeBody {:time-to-expire 0
+                                              :type           "ALLOW_OWNER_CHANGES"
+                                              :lifetime       "PERSISTENT"})]
+    (is (= 200) (:status (core/lock-node ticket node-id lock-node-body)))
+    (let [properties (get-in (core/get-node ticket node-id) [:body :entry :properties])]
+      (is (every? true? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
+    ;; clean up
+    (is (= 204) (:status (core/delete-node ticket node-id)))))
 
 (deftest unlock-node
   ;; TODO

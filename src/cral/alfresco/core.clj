@@ -104,7 +104,7 @@
   "Lock node."
   ([^Ticket ticket ^String node-id ^LockNodeBody body]
    (lock-node ticket node-id body nil))
-  ([^Ticket ticket ^Strig node-id ^LockNodeBody body ^LockNodeQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^String node-id ^LockNodeBody body ^LockNodeQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
      (format "%s/nodes/%s/lock" (config/get-url 'core) node-id)
