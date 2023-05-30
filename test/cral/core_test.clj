@@ -89,15 +89,32 @@
      lock-node-body (model/map->LockNodeBody {:time-to-expire 0
                                               :type           "ALLOW_OWNER_CHANGES"
                                               :lifetime       "PERSISTENT"})]
-    (is (= 200) (:status (core/lock-node ticket node-id lock-node-body)))
+    (is (= 200 (:status (core/lock-node ticket node-id lock-node-body))))
     (let [properties (get-in (core/get-node ticket node-id) [:body :entry :properties])]
+      ;; check if node is locked
       (is (every? true? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
     ;; clean up
     (is (= 204) (:status (core/delete-node ticket node-id)))))
 
 (deftest unlock-node
-  ;; TODO
-  )
+  (let
+    [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+     parent-id (:id (get-guest-home))
+     node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+     lock-node-body (model/map->LockNodeBody {:time-to-expire 0
+                                              :type           "ALLOW_OWNER_CHANGES"
+                                              :lifetime       "PERSISTENT"})]
+    (is (= 200 (:status (core/lock-node ticket node-id lock-node-body))))
+    (let [properties (get-in (core/get-node ticket node-id) [:body :entry :properties])]
+      ;; check if node is locked
+      (is (every? true? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
+    ;; unlock node
+    (is (= 200 (:status (core/unlock-node ticket node-id))))
+    (let [properties (get-in (core/get-node ticket node-id) [:body :entry :properties])]
+      ;; check if node is unlocked
+      (is (every? false? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
+    ;; clean up
+    (is (= 204) (:status (core/delete-node ticket node-id)))))
 
 (deftest move-node
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
