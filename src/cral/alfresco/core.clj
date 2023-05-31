@@ -3,19 +3,21 @@
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap)
+  (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.alfresco.model CopyNodeBody
                                 CopyNodeQueryParams
+                                CreateNodeAssocsQueryParams
                                 CreateNodeBody
                                 CreateNodeQueryParams
                                 DeleteNodeQueryParams
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
-                                MoveNodeBody
+                                ListTargetAssocsQueryParams LockNodeBody
+                                LockNodeQueryParams MoveNodeBody
                                 MoveNodeQueryParams
                                 Ticket
-                                UpdateNodeBody
+                                UnLockNodeQueryParams UpdateNodeBody
                                 UpdateNodeContentQueryParams
                                 UpdateNodeQueryParams)
            (java.io File)))
@@ -98,6 +100,33 @@
       :content-type :json}
      (:return-headers opts))))
 
+(defn lock-node
+  "Lock node."
+  ([^Ticket ticket ^String node-id ^LockNodeBody body]
+   (lock-node ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^LockNodeBody body ^LockNodeQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/lock" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
+     (:return-headers opts))))
+
+(defn unlock-node
+  "Unlock a node."
+  ([^Ticket ticket ^String node-id]
+   (unlock-node ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^UnLockNodeQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/unlock" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
+     (:return-headers opts))))
+
 (defn move-node
   "Move node."
   ([^Ticket ticket ^String node-id ^MoveNodeBody body]
@@ -143,6 +172,32 @@
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/parents" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
+     (:return-headers opts))))
+
+(defn create-node-assocs
+  "Create node associations."
+  ([^Ticket ticket ^String node-id ^PersistentVector body]
+   (create-node-assocs ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateNodeAssocsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/targets" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
+     (:return-headers opts))))
+
+(defn list-target-assocs
+  "List target associations."
+  ([^Ticket ticket ^String node-id]
+   (list-target-assocs ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListTargetAssocsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/targets" (config/get-url 'core) node-id)
      ticket
      {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
      (:return-headers opts))))

@@ -45,6 +45,14 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord LockNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+(defrecord UnLockNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord MoveNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
@@ -55,6 +63,14 @@
    ^Integer skip-count
    ^Integer max-items
    ^Boolean include-source
+   ^PersistentVector fields])
+
+(defrecord CreateNodeAssocsQueryParams
+  [^PersistentVector fields])
+
+(defrecord ListTargetAssocsQueryParams
+  [^String where
+   ^PersistentVector include
    ^PersistentVector fields])
 
 (defrecord UpdateNodeBody
@@ -81,6 +97,15 @@
   [^String target-parent-id
    ^String name])
 
+(defrecord LockNodeBody
+  [^Integer time-to-expire
+   ^String type
+   ^String lifetime])
+
 (defrecord MoveNodeBody
   [^String target-parent-id
    ^String name])
+
+(defrecord CreateNodeAssocsBody
+  [^String target-id
+   ^String assoc-type])

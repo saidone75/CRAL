@@ -29,9 +29,9 @@
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         guest-home-id (:id (get-guest-home))]
     ;; well known fields for query parameters defined in core/QueryParamsGetNode
-    (core/get-node ticket guest-home-id (model/map->GetNodeQueryParams {:include ["path" "permissions"]}))
+    (is (every? true? (map (partial contains? (get-in (core/get-node ticket guest-home-id (model/map->GetNodeQueryParams {:include ["path" "permissions"]})) [:body :entry])) [:path :permissions])))
     ;; but plain maps can be used as well
-    (core/get-node ticket guest-home-id {:include ["path" "permissions"]})))
+    (is (every? true? (map (partial contains? (get-in (core/get-node ticket guest-home-id {:include ["path" "permissions"]}) [:body :entry])) [:path :permissions])))))
 
 (deftest update-node
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
@@ -42,7 +42,7 @@
     (core/update-node ticket node-id (model/map->UpdateNodeBody {:name new-name}))
     (is (= new-name (get-in (core/get-node ticket node-id) [:body :entry :name])))
     ;; clean up
-    (core/delete-node ticket node-id)))
+    (is (= 204 (:status (core/delete-node ticket node-id))))))
 
 (deftest delete-node
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
@@ -64,9 +64,9 @@
         parent-id (:id (get-guest-home))
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         create-node-response (core/create-node ticket parent-id create-node-body)]
-    (is (= 201) (:status create-node-response))
+    (is (= 201 (:status create-node-response)))
     ;; clean up
-    (core/delete-node ticket (get-in create-node-response [:body :entry :id]))))
+    (is (= 204 (:status (core/delete-node ticket (get-in create-node-response [:body :entry :id])))))))
 
 (deftest copy-node
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
@@ -78,8 +78,43 @@
     ;; check if node has been copied
     (is (= (get-in copy-node-response [:body :entry :parent-id]) new-parent-id))
     ;; clean up
-    (core/delete-node ticket created-node-id)
-    (core/delete-node ticket new-parent-id)))
+    (is (= 204 (:status (core/delete-node ticket created-node-id))))
+    (is (= 204 (:status (core/delete-node ticket new-parent-id))))))
+
+(deftest lock-node
+  (let
+    [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+     parent-id (:id (get-guest-home))
+     node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+     lock-node-body (model/map->LockNodeBody {:time-to-expire 0
+                                              :type           "ALLOW_OWNER_CHANGES"
+                                              :lifetime       "PERSISTENT"})]
+    (is (= 200 (:status (core/lock-node ticket node-id lock-node-body))))
+    (let [properties (get-in (core/get-node ticket node-id) [:body :entry :properties])]
+      ;; check if node is locked
+      (is (every? true? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
+    ;; clean up
+    (is (= 204) (:status (core/delete-node ticket node-id)))))
+
+(deftest unlock-node
+  (let
+    [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+     parent-id (:id (get-guest-home))
+     node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+     lock-node-body (model/map->LockNodeBody {:time-to-expire 0
+                                              :type           "ALLOW_OWNER_CHANGES"
+                                              :lifetime       "PERSISTENT"})]
+    (is (= 200 (:status (core/lock-node ticket node-id lock-node-body))))
+    (let [properties (get-in (core/get-node ticket node-id) [:body :entry :properties])]
+      ;; check if node is locked
+      (is (every? true? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
+    ;; unlock node
+    (is (= 200 (:status (core/unlock-node ticket node-id))))
+    (let [properties (get-in (core/get-node ticket node-id) [:body :entry :properties])]
+      ;; check if node is unlocked
+      (is (every? false? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
+    ;; clean up
+    (is (= 204) (:status (core/delete-node ticket node-id)))))
 
 (deftest move-node
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
@@ -91,7 +126,7 @@
     ;; check if node has been moved
     (is (= (get-in move-node-response [:body :entry :parent-id]) new-parent-id))
     ;; clean up
-    (core/delete-node ticket new-parent-id)))
+    (is (= 204 (:status (core/delete-node ticket new-parent-id))))))
 
 (deftest get-node-content
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
@@ -99,7 +134,7 @@
         create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id create-node-body) [:body :entry :id])
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
-    (spit file-to-be-uploaded "hello")
+    (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
     (core/update-node-content ticket node-id file-to-be-uploaded)
     (let [response (core/get-node-content ticket node-id)
           downloaded-file (->> response
@@ -111,7 +146,7 @@
                                    %)))]
       (is (= (slurp (.getPath downloaded-file)) (apply str (map char (:body (core/get-node-content ticket node-id))))))
       ;;clean up
-      (core/delete-node ticket node-id)
+      (is (= 204 (:status (core/delete-node ticket node-id))))
       (io/delete-file file-to-be-uploaded)
       (io/delete-file downloaded-file))))
 
@@ -120,15 +155,40 @@
         parent-id (:id (get-guest-home))
         create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
         node-id (get-in (core/create-node ticket parent-id create-node-body) [:body :entry :id])
-        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
-    (spit file-to-be-uploaded "hello")
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+        file-content (.toString (UUID/randomUUID))]
+    (spit file-to-be-uploaded file-content)
     (core/update-node-content ticket node-id file-to-be-uploaded)
-    (is (= "hello" (apply str (map char (:body (core/get-node-content ticket node-id))))))
+    (is (= file-content (apply str (map char (:body (core/get-node-content ticket node-id))))))
     ;; clean up
-    (core/delete-node ticket node-id)
+    (is (= 204 (:status (core/delete-node ticket node-id))))
     (io/delete-file file-to-be-uploaded)))
 
 (deftest list-parents
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         node-id (:id (get-guest-home))]
     (is (= "Company Home" (get-in (first (get-in (core/list-parents ticket node-id) [:body :list :entries])) [:entry :name])))))
+
+(deftest create-node-assocs
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-id (:id (get-guest-home))
+        source-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        target-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+    (is (= 201 (:status (core/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type "cm:references"})]))))
+    ;; clean up
+    (is (= 204 (:status (core/delete-node ticket source-node-id))))
+    (is (= 204 (:status (core/delete-node ticket target-node-id))))))
+
+(deftest list-target-assocs
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-id (:id (get-guest-home))
+        source-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        target-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+    (is (= 201 (:status (core/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type "cm:references"})]))))
+    (let [response (core/list-target-assocs ticket source-node-id (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"}))
+          entry (:entry (first (get-in response [:body :list :entries])))]
+      (is (= 200 (:status response)))
+      (is (= "cm:references") (get-in entry [:association :assoc-type])))
+    ;; clean up
+    (is (= 204 (:status (core/delete-node ticket source-node-id))))
+    (is (= 204 (:status (core/delete-node ticket target-node-id))))))
