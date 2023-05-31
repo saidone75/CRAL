@@ -13,7 +13,7 @@
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
-                                LockNodeBody
+                                ListTargetAssocsQueryParams LockNodeBody
                                 LockNodeQueryParams MoveNodeBody
                                 MoveNodeQueryParams
                                 Ticket
@@ -188,4 +188,16 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
       :content-type :json}
+     (:return-headers opts))))
+
+(defn list-target-assocs
+  "List target associations."
+  ([^Ticket ticket ^String node-id]
+   (list-target-assocs ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListTargetAssocsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/targets" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
      (:return-headers opts))))

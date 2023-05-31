@@ -68,6 +68,11 @@
 (defrecord CreateNodeAssocsQueryParams
   [^PersistentVector fields])
 
+(defrecord ListTargetAssocsQueryParams
+  [^String where
+   ^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord UpdateNodeBody
   [^String name
    ^String node-type
