@@ -169,10 +169,26 @@
         node-id (:id (get-guest-home))]
     (is (= "Company Home" (get-in (first (get-in (core/list-parents ticket node-id) [:body :list :entries])) [:entry :name])))))
 
-(deftest create-node-assoc
-  ;; TODO
-  )
+(deftest create-node-assocs
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-id (:id (get-guest-home))
+        source-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        target-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+    (is (= 201 (:status (core/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type "cm:references"})]))))
+    ;; clean up
+    (is (= 204 (:status (core/delete-node ticket source-node-id))))
+    (is (= 204 (:status (core/delete-node ticket target-node-id))))))
 
 (deftest list-target-assocs
-  ;; TODO
-  )
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-id (:id (get-guest-home))
+        source-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        target-node-id (get-in (core/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+    (is (= 201 (:status (core/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type "cm:references"})]))))
+    (let [response (core/list-target-assocs ticket source-node-id (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"}))
+          entry (:entry (first (get-in response [:body :list :entries])))]
+      (is (= 200 (:status response)))
+      (is (= "cm:references") (get-in entry [:association :assoc-type])))
+    ;; clean up
+    (is (= 204 (:status (core/delete-node ticket source-node-id))))
+    (is (= 204 (:status (core/delete-node ticket target-node-id))))))
