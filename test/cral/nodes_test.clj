@@ -1,4 +1,4 @@
-(ns cral.core-test
+(ns cral.nodes-test
   (:import (java.util UUID)
            (java.io File))
   (:require [clojure.test :refer :all]
