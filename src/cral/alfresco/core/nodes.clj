@@ -9,15 +9,20 @@
                                 CreateNodeAssocsQueryParams
                                 CreateNodeBody
                                 CreateNodeQueryParams
-                                DeleteNodeAssocsQueryParams DeleteNodeQueryParams
+                                DeleteNodeAssocsQueryParams
+                                DeleteNodeQueryParams
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
-                                ListSourceAssocsQueryParams ListTargetAssocsQueryParams LockNodeBody
-                                LockNodeQueryParams MoveNodeBody
+                                ListSourceAssocsQueryParams
+                                ListTargetAssocsQueryParams
+                                LockNodeBody
+                                LockNodeQueryParams
+                                MoveNodeBody
                                 MoveNodeQueryParams
                                 Ticket
-                                UnLockNodeQueryParams UpdateNodeBody
+                                UnLockNodeQueryParams
+                                UpdateNodeBody
                                 UpdateNodeContentQueryParams
                                 UpdateNodeQueryParams)
            (java.io File)))
