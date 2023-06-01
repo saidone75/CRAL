@@ -1,4 +1,4 @@
-(ns cral.alfresco.core
+(ns cral.alfresco.core.nodes
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
@@ -9,7 +9,7 @@
                                 CreateNodeAssocsQueryParams
                                 CreateNodeBody
                                 CreateNodeQueryParams
-                                DeleteNodeQueryParams
+                                DeleteNodeAssocsQueryParams DeleteNodeQueryParams
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
@@ -198,6 +198,18 @@
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/targets" (config/get-url 'core) node-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
+     (:return-headers opts))))
+
+(defn delete-node-assocs
+  "Delete node associations."
+  ([^Ticket ticket ^String node-id ^String target-id]
+   (delete-node-assocs ticket node-id target-id nil))
+  ([^Ticket ticket ^String node-id ^String target-id ^DeleteNodeAssocsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/delete
+     (format "%s/nodes/%s/targets/%s" (config/get-url 'core) node-id target-id)
      ticket
      {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
      (:return-headers opts))))

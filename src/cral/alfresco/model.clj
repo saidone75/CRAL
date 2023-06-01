@@ -73,6 +73,14 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord DeleteNodeAssocsQueryParams
+  [^String assoc-type])
+
+(defrecord ListSourceAssocsQueryParams
+  [^String where
+   ^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord UpdateNodeBody
   [^String name
    ^String node-type
