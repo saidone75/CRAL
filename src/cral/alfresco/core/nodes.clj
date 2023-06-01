@@ -13,7 +13,7 @@
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
-                                ListTargetAssocsQueryParams LockNodeBody
+                                ListSourceAssocsQueryParams ListTargetAssocsQueryParams LockNodeBody
                                 LockNodeQueryParams MoveNodeBody
                                 MoveNodeQueryParams
                                 Ticket
@@ -210,6 +210,18 @@
    (utils/call-rest
      client/delete
      (format "%s/nodes/%s/targets/%s" (config/get-url 'core) node-id target-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
+     (:return-headers opts))))
+
+(defn list-source-assocs
+  "List source associations."
+  ([^Ticket ticket ^String node-id]
+   (list-source-assocs ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListSourceAssocsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/sources" (config/get-url 'core) node-id)
      ticket
      {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
      (:return-headers opts))))
