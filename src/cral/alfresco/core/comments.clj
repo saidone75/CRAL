@@ -1,5 +1,6 @@
 (ns cral.alfresco.core.comments
   (:require [clj-http.lite.client :as client]
+            [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
@@ -30,7 +31,7 @@
      client/post
      (format "%s/nodes/%s/comments" (config/get-url 'core) node-id)
      ticket
-     {:body         body
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
       :content-type :json}
      (:return-headers opts))))
@@ -44,7 +45,7 @@
      client/put
      (format "%s/nodes/%s/comments/%s" (config/get-url 'core) node-id comment-id)
      ticket
-     {:body         body
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
       :content-type :json}
      (:return-headers opts))))
