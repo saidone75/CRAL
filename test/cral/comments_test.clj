@@ -45,19 +45,8 @@
       (is (= updated-comment-content) (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content])))
     ;; delete comment
     (let [list-comments-response (comments/list-comments ticket created-node-id)
-          comment-entry (:entry (first (get-in list-comments-response [:body :list :entries])))
-          updated-comment-content (.toString (UUID/randomUUID))]
-      (comments/de)
-      ;; check if comment has been updated
-      (is (= updated-comment-content) (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content]))
-
-
-
-      )
-
-
-
-
-
-    ))
+          comment-entry (:entry (first (get-in list-comments-response [:body :list :entries])))]
+      (is (= 204 (:status (comments/delete-comment ticket created-node-id (:id comment-entry))))))
+    ;; clean up
+    (is (= 204 (:status (nodes/delete-node ticket created-node-id))))))
 
