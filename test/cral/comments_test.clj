@@ -23,13 +23,13 @@
                 (search/search ticket search-request))
               [:body :list :entries]))))
 
-(deftest list-comments
+(deftest test-comments
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (:id (get-guest-home))
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         create-node-response (nodes/create-node ticket parent-id create-node-body)]
-    create-node-response
-    ;(comments/list-comments ticket (get-in create-node-response [:body :entry :id]))
+
+    (comments/list-comments ticket (get-in create-node-response [:body :entry :id]))
     )
   )
 

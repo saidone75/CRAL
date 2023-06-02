@@ -15,7 +15,13 @@
 (defrecord CreateCommentQueryParams
   [^PersistentVector fields])
 
+(defrecord UpdateCommentQueryParams
+  [^PersistentVector fields])
+
 (defrecord CreateCommentBody
+  [^String content])
+
+(defrecord UpdateCommentBody
   [^String content])
 
 ;; nodes
