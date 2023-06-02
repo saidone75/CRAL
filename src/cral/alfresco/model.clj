@@ -5,6 +5,27 @@
   [^String id
    ^String user-id])
 
+;; comments
+
+(defrecord ListCommentsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
+(defrecord CreateCommentQueryParams
+  [^PersistentVector fields])
+
+(defrecord UpdateCommentQueryParams
+  [^PersistentVector fields])
+
+(defrecord CreateCommentBody
+  [^String content])
+
+(defrecord UpdateCommentBody
+  [^String content])
+
+;; nodes
+
 (defrecord GetNodeQueryParams
   [^PersistentVector include
    ^String relative-path
