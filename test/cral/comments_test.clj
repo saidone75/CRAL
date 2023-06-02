@@ -42,5 +42,22 @@
           updated-comment-content (.toString (UUID/randomUUID))]
       (comments/update-comment ticket created-node-id (:id comment-entry) (model/map->UpdateCommentBody {:content updated-comment-content}))
       ;; check if comment has been updated
-      (is (= updated-comment-content) (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content])))))
+      (is (= updated-comment-content) (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content])))
+    ;; delete comment
+    (let [list-comments-response (comments/list-comments ticket created-node-id)
+          comment-entry (:entry (first (get-in list-comments-response [:body :list :entries])))
+          updated-comment-content (.toString (UUID/randomUUID))]
+      (comments/de)
+      ;; check if comment has been updated
+      (is (= updated-comment-content) (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content]))
+
+
+
+      )
+
+
+
+
+
+    ))
 

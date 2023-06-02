@@ -50,3 +50,12 @@
       :content-type :json}
      (:return-headers opts))))
 
+(defn delete-comment
+  "Delete a comment."
+  [^Ticket ticket ^String node-id ^String comment-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/nodes/%s/comments/%s" (config/get-url 'core) node-id comment-id)
+    ticket
+    {}
+    (:return-headers opts)))
