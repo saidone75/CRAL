@@ -44,13 +44,6 @@
     ;; clean up
     (is (= 204 (:status (nodes/delete-node ticket node-id))))))
 
-(deftest delete-node
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
-        parent-id (:id (get-guest-home))
-        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
-        node-id (get-in (nodes/create-node ticket parent-id create-node-body) [:body :entry :id])]
-    (is (= 204 (:status (nodes/delete-node ticket node-id))))))
-
 (deftest list-node-children
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         company-home-id (get-in (first (get-in (search/search ticket (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
@@ -59,7 +52,7 @@
     (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
     (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
 
-(deftest create-node
+(deftest create-and-delete-node
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (:id (get-guest-home))
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
@@ -81,22 +74,7 @@
     (is (= 204 (:status (nodes/delete-node ticket created-node-id))))
     (is (= 204 (:status (nodes/delete-node ticket new-parent-id))))))
 
-(deftest lock-node
-  (let
-    [ticket (get-in (auth/create-ticket user pass) [:body :entry])
-     parent-id (:id (get-guest-home))
-     node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
-     lock-node-body (model/map->LockNodeBody {:time-to-expire 0
-                                              :type           "ALLOW_OWNER_CHANGES"
-                                              :lifetime       "PERSISTENT"})]
-    (is (= 200 (:status (nodes/lock-node ticket node-id lock-node-body))))
-    (let [properties (get-in (nodes/get-node ticket node-id) [:body :entry :properties])]
-      ;; check if node is locked
-      (is (every? true? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
-    ;; clean up
-    (is (= 204) (:status (nodes/delete-node ticket node-id)))))
-
-(deftest unlock-node
+(deftest lock-and-unlock-node
   (let
     [ticket (get-in (auth/create-ticket user pass) [:body :entry])
      parent-id (:id (get-guest-home))
