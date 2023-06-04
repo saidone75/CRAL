@@ -1,4 +1,5 @@
-(ns cral.alfresco.config)
+(ns cral.alfresco.config
+  (:require [taoensso.timbre :as timbre]))
 
 (defonce config (atom {:scheme      "http"
                        :host        "localhost"
@@ -9,6 +10,10 @@
 
 (defn configure [& [m]]
   (swap! config merge m))
+
+(defn set-log-level
+  [level]
+  (timbre/set-config! {:min-level level}))
 
 (defn get-url [path]
   (let [path (keyword (str path "-path"))]
