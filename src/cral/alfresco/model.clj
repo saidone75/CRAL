@@ -148,3 +148,14 @@
    ^PersistentVector relations
    ^PersistentVector fields
    ^String where])
+
+(defrecord CreateSiteQueryParams
+  [^Boolean skip-configuration
+   ^Boolean skip-add-to-favorites
+   ^PersistentVector fields])
+
+(defrecord CreateSiteBody
+  [^String id
+   ^String title
+   ^String description
+   ^String visibility])
