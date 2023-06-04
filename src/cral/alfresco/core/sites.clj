@@ -1,9 +1,12 @@
 (ns cral.alfresco.core.sites
   (:require [clj-http.lite.client :as client]
+            [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model ListSitesQueryParams Ticket)))
+           (cral.alfresco.model CreateSiteBody
+                                CreateSiteQueryParams ListSitesQueryParams
+                                Ticket)))
 
 (defn list-sites
   "List sites."
@@ -15,4 +18,18 @@
      (format "%s/sites" (config/get-url 'core))
      ticket
      {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
+     (:return-headers opts))))
+
+(defn create-site
+  "Create a site."
+  ([^Ticket ticket ^CreateSiteBody body]
+   (create-site ticket body nil))
+  ([^Ticket ticket ^CreateSiteBody body ^CreateSiteQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/sites" (config/get-url 'core))
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :content-type :json}
      (:return-headers opts))))
