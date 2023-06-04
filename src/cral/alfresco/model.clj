@@ -138,3 +138,13 @@
 (defrecord CreateNodeAssocsBody
   [^String target-id
    ^String assoc-type])
+
+;; sites
+
+(defrecord ListSitesQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector relations
+   ^PersistentVector fields
+   ^String where])
