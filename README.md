@@ -35,3 +35,31 @@ Results are returned as maps that can be pretty easily handled in Clojure, pleas
                                   :created-at "2023-05-21T16:46:55.651+0000",
                                   :location "nodes"}}]}}}
 ```
+Post bodies and request parameters with well known keys are modeled as records:
+```clojure
+(model/map->GetNodeQueryParams {:include ["path" "permissions"]})
+=> #cral.alfresco.model.GetNodeQueryParams{:include ["path" "permissions"], :relative-path nil, :fields nil}
+
+(model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+=>
+#cral.alfresco.model.CreateNodeBody{:name "50075900-f0ef-461c-8534-116945f29b58",
+                                    :node-type "cm:content",
+                                    :properties nil}
+```
+but plain maps can be used as well if desired:
+```clojure
+(let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+      parent-id (:id (get-guest-home))]
+  (select-keys
+    (get-in (core/create-node ticket parent-id {:name "test" :node-type "cm:content"}) [:body :entry])
+    [:name :node-type :id :parent-id]))
+=>
+{:name "test",
+ :node-type "cm:content",
+ :id "68d9d0e3-8830-427e-b04e-c0109b02a539",
+ :parent-id "a29adc70-0639-416a-9660-4ed7f247b5a9"}
+```
+## License
+Copyright (c) 2023 Saidone
+
+Distributed under the GNU General Public License v3.0
