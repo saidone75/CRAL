@@ -59,3 +59,7 @@ but plain maps can be used as well if desired:
  :id "68d9d0e3-8830-427e-b04e-c0109b02a539",
  :parent-id "a29adc70-0639-416a-9660-4ed7f247b5a9"}
 ```
+## License
+Copyright (c) 2023 Saidone
+
+Distributed under the GNU General Public License v3.0
