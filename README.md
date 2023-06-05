@@ -5,12 +5,13 @@ CRAL is a pure Clojure client library for consuming Alfresco Content Services pu
 ## Usage
 Require the relevant namespaces:
 ```clojure
-(:require [cral.alfresco.model :as model]
-          [cral.alfresco.core :as core]
-          [cral.alfresco.search :as search]
-          [cral.alfresco.auth :as auth])
+(:require
+  [cral.alfresco.model :as model]
+  [cral.alfresco.core.nodes :as nodes]
+  [cral.alfresco.search :as search]
+  [cral.alfresco.auth :as auth])
 ```
-Results are returned as maps that can be pretty easily handled in Clojure, please note that all map keys are converted to proper kebab-case keywords and query parameters as well as POST bodies JSON keys are automatically converted to camel case before they are sent: 
+Results are returned as maps that can be easily handled in Clojure, please note that all map keys are converted to proper kebab-case keywords and query parameters as well as POST bodies JSON keys are automatically converted to camel case before they are sent: 
 ```clojure
 (auth/create-ticket "admin" "admin")
 => {:status 201, :body {:entry {:id "TICKET_5905a2c41cf63c003a2044ebdae69aa48691fdc8", :user-id "admin"}}}
@@ -51,7 +52,7 @@ but plain maps can be used as well if desired:
 (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
       parent-id (:id (get-guest-home))]
   (select-keys
-    (get-in (core/create-node ticket parent-id {:name "test" :node-type "cm:content"}) [:body :entry])
+    (get-in (nodes/create-node ticket parent-id {:name "test" :node-type "cm:content"}) [:body :entry])
     [:name :node-type :id :parent-id]))
 =>
 {:name "test",
