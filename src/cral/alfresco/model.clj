@@ -5,6 +5,27 @@
   [^String id
    ^String user-id])
 
+;; comments
+
+(defrecord ListCommentsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
+(defrecord CreateCommentQueryParams
+  [^PersistentVector fields])
+
+(defrecord UpdateCommentQueryParams
+  [^PersistentVector fields])
+
+(defrecord CreateCommentBody
+  [^String content])
+
+(defrecord UpdateCommentBody
+  [^String content])
+
+;; nodes
+
 (defrecord GetNodeQueryParams
   [^PersistentVector include
    ^String relative-path
@@ -73,6 +94,14 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord DeleteNodeAssocsQueryParams
+  [^String assoc-type])
+
+(defrecord ListSourceAssocsQueryParams
+  [^String where
+   ^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord UpdateNodeBody
   [^String name
    ^String node-type
@@ -109,3 +138,27 @@
 (defrecord CreateNodeAssocsBody
   [^String target-id
    ^String assoc-type])
+
+;; sites
+
+(defrecord ListSitesQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector relations
+   ^PersistentVector fields
+   ^String where])
+
+(defrecord CreateSiteQueryParams
+  [^Boolean skip-configuration
+   ^Boolean skip-add-to-favorites
+   ^PersistentVector fields])
+
+(defrecord DeleteSiteQueryParams
+  [^Boolean permanent])
+
+(defrecord CreateSiteBody
+  [^String id
+   ^String title
+   ^String description
+   ^String visibility])

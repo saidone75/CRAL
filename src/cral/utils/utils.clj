@@ -6,7 +6,8 @@
             [taoensso.timbre :as timbre])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model Ticket)
-           (java.util Base64)))
+           (java.util Base64)
+           (javax.net.ssl SSLException)))
 
 (defn kebab-case
   "Turn a camelCase string into kebab-case."
@@ -73,11 +74,14 @@
   "Build a response from a client exception."
   [e]
   (timbre/trace (with-out-str (clojure.pprint/pprint e)))
-  (let [ex-data (ex-data e)
-        body (kebab-keywordize-keys (json/read-str (:body ex-data)))]
-    {:status  (:status ex-data)
-     :message (get-in body [:error :brief-summary])
-     :body    body}))
+  (if (instance? SSLException e)
+    {:status  500
+     :message (.getMessage e)}
+    (let [ex-data (ex-data e)
+          body (kebab-keywordize-keys (json/read-str (:body ex-data)))]
+      {:status  (:status ex-data)
+       :message (get-in body [:error :brief-summary])
+       :body    body})))
 
 (defn- add-auth
   "Add authorization header from ticket."
