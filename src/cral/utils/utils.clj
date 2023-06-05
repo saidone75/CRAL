@@ -72,7 +72,7 @@
 
 (defn ex-response
   "Build a response from a client exception."
-  [e]
+  [^Exception e]
   (timbre/trace (with-out-str (clojure.pprint/pprint e)))
   (if (instance? SSLException e)
     {:status  500
@@ -88,7 +88,7 @@
   [ticket req]
   (if (nil? ticket)
     req
-    (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (.getBytes (:id ticket)))))))
+    (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (byte-array (map (comp byte int) (:id ticket))))))))
 
 (defn call-rest
   ([method ^String url ^Ticket ticket]

@@ -191,7 +191,7 @@
     (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
     (is (= 204 (:status (nodes/delete-node ticket target-node-id))))))
 
-(deftest list-source-assocs
+(deftest create-then-list-then-delete-source-assocs
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (:id (get-guest-home))
         ;; create the source node
@@ -213,5 +213,4 @@
       (is (empty? (get-in response [:body :list :pagination :entries]))))
     ;; clean up
     (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
-    (is (= 204 (:status (nodes/delete-node ticket target-node-id)))))
-  )
+    (is (= 204 (:status (nodes/delete-node ticket target-node-id))))))
