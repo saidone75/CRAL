@@ -7,6 +7,7 @@
            (cral.alfresco.model CreateSiteBody
                                 CreateSiteQueryParams
                                 DeleteSiteQueryParams
+                                GetSiteQueryParams
                                 ListSitesQueryParams
                                 Ticket)))
 
@@ -37,9 +38,16 @@
      (:return-headers opts))))
 
 (defn get-site
-  []
-  ;; TODO
-  )
+  "Get a site."
+  ([^Ticket ticket ^String site-id]
+   (get-site ticket site-id nil))
+  ([^Ticket ticket ^String site-id ^GetSiteQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s" (config/get-url 'core) site-id)
+     ticket
+     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
+     (:return-headers opts))))
 
 (defn update-site
   []

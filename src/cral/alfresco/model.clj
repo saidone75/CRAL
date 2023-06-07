@@ -157,6 +157,10 @@
 (defrecord DeleteSiteQueryParams
   [^Boolean permanent])
 
+(defrecord GetSiteQueryParams
+  [^PersistentHashMap relations
+   ^PersistentHashMap fields])
+
 (defrecord CreateSiteBody
   [^String id
    ^String title

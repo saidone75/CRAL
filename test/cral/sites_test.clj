@@ -8,7 +8,7 @@
 (def user "admin")
 (def pass "admin")
 
-(deftest create-list-and-delete-site
+(deftest create-then-then-list-then-get-then-delete-site
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         create-site-body (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -23,5 +23,7 @@
                 (map
                   #(= site-id (get-in % [:entry :id]))
                   (get-in list-sites-response [:body :list :entries])))))
+    ;; get-site
+    (is (= 200 (:status (sites/get-site ticket site-id))))
     ;; delete site
     (is (= 204 (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true})))))))
