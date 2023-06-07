@@ -154,6 +154,9 @@
    ^Boolean skip-add-to-favorites
    ^PersistentVector fields])
 
+(defrecord UpdateSiteQueryParams
+  [^PersistentVector fields])
+
 (defrecord DeleteSiteQueryParams
   [^Boolean permanent])
 
@@ -164,5 +167,10 @@
 (defrecord CreateSiteBody
   [^String id
    ^String title
+   ^String description
+   ^String visibility])
+
+(defrecord UpdateSiteBody
+  [^String title
    ^String description
    ^String visibility])

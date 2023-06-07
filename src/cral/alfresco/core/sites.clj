@@ -9,7 +9,9 @@
                                 DeleteSiteQueryParams
                                 GetSiteQueryParams
                                 ListSitesQueryParams
-                                Ticket)))
+                                Ticket
+                                UpdateSiteBody
+                                UpdateSiteQueryParams)))
 
 (defn list-sites
   "List sites."
@@ -50,9 +52,17 @@
      opts)))
 
 (defn update-site
-  []
-  ;; TODO
-  )
+  ([^Ticket ticket ^String site-id ^UpdateSiteBody body]
+   (update-site ticket site-id body nil))
+  ([^Ticket ticket ^String site-id ^UpdateSiteBody body ^UpdateSiteQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/put
+     (format "%s/sites/%s" (config/get-url 'core))
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
+     opts)))
 
 (defn delete-site
   "Delete a site."
