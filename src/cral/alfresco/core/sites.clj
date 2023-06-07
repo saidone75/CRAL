@@ -20,8 +20,8 @@
      client/get
      (format "%s/sites" (config/get-url 'core))
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn create-site
   "Create a site."
@@ -33,9 +33,9 @@
      (format "%s/sites" (config/get-url 'core))
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn get-site
   "Get a site."
@@ -46,8 +46,8 @@
      client/get
      (format "%s/sites/%s" (config/get-url 'core) site-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn update-site
   []
@@ -63,5 +63,5 @@
      client/delete
      (format "%s/sites/%s" (config/get-url 'core) site-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))

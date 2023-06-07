@@ -36,8 +36,8 @@
      client/get
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn update-node
   "Update a node."
@@ -49,9 +49,9 @@
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn delete-node
   "Delete a node."
@@ -62,8 +62,8 @@
      client/delete
      (format "%s/nodes/%s" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn list-node-children
   "List node children."
@@ -74,8 +74,8 @@
      client/get
      (format "%s/nodes/%s/children" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn create-node
   "Create a node."
@@ -87,9 +87,9 @@
      (format "%s/nodes/%s/children" (config/get-url 'core) parent-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn copy-node
   "Copy node."
@@ -101,9 +101,9 @@
      (format "%s/nodes/%s/copy" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn lock-node
   "Lock node."
@@ -115,9 +115,9 @@
      (format "%s/nodes/%s/lock" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn unlock-node
   "Unlock a node."
@@ -128,9 +128,9 @@
      client/post
      (format "%s/nodes/%s/unlock" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+     {:query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn move-node
   "Move node."
@@ -142,9 +142,9 @@
      (format "%s/nodes/%s/move" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn get-node-content
   "Get node content."
@@ -154,7 +154,7 @@
     (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
     ticket
     {:as :byte-array}
-    true))
+    {:return-headers true}))
 
 (defn update-node-content
   "Upload node content."
@@ -166,8 +166,8 @@
      (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
      ticket
      {:body         content
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+      :query-params query-params}
+     opts)))
 
 (defn list-parents
   "List parents."
@@ -178,8 +178,8 @@
      client/get
      (format "%s/nodes/%s/parents" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn create-node-assocs
   "Create node associations."
@@ -191,9 +191,9 @@
      (format "%s/nodes/%s/targets" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn list-target-assocs
   "List target associations."
@@ -204,8 +204,8 @@
      client/get
      (format "%s/nodes/%s/targets" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn delete-node-assocs
   "Delete node associations."
@@ -216,8 +216,8 @@
      client/delete
      (format "%s/nodes/%s/targets/%s" (config/get-url 'core) node-id target-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn list-source-assocs
   "List source associations."
@@ -228,5 +228,5 @@
      client/get
      (format "%s/nodes/%s/sources" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
