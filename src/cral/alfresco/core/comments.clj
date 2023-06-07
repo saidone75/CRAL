@@ -19,8 +19,8 @@
      client/get
      (format "%s/nodes/%s/comments" (config/get-url 'core) node-id)
      ticket
-     {:query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))}
-     (:return-headers opts))))
+     {:query-params query-params}
+     opts)))
 
 (defn create-comment
   "Create a comment."
@@ -32,9 +32,9 @@
      (format "%s/nodes/%s/comments" (config/get-url 'core) node-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn update-comment
   "Update a comment."
@@ -46,9 +46,9 @@
      (format "%s/nodes/%s/comments/%s" (config/get-url 'core) node-id comment-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params (into {} (utils/camel-case-stringify-keys (remove #(nil? (val %)) query-params)))
+      :query-params query-params
       :content-type :json}
-     (:return-headers opts))))
+     opts)))
 
 (defn delete-comment
   "Delete a comment."
@@ -58,4 +58,4 @@
     (format "%s/nodes/%s/comments/%s" (config/get-url 'core) node-id comment-id)
     ticket
     {}
-    (:return-headers opts)))
+    opts))
