@@ -57,7 +57,7 @@
   ([^Ticket ticket ^String site-id ^UpdateSiteBody body ^UpdateSiteQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/put
-     (format "%s/sites/%s" (config/get-url 'core))
+     (format "%s/sites/%s" (config/get-url 'core) site-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
