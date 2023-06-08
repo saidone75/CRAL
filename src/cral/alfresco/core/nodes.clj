@@ -9,6 +9,7 @@
                                 CreateNodeAssocsQueryParams
                                 CreateNodeBody
                                 CreateNodeQueryParams
+                                CreateSecondaryChildQueryParams
                                 DeleteNodeAssocsQueryParams
                                 DeleteNodeQueryParams
                                 GetNodeQueryParams
@@ -168,6 +169,32 @@
      {:body         content
       :query-params query-params}
      opts)))
+
+(defn create-secondary-child
+  "Create secondary child."
+  ([^Ticket ticket ^String node-id ^PersistentVector body]
+   (create-secondary-child ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateSecondaryChildQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/secondary-children" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
+     opts)))
+
+(defn list-secondary-children
+  "List secondary children."
+  []
+  ;; TODO
+  )
+
+(defn delete-secondary-child
+  "Delete secondary child or children."
+  []
+  ;; TODO
+  )
 
 (defn list-parents
   "List parents."

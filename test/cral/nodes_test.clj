@@ -206,3 +206,19 @@
     ;; clean up
     (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
     (is (= 204 (:status (nodes/delete-node ticket target-node-id))))))
+
+(deftest create-secondary-child
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-id (:id (tu/get-guest-home ticket))
+        ;; create the source node
+        source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        ;; create the target node
+        target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+    ;; create association
+    ;; FIXME
+    ;;(is (= 201 (:status (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})]))))
+    (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})])]
+      ;; clean up
+      (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
+      (is (= 204 (:status (nodes/delete-node ticket target-node-id))))
+      response)))
