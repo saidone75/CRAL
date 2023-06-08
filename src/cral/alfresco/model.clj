@@ -55,6 +55,9 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord CreateSecondaryChildQueryParams
+  [^PersistentVector fields])
+
 (defrecord CreateNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
@@ -107,6 +110,10 @@
    ^String node-type
    ^PersistentVector aspect-names
    ^PersistentHashMap properties])
+
+(defrecord CreateSecondaryChildBody
+  [^String child-id
+   ^String assoc-type])
 
 (defrecord LocallySet
   [^String authority-id
