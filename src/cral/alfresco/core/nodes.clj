@@ -169,6 +169,24 @@
       :query-params query-params}
      opts)))
 
+(defn create-secondary-child
+  "Create secondary child."
+  []
+  ;; TODO
+  )
+
+(defn list-secondary-children
+  "List secondary children."
+  []
+  ;; TODO
+  )
+
+(defn delete-secondary-child
+  "Delete secondary child or children."
+  []
+  ;; TODO
+  )
+
 (defn list-parents
   "List parents."
   ([^Ticket ticket ^String node-id]
