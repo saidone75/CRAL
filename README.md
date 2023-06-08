@@ -2,8 +2,12 @@
 *♫ faccio il tifo per la S.P.A.L. / a tressette gioco al C.R.A.L. ♫*
 
 CRAL is a pure Clojure library for consuming Alfresco Content Services public REST API in an idiomatic way.
-## Notes
-*☛ Tuned for GraalVM, can be compiled to native code*
+## Outline
+- Tuned for GraalVM, can be compiled to native binary
+
+- Lean and readable code
+
+- 100% test coverage
 
 *☛ Still incomplete and alpha quality, interface subject to changes*
 
@@ -16,6 +20,28 @@ Require the relevant namespaces:
   [cral.alfresco.core.nodes :as nodes]
   [cral.alfresco.search :as search]
   [cral.alfresco.auth :as auth])
+```
+Default configuration is stored in `config` atom defined in `cral.alfresco.config`:
+```clojure
+@config/config
+=>
+{:scheme "http",
+ :host "localhost",
+ :port 8080,
+ :core-path "alfresco/api/-default-/public/alfresco/versions/1",
+ :search-path "alfresco/api/-default-/public/search/versions/1",
+ :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
+```
+and can be overwritten by passing a map with the new values to `config/configure` fn:
+```clojure
+(config/configure {:scheme "https" :port 8983})
+=>
+{:scheme "https",
+ :host "localhost",
+ :port 8983,
+ :core-path "alfresco/api/-default-/public/alfresco/versions/1",
+ :search-path "alfresco/api/-default-/public/search/versions/1",
+ :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
 ```
 Results are returned as maps that can be easily handled in Clojure, please note that all map keys are converted to proper kebab-case keywords and query parameters as well as POST bodies JSON keys are automatically converted to camel case before they are sent: 
 ```clojure
