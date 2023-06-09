@@ -188,3 +188,10 @@
   [^String title
    ^String description
    ^String visibility])
+
+;; tags
+
+(defrecord ListTagsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
