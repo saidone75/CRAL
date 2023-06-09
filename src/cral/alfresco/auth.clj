@@ -17,14 +17,14 @@
      :body         (json/write-str {
                                     :userId   username
                                     :password password})}
-    (:return-headers opts)))
+    opts))
 
 (defn- *-ticket [method ^Ticket ticket ^PersistentHashMap opts]
   (utils/call-rest
     method
     (format "%s/tickets/-me-" (config/get-url 'auth))
     ticket
-    (:return-headers opts)))
+    opts))
 
 (defn validate-ticket
   "Validate a ticket."
