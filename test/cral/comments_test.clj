@@ -1,9 +1,10 @@
 (ns cral.comments-test
   (:require [clojure.test :refer :all]
+            [cral.alfresco.model.core]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.comments :as comments]
             [cral.alfresco.core.nodes :as nodes]
-            [cral.alfresco.model :as model]
+            [cral.alfresco.model.core :as model]
             [cral.test-utils :as tu]
             [taoensso.timbre :as timbre])
   (:import (java.util UUID)))

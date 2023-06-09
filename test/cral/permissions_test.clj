@@ -1,6 +1,6 @@
 (ns cral.permissions-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.model :as model]))
+            [cral.alfresco.model.core :as model]))
 
 (let [permissions (model/map->Permissions {:is-inheritance-enabled false})]
   (->> permissions

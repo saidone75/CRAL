@@ -2,10 +2,10 @@
   (:require [clojure.data.json :as json]
             [clojure.string :as str]
             [clojure.walk :as walk]
-            [cral.alfresco.model]
+            [cral.alfresco.model.auth]
             [taoensso.timbre :as timbre])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model Ticket)
+           (cral.alfresco.model.auth Ticket)
            (java.util Base64)
            (javax.net.ssl SSLException)))
 

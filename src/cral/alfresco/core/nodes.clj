@@ -4,29 +4,30 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
-           (cral.alfresco.model CopyNodeBody
-                                CopyNodeQueryParams
-                                CreateNodeAssocsQueryParams
-                                CreateNodeBody
-                                CreateNodeQueryParams
-                                CreateSecondaryChildQueryParams
-                                DeleteNodeAssocsQueryParams
-                                DeleteNodeQueryParams
-                                GetNodeQueryParams
-                                ListNodeChildrenQueryParams
-                                ListParentsQueryParams
-                                ListSecondaryChildrenQueryParams
-                                ListSourceAssocsQueryParams
-                                ListTargetAssocsQueryParams
-                                LockNodeBody
-                                LockNodeQueryParams
-                                MoveNodeBody
-                                MoveNodeQueryParams
-                                Ticket
-                                UnLockNodeQueryParams
-                                UpdateNodeBody
-                                UpdateNodeContentQueryParams
-                                UpdateNodeQueryParams)
+           (cral.alfresco.model.auth Ticket)
+           (cral.alfresco.model.core CopyNodeBody
+                                     CopyNodeQueryParams
+                                     CreateNodeAssocsQueryParams
+                                     CreateNodeBody
+                                     CreateNodeQueryParams
+                                     CreateSecondaryChildQueryParams
+                                     DeleteNodeAssocsQueryParams
+                                     DeleteNodeQueryParams
+                                     DeleteSecondaryChildQueryParams
+                                     GetNodeQueryParams
+                                     ListNodeChildrenQueryParams
+                                     ListParentsQueryParams
+                                     ListSecondaryChildrenQueryParams
+                                     ListSourceAssocsQueryParams
+                                     ListTargetAssocsQueryParams
+                                     LockNodeBody
+                                     LockNodeQueryParams
+                                     MoveNodeBody
+                                     MoveNodeQueryParams
+                                     UnLockNodeQueryParams
+                                     UpdateNodeBody
+                                     UpdateNodeContentQueryParams
+                                     UpdateNodeQueryParams)
            (java.io File)))
 
 (defn get-node
@@ -199,9 +200,15 @@
 
 (defn delete-secondary-child
   "Delete secondary child or children."
-  []
-  ;; TODO
-  )
+  ([^Ticket ticket ^String node-id ^String child-id]
+   (delete-secondary-child ticket node-id child-id nil))
+  ([^Ticket ticket ^String node-id ^String child-id ^DeleteSecondaryChildQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/delete
+     (format "%s/nodes/%s/secondary-children/%s" (config/get-url 'core) node-id child-id)
+     ticket
+     {:query-params query-params}
+     opts)))
 
 (defn list-parents
   "List parents."

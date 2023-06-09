@@ -4,11 +4,11 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
-           (cral.alfresco.model CreateCommentQueryParams
-                                ListCommentsQueryParams
-                                Ticket
-                                UpdateCommentBody
-                                UpdateCommentQueryParams)))
+           (cral.alfresco.model.auth Ticket)
+           (cral.alfresco.model.core CreateCommentQueryParams
+                                     ListCommentsQueryParams
+                                     UpdateCommentBody
+                                     UpdateCommentQueryParams)))
 
 (defn list-comments
   "List comments."

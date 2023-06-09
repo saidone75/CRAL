@@ -1,9 +1,5 @@
-(ns cral.alfresco.model
+(ns cral.alfresco.model.core
   (:import (clojure.lang PersistentHashMap PersistentVector)))
-
-(defrecord Ticket
-  [^String id
-   ^String user-id])
 
 ;; comments
 
@@ -65,6 +61,9 @@
    ^Integer max-items
    ^Boolean include-source
    ^PersistentVector fields])
+
+(defrecord DeleteSecondaryChildQueryParams
+  [^String assoc-type])
 
 (defrecord CreateNodeQueryParams
   [^PersistentVector include
