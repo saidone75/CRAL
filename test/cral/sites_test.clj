@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.sites :as sites]
-            [cral.alfresco.model :as model])
+            [cral.alfresco.model.core :as model])
   (:import (java.util UUID)))
 
 (def user "admin")

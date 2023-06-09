@@ -1,6 +1,5 @@
 (ns cral.auth-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.model]
             [cral.alfresco.auth :as auth]))
 
 (deftest create-ticket

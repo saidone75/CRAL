@@ -4,14 +4,14 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model CreateSiteBody
-                                CreateSiteQueryParams
-                                DeleteSiteQueryParams
-                                GetSiteQueryParams
-                                ListSitesQueryParams
-                                Ticket
-                                UpdateSiteBody
-                                UpdateSiteQueryParams)))
+           (cral.alfresco.model.auth Ticket)
+           (cral.alfresco.model.core CreateSiteBody
+                                     CreateSiteQueryParams
+                                     DeleteSiteQueryParams
+                                     GetSiteQueryParams
+                                     ListSitesQueryParams
+                                     UpdateSiteBody
+                                     UpdateSiteQueryParams)))
 
 (defn list-sites
   "List sites."

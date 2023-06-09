@@ -6,7 +6,8 @@
             [clojure.java.io :as io]
             [taoensso.timbre :as timbre]
             [cral.core :refer :all]
-            [cral.alfresco.model :as model]
+            [cral.alfresco.model.core :as model]
+            [cral.alfresco.model.search :as search-model]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.search :as search]
             [cral.alfresco.auth :as auth]
@@ -41,7 +42,7 @@
 
 (deftest list-node-children
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
-        company-home-id (get-in (first (get-in (search/search ticket (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
+        company-home-id (get-in (first (get-in (search/search ticket (search-model/map->SearchBody {:query (search-model/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
         list-node-children-response (nodes/list-node-children ticket company-home-id)]
     (is (= 200 (:status list-node-children-response)))
     (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))

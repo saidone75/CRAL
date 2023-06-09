@@ -4,7 +4,7 @@
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model Ticket)))
+           (cral.alfresco.model.auth Ticket)))
 
 (defn create-ticket
   "Create a ticket."
