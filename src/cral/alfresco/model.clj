@@ -66,6 +66,9 @@
    ^Boolean include-source
    ^PersistentVector fields])
 
+(defrecord DeleteSecondaryChildQueryParams
+  [^String assoc-type])
+
 (defrecord CreateNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])

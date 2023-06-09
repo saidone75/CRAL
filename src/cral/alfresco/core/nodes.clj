@@ -199,9 +199,15 @@
 
 (defn delete-secondary-child
   "Delete secondary child or children."
-  []
-  ;; TODO
-  )
+  ([^Ticket ticket ^String node-id ^String child-id]
+   (delete-secondary-child ticket node-id child-id nil))
+  ([^Ticket ticket ^String node-id ^String child-id ^DeleteSecondaryChildQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/delete
+     (format "%s/nodes/%s/secondary-children/%s" (config/get-url 'core) node-id child-id)
+     ticket
+     {:query-params query-params}
+     opts)))
 
 (defn list-parents
   "List parents."
