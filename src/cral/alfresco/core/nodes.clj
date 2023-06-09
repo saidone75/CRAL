@@ -15,6 +15,7 @@
                                 GetNodeQueryParams
                                 ListNodeChildrenQueryParams
                                 ListParentsQueryParams
+                                ListSecondaryChildrenQueryParams
                                 ListSourceAssocsQueryParams
                                 ListTargetAssocsQueryParams
                                 LockNodeBody
@@ -186,9 +187,15 @@
 
 (defn list-secondary-children
   "List secondary children."
-  []
-  ;; TODO
-  )
+  ([^Ticket ticket ^String node-id]
+   (list-node-children ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListSecondaryChildrenQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/secondary-children" (config/get-url 'core) node-id)
+     ticket
+     {:query-params query-params}
+     opts)))
 
 (defn delete-secondary-child
   "Delete secondary child or children."

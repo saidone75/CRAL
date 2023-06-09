@@ -58,6 +58,14 @@
 (defrecord CreateSecondaryChildQueryParams
   [^PersistentVector fields])
 
+(defrecord ListSecondaryChildrenQueryParams
+  [^String where
+   ^PersistentVector include
+   ^Integer skip-count
+   ^Integer max-items
+   ^Boolean include-source
+   ^PersistentVector fields])
+
 (defrecord CreateNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
