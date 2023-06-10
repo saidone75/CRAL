@@ -14,7 +14,7 @@
 
 (timbre/set-config! {:min-level :info})
 
-(deftest test-comments
+(deftest create-then-list-then-update-then-delete-comment
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
