@@ -5,16 +5,31 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core ListTagsQueryParams)))
+           (cral.alfresco.model.core CreateNodeTagBody
+                                     CreateNodeTagQueryParams ListNodeTagsQueryParams)))
 
-(defn list-tags
+(defn list-node-tags
   "List tags for a node."
   ([^Ticket ticket ^String node-id]
-   (list-tags ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^ListTagsQueryParams query-params & [^PersistentHashMap opts]]
+   (list-node-tags ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListNodeTagsQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/tags" (config/get-url 'core) node-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn create-node-tag
+  "Create a tag for a node."
+  ([^Ticket ticket ^String node-id ^CreateNodeTagBody body]
+   (create-node-tag ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^CreateNodeTagBody body ^CreateNodeTagQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/tags" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
