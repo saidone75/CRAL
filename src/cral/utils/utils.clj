@@ -2,8 +2,8 @@
   (:require [clojure.data.json :as json]
             [clojure.string :as str]
             [clojure.walk :as walk]
-            [cral.alfresco.model.auth]
-            [taoensso.timbre :as timbre])
+            [taoensso.timbre :as timbre]
+            [cral.alfresco.model.auth])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
            (java.util Base64)

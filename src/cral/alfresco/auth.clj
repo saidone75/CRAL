@@ -2,7 +2,8 @@
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
-            [cral.utils.utils :as utils])
+            [cral.utils.utils :as utils]
+            [cral.alfresco.model.auth])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)))
 
