@@ -1,4 +1,4 @@
-(defproject cral "0.1.0-SNAPSHOT"
+(defproject org.saidone/cral "0.1.0"
   :description "A library for consuming Alfresco Content Services public REST API"
   :url "https://saidone.org"
   :license {:name "GNU General Public License v3.0"
@@ -7,7 +7,4 @@
                  [org.clojure/data.json "2.4.0"]
                  [org.clj-commons/clj-http-lite "1.0.13"]
                  [com.taoensso/timbre "6.1.0"]]
-  :main ^:skip-aot cral.core
-  :target-path "target/%s"
-  :profiles {:uberjar {:aot      :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+  :repl-options {:init-ns cral.alfresco})
