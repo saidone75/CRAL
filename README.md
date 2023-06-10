@@ -1,6 +1,8 @@
 # CRAL
 *♫ faccio il tifo per la S.P.A.L. / a tressette gioco al C.R.A.L. ♫*
 
+[![Clojars Version](https://img.shields.io/clojars/v/org.saidone/cral)](https://clojars.org/org.saidone/cral)
+
 CRAL is a pure Clojure library for consuming Alfresco Content Services public REST API in an idiomatic way.
 ## Outline
 - Tuned for GraalVM, can be compiled to native binary
