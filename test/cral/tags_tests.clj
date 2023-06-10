@@ -21,9 +21,10 @@
     ;; list tags
     (let [response (tags/list-node-tags ticket node-id)]
       (is (= 200 (:status response)))
-      (is (= tag-name (get-in (first (get-in response [:body :list :entries])) [:entry :tag]))) [:tag])
-    ;; FIXME delete tag
+      (is (= tag-name (get-in (first (get-in response [:body :list :entries])) [:entry :tag])))
+      ;; delete tag
+      (is (= 204 (:status (tags/delete-node-tag ticket node-id (get-in (first (get-in response [:body :list :entries])) [:entry :id]))))))
+    ;; check if tag has been deleted
+    (is (empty? (get-in (tags/list-node-tags ticket node-id) [:body :list :entries])))
     ;; clean up
     (is (= 204 (:status (nodes/delete-node ticket node-id))))))
-
-
