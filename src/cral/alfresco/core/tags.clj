@@ -33,3 +33,13 @@
       :query-params query-params
       :content-type :json}
      opts)))
+
+(defn delete-node-tag
+  "Delete a tag for a node."
+  ([^Ticket ticket ^String node-id ^String tag-id & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/delete
+     (format "%s/nodes/%s/tags/%s" (config/get-url 'core) node-id tag-id)
+     ticket
+     {}
+     opts)))
