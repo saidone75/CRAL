@@ -3,6 +3,7 @@
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils]
+            [cral.alfresco.model.auth]
             [cral.alfresco.model.core])
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.alfresco.model.auth Ticket)
