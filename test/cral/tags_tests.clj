@@ -16,7 +16,7 @@
         ;; create a node
         node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
     ;; list tags
-    (let [response (tags/list-tags ticket node-id)]
+    (let [response (tags/list-node-tags ticket node-id)]
       (is (= 204 (:status (nodes/delete-node ticket node-id))))
       response)))
 

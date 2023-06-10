@@ -176,7 +176,7 @@
 
 (defrecord GetSiteQueryParams
   [^PersistentHashMap relations
-   ^PersistentHashMap fields])
+   ^PersistentVector fields])
 
 (defrecord CreateSiteBody
   [^String id
@@ -191,7 +191,13 @@
 
 ;; tags
 
-(defrecord ListTagsQueryParams
+(defrecord ListNodeTagsQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector fields])
+
+(defrecord CreateNodeTagQueryParams
+  [^PersistentVector fields])
+
+(defrecord CreateNodeTagBody
+  [^PersistentVector fields])
