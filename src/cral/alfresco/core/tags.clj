@@ -3,7 +3,7 @@
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap)
+  (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreateNodeTagBody
                                      CreateNodeTagQueryParams ListNodeTagsQueryParams)))
@@ -24,7 +24,7 @@
   "Create a tag for a node."
   ([^Ticket ticket ^String node-id ^CreateNodeTagBody body]
    (create-node-tag ticket node-id body nil))
-  ([^Ticket ticket ^String node-id ^CreateNodeTagBody body ^CreateNodeTagQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateNodeTagQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
      (format "%s/nodes/%s/tags" (config/get-url 'core) node-id)
@@ -32,4 +32,14 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn delete-node-tag
+  "Delete a tag for a node."
+  ([^Ticket ticket ^String node-id ^String tag-id & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/delete
+     (format "%s/nodes/%s/tags/%s" (config/get-url 'core) node-id tag-id)
+     ticket
+     {}
      opts)))

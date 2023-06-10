@@ -200,4 +200,4 @@
   [^PersistentVector fields])
 
 (defrecord CreateNodeTagBody
-  [^PersistentVector fields])
+  [^String tag])
