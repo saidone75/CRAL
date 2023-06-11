@@ -38,7 +38,9 @@
               (is (= 200 (:status get-response)))
               get-response))]
       ;; more check for get download response
-      (is (= 2 (get-in get-response [:body :entry :files-added]))))
+      (is (= 2 (get-in get-response [:body :entry :files-added])))
+      ;; delete download
+      (is (= 202 (:status (downloads/delete-download ticket (get-in get-response [:body :entry :id]))))))
     ;; clean up
     (is (= 204 (:status (nodes/delete-node ticket node-id1))))
     (is (= 204 (:status (nodes/delete-node ticket node-id2))))))
