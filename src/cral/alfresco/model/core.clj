@@ -28,6 +28,9 @@
 (defrecord CreateDownloadBody
   [^PersistentVector node-ids])
 
+(defrecord GetDownloadQueryParams
+  [^PersistentVector fields])
+
 ;; nodes
 
 (defrecord GetNodeQueryParams
