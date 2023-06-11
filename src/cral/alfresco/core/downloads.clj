@@ -36,3 +36,13 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn delete-download
+  "Delete a download."
+  [^Ticket ticket ^String download-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/downloads/%s" (config/get-url 'core) download-id)
+    ticket
+    {}
+    opts))
