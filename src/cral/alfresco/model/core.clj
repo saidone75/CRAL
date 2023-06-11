@@ -20,6 +20,14 @@
 (defrecord UpdateCommentBody
   [^String content])
 
+;; downloads
+
+(defrecord CreateDownloadQueryParams
+  [^PersistentVector fields])
+
+(defrecord CreateDownloadBody
+  [^PersistentVector node-ids])
+
 ;; nodes
 
 (defrecord GetNodeQueryParams
