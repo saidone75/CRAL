@@ -12,8 +12,6 @@ CRAL is a pure Clojure library for consuming Alfresco Content Services public RE
 - 100% test coverage
 
 *☛ Still incomplete and alpha quality, interface subject to changes*
-
-Unreleased on Clojars at the moment, install to your local repository with `lein install` if you want to play with it.
 ## Usage
 Require the relevant namespaces:
 ```clojure
