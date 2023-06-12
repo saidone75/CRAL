@@ -11,7 +11,7 @@
 (def user "admin")
 (def pass "admin")
 
-(deftest create-then-get-download
+(deftest create-then-get-then-delete-download
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a couple of nodes
