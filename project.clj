@@ -2,7 +2,7 @@
   :description "A library for consuming Alfresco Content Services public REST API"
   :url "https://saidone.org"
   :license {:name "GNU General Public License v3.0"
-            :url  "https://raw.githubusercontent.com/saidone75/CRAL/main/LICENSE"}
+            :url  "https://www.gnu.org/licenses/gpl-3.0.txt"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.clojure/data.json "2.4.0"]
                  [org.clj-commons/clj-http-lite "1.0.13"]
