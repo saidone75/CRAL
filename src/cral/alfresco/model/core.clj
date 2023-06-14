@@ -197,6 +197,9 @@
    ^PersistentVector aspect-names
    ^PersistentHashMap properties])
 
+(defrecord GetPersonQueryParams
+  [^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams

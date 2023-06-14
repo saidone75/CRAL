@@ -9,6 +9,7 @@
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreatePersonBody
                                      CreatePersonQueryParams
+                                     GetPersonQueryParams
                                      ListPeopleQueryParams)))
 
 (defn create-person
@@ -33,6 +34,18 @@
    (utils/call-rest
      client/get
      (format "%s/people" (config/get-url 'core))
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn get-person
+  "Get a person."
+  ([^Ticket ticket ^String person-id]
+   (get-person ticket person-id nil))
+  ([^Ticket ticket ^String person-id ^GetPersonQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/people/%s" (config/get-url 'core) person-id)
      ticket
      {:query-params query-params}
      opts)))
