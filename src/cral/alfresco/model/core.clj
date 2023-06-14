@@ -166,12 +166,36 @@
 
 ;; people
 
+(defrecord CreatePersonQueryParams
+  [^PersistentVector fields])
+
 (defrecord ListPeopleQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector order-by
    ^PersistentVector include
    ^PersistentVector fields])
+
+(defrecord CreatePersonBody
+  [^String id
+   ^String first-name
+   ^String last-name
+   ^String description
+   ^String email
+   ^String skype-id
+   ^String google-id
+   ^String instant-message-id
+   ^String job-title
+   ^String location
+   ^PersistentHashMap company
+   ^String mobile
+   ^String telephone
+   ^String user-status
+   ^Boolean enabled
+   ^Boolean email-notifications-enabled
+   ^String password
+   ^PersistentVector aspect-names
+   ^PersistentHashMap properties])
 
 ;; sites
 
