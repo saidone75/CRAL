@@ -164,6 +164,15 @@
   [^String target-id
    ^String assoc-type])
 
+;; people
+
+(defrecord ListPeopleQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector include
+   ^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
