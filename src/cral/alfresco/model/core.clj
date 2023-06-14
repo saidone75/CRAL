@@ -197,7 +197,33 @@
    ^PersistentVector aspect-names
    ^PersistentHashMap properties])
 
+;; FIXME Company definition missing
+
 (defrecord GetPersonQueryParams
+  [^PersistentVector fields])
+
+(defrecord UpdatePersonBody
+  [^String first-name
+   ^String last-name
+   ^String description
+   ^String email
+   ^String skype-id
+   ^String google-id
+   ^String instant-message-id
+   ^String job-title
+   ^String location
+   ^PersistentHashMap company
+   ^String mobile
+   ^String telephone
+   ^String user-status
+   ^Boolean enabled
+   ^Boolean email-notifications-enabled
+   ^String password
+   ^String old-password
+   ^PersistentVector aspect-names
+   ^PersistentHashMap properties])
+
+(defrecord UpdatePersonQueryParams
   [^PersistentVector fields])
 
 ;; sites
