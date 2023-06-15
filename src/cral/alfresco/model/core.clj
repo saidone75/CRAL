@@ -244,6 +244,15 @@
    ^String where
    ^PersistentVector fields])
 
+(defrecord CreateGroupBody
+  [^String id
+   ^String display-name
+   ^PersistentVector parent-ids])
+
+(defrecord CreateGroupQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
