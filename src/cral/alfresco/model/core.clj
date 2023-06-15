@@ -226,6 +226,16 @@
 (defrecord UpdatePersonQueryParams
   [^PersistentVector fields])
 
+;; groups
+
+(defrecord ListGroupMembershipQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector include
+   ^String where
+   ^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
