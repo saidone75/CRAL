@@ -6,7 +6,8 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core ListGroupMembershipQueryParams)))
+           (cral.alfresco.model.core ListGroupMembershipQueryParams
+                                     ListGroupsQueryParams)))
 
 (defn list-group-memberships
   "List groups memberships."
@@ -16,6 +17,18 @@
    (utils/call-rest
      client/get
      (format "%s/people/%s/groups" (config/get-url 'core) person-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn list-groups
+  "List groups."
+  ([^Ticket ticket]
+   (list-groups ticket nil))
+  ([^Ticket ticket ^ListGroupsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/groups" (config/get-url 'core))
      ticket
      {:query-params query-params}
      opts)))
