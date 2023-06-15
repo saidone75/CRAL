@@ -236,6 +236,14 @@
    ^String where
    ^PersistentVector fields])
 
+(defrecord ListGroupsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector include
+   ^String where
+   ^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
