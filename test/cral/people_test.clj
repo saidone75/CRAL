@@ -10,4 +10,7 @@
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         list-people-response (people/list-people ticket {})]
     (is (= 200 (:status list-people-response)))
-    list-people-response))
+    (is (some #(= "admin" %) (->> list-people-response
+                                  (#(get-in % [:body :list :entries]))
+                                  (map :entry)
+                                  (map :id))))))
