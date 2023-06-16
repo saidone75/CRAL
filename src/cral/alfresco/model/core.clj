@@ -301,3 +301,9 @@
 
 (defrecord CreateNodeTagBody
   [^String tag])
+
+(defrecord ListTagsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields
+   ^PersistentVector include])
