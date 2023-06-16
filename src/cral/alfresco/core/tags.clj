@@ -8,7 +8,9 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreateNodeTagBody
-                                     CreateNodeTagQueryParams ListNodeTagsQueryParams)))
+                                     CreateNodeTagQueryParams
+                                     ListNodeTagsQueryParams
+                                     ListTagsQueryParams)))
 
 (defn list-node-tags
   "List tags for a node."
@@ -44,4 +46,16 @@
      (format "%s/nodes/%s/tags/%s" (config/get-url 'core) node-id tag-id)
      ticket
      {}
+     opts)))
+
+(defn list-tags
+  "List tags."
+  ([^Ticket ticket]
+   (list-tags ticket nil))
+  ([^Ticket ticket ^ListTagsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/tags" (config/get-url 'core) )
+     ticket
+     {:query-params query-params}
      opts)))
