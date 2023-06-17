@@ -11,7 +11,9 @@
                                      CreateNodeTagQueryParams
                                      GetTagQueryParams
                                      ListNodeTagsQueryParams
-                                     ListTagsQueryParams)))
+                                     ListTagsQueryParams
+                                     UpdateTagBody
+                                     UpdateTagQueryParams)))
 
 (defn list-node-tags
   "List tags for a node."
@@ -71,4 +73,18 @@
      (format "%s/tags/%s" (config/get-url 'core) tag-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn update-tag
+  "Update a tag."
+  ([^Ticket ticket ^String tag-id ^UpdateTagBody body]
+   (update-tag ticket tag-id body nil))
+  ([^Ticket ticket ^String tag-id ^UpdateTagBody body ^UpdateTagQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/put
+     (format "%s/tags/%s" (config/get-url 'core) tag-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
