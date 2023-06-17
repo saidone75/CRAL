@@ -10,7 +10,7 @@
 (def user "admin")
 (def pass "admin")
 
-(deftest create-then-list-then-delete-node-tags
+(deftest create-then-list-then-get-then-delete-node-tags
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
@@ -22,6 +22,8 @@
     (let [response (tags/list-node-tags ticket node-id)]
       (is (= 200 (:status response)))
       (is (= tag-name (get-in (first (get-in response [:body :list :entries])) [:entry :tag])))
+      ;; get tag
+      (is (= 200 (:status (tags/get-tag ticket (get-in (first (get-in response [:body :list :entries])) [:entry :id])))))
       ;; delete tag
       (is (= 204 (:status (tags/delete-node-tag ticket node-id (get-in (first (get-in response [:body :list :entries])) [:entry :id]))))))
     ;; check if tag has been deleted
