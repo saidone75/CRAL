@@ -310,3 +310,9 @@
 
 (defrecord GetTagQueryParams
   [^PersistentVector fields])
+
+(defrecord UpdateTagBody
+  [^String tag])
+
+(defrecord UpdateTagQueryParams
+  [^PersistentVector fields])
