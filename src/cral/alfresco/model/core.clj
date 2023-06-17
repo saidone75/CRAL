@@ -307,3 +307,6 @@
    ^Integer max-items
    ^PersistentVector fields
    ^PersistentVector include])
+
+(defrecord GetTagQueryParams
+  [^PersistentVector fields])

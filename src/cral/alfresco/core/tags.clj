@@ -9,6 +9,7 @@
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreateNodeTagBody
                                      CreateNodeTagQueryParams
+                                     GetTagQueryParams
                                      ListNodeTagsQueryParams
                                      ListTagsQueryParams)))
 
@@ -55,7 +56,19 @@
   ([^Ticket ticket ^ListTagsQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
-     (format "%s/tags" (config/get-url 'core) )
+     (format "%s/tags" (config/get-url 'core))
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn get-tag
+  "Get a tag."
+  ([^Ticket ticket ^String tag-id]
+   (get-tag ticket tag-id nil))
+  ([^Ticket ticket ^String tag-id ^GetTagQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/tags/%s" (config/get-url 'core) tag-id)
      ticket
      {:query-params query-params}
      opts)))
