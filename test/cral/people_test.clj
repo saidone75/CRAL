@@ -12,5 +12,4 @@
     (is (= 200 (:status list-people-response)))
     (is (some #(= "admin" %) (->> list-people-response
                                   (#(get-in % [:body :list :entries]))
-                                  (map :entry)
-                                  (map :id))))))
+                                  (map #(get-in % [:entry :id])))))))
