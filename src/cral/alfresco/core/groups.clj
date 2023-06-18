@@ -9,6 +9,7 @@
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreateGroupBody
                                      CreateGroupQueryParams
+                                     GetGroupDetailsQueryParams
                                      ListGroupMembershipQueryParams
                                      ListGroupsQueryParams)))
 
@@ -48,4 +49,16 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn get-group-details
+  "Get group details."
+  ([^Ticket ticket ^String group-id]
+   (get-group-details ticket group-id nil))
+  ([^Ticket ticket ^String group-id ^GetGroupDetailsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/groups/%s" (config/get-url 'core) group-id)
+     ticket
+     {:query-params query-params}
      opts)))

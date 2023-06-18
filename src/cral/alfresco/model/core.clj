@@ -253,6 +253,10 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord GetGroupDetailsQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
