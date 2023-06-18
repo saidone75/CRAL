@@ -19,13 +19,18 @@
     ;; create a tag for the node
     (= 201 (:status (tags/create-node-tag ticket node-id [(model/map->CreateNodeTagBody {:tag tag-name})])))
     ;; list tags
-    (let [response (tags/list-node-tags ticket node-id)]
-      (is (= 200 (:status response)))
-      (is (= tag-name (get-in (first (get-in response [:body :list :entries])) [:entry :tag])))
+    (let [list-node-tag-response (tags/list-node-tags ticket node-id)]
+      (is (= 200 (:status list-node-tag-response)))
+      (is (= tag-name (get-in (first (get-in list-node-tag-response [:body :list :entries])) [:entry :tag])))
       ;; get tag
-      (is (= 200 (:status (tags/get-tag ticket (get-in (first (get-in response [:body :list :entries])) [:entry :id])))))
+      (is (= 200 (:status (tags/get-tag ticket (get-in (first (get-in list-node-tag-response [:body :list :entries])) [:entry :id])))))
+      ;; update tag
+      (let [new-tag-name (.toString (UUID/randomUUID))
+            update-tag-response (tags/update-tag ticket (get-in (first (get-in list-node-tag-response [:body :list :entries])) [:entry :id]) (model/map->UpdateTagBody {:tag new-tag-name}))]
+        (is (= 200 (:status update-tag-response)))
+        (is (= new-tag-name (get-in update-tag-response [:body :entry :tag]))))
       ;; delete tag
-      (is (= 204 (:status (tags/delete-node-tag ticket node-id (get-in (first (get-in response [:body :list :entries])) [:entry :id]))))))
+      (is (= 204 (:status (tags/delete-node-tag ticket node-id (get-in (first (get-in list-node-tag-response [:body :list :entries])) [:entry :id]))))))
     ;; check if tag has been deleted
     (is (empty? (get-in (tags/list-node-tags ticket node-id) [:body :list :entries])))
     ;; clean up
