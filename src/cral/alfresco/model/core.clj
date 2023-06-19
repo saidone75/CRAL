@@ -257,6 +257,13 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord UpdateGroupBody
+  [^String display-name])
+
+(defrecord UpdateGroupQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
