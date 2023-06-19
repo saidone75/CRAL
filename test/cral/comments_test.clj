@@ -1,18 +1,15 @@
 (ns cral.comments-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.model.core]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.comments :as comments]
             [cral.alfresco.core.nodes :as nodes]
+            [cral.alfresco.model.core]
             [cral.alfresco.model.core :as model]
-            [cral.test-utils :as tu]
-            [taoensso.timbre :as timbre])
+            [cral.test-utils :as tu])
   (:import (java.util UUID)))
 
 (def user "admin")
 (def pass "admin")
-
-(timbre/set-config! {:min-level :info})
 
 (deftest create-then-list-then-update-then-delete-comment
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
