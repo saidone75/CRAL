@@ -9,7 +9,7 @@
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreateGroupBody
                                      CreateGroupQueryParams
-                                     GetGroupDetailsQueryParams
+                                     DeleteGroupQueryParams GetGroupDetailsQueryParams
                                      ListGroupMembershipQueryParams
                                      ListGroupsQueryParams
                                      UpdateGroupBody
@@ -77,4 +77,16 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn delete-group
+  "Delete a group."
+  ([^Ticket ticket ^String group-id]
+   (delete-group ticket group-id nil))
+  ([^Ticket ticket ^String group-id ^DeleteGroupQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/delete
+     (format "%s/groups/%s" (config/get-url 'core) group-id)
+     ticket
+     {:query-params query-params}
      opts)))
