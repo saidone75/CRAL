@@ -264,6 +264,9 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord DeleteGroupQueryParams
+  [^Boolean cascade])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
