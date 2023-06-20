@@ -10,6 +10,12 @@
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         list-people-response (people/list-people ticket {})]
     (is (= 200 (:status list-people-response)))
-    (is (some #(= "admin" %) (->> list-people-response
-                                  (#(get-in % [:body :list :entries]))
-                                  (map #(get-in % [:entry :id])))))))
+    (is (some #(= user %) (->> list-people-response
+                               (#(get-in % [:body :list :entries]))
+                               (map #(get-in % [:entry :id])))))))
+
+(deftest get-person
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        get-person-response (people/get-person ticket user)]
+    (is (= 200 (:status get-person-response)))
+    (is (true? (get-in get-person-response [:body :entry :capabilities :is-admin])))))
