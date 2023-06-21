@@ -267,6 +267,13 @@
 (defrecord DeleteGroupQueryParams
   [^Boolean cascade])
 
+(defrecord CreateGroupMembershipBody
+  [^String id
+   ^String member-type])
+
+(defrecord CreateGroupMembershipQueryParams
+  [^PersistentVector fields])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
