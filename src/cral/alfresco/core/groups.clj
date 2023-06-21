@@ -8,6 +8,8 @@
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreateGroupBody
+                                     CreateGroupMembershipBody
+                                     CreateGroupMembershipQueryParams
                                      CreateGroupQueryParams
                                      DeleteGroupQueryParams GetGroupDetailsQueryParams
                                      ListGroupMembershipQueryParams
@@ -89,4 +91,18 @@
      (format "%s/groups/%s" (config/get-url 'core) group-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn create-group-membership
+  "Create a group membership."
+  ([^Ticket ticket ^String group-id ^CreateGroupMembershipBody body]
+   (create-group-membership ticket group-id body nil))
+  ([^Ticket ticket ^String group-id ^CreateGroupMembershipBody body ^CreateGroupMembershipQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/groups/%s/members" (config/get-url 'core) group-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
