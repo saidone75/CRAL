@@ -11,8 +11,10 @@
                                      CreateGroupMembershipBody
                                      CreateGroupMembershipQueryParams
                                      CreateGroupQueryParams
-                                     DeleteGroupQueryParams GetGroupDetailsQueryParams
+                                     DeleteGroupQueryParams
+                                     GetGroupDetailsQueryParams
                                      ListGroupMembershipQueryParams
+                                     ListGroupMembershipsQueryParams
                                      ListGroupsQueryParams
                                      UpdateGroupBody
                                      UpdateGroupQueryParams)))
@@ -105,4 +107,16 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn list-group-memberships
+  "List memberships of a group."
+  ([^Ticket ticket ^String group-id]
+   (list-group-memberships ticket group-id nil))
+  ([^Ticket ticket ^String group-id ^ListGroupMembershipsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/groups/%s/members" (config/get-url 'core) group-id)
+     ticket
+     {:query-params query-params}
      opts)))
