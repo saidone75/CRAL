@@ -274,6 +274,13 @@
 (defrecord CreateGroupMembershipQueryParams
   [^PersistentVector fields])
 
+(defrecord ListGroupMembershipsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^String where
+   ^PersistentVector fieds])
+
 ;; sites
 
 (defrecord ListSitesQueryParams
