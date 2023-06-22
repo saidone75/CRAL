@@ -120,3 +120,13 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn delete-group-membership
+  "Delete a group membership"
+  [^Ticket ticket ^String group-id ^String group-member-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/groups/%s/members/%s" (config/get-url 'core) group-id group-member-id)
+    ticket
+    nil
+    opts))
