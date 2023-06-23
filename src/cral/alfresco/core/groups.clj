@@ -19,10 +19,10 @@
                                      UpdateGroupBody
                                      UpdateGroupQueryParams)))
 
-(defn list-group-memberships
-  "List groups memberships."
+(defn list-user-group-memberships
+  "Gets a list of group membership information for person person-id."
   ([^Ticket ticket ^String person-id]
-   (list-group-memberships ticket person-id nil))
+   (list-user-group-memberships ticket person-id nil))
   ([^Ticket ticket ^String person-id ^ListGroupMembershipQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
