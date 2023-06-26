@@ -283,6 +283,11 @@
 
 ;; sites
 
+(defrecord ListSiteMembershipRequestsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
 (defrecord ListSitesQueryParams
   [^Integer skip-count
    ^Integer max-items
