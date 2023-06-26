@@ -11,9 +11,22 @@
                                      CreateSiteQueryParams
                                      DeleteSiteQueryParams
                                      GetSiteQueryParams
+                                     ListSiteMembershipRequestsQueryParams
                                      ListSitesQueryParams
                                      UpdateSiteBody
                                      UpdateSiteQueryParams)))
+
+(defn list-site-membership-requests
+  "Gets a list of the current site membership requests for person person-id."
+  ([^Ticket ticket ^String person-id]
+   (list-site-membership-requests ticket person-id nil))
+  ([^Ticket ticket ^String person-id ^ListSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/people/%s/site-membership-requests" (config/get-url 'core) person-id)
+     ticket
+     {:query-params query-params}
+     opts)))
 
 (defn list-sites
   "List sites."
