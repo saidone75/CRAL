@@ -14,12 +14,12 @@
             [cral.test-utils :as tu]))
 
 (def user "admin")
-(def pass "admin")
+(def password "admin")
 
 (timbre/set-config! {:min-level :info})
 
 (deftest get-node
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         guest-home-id (:id (tu/get-guest-home ticket))]
     ;; well known fields for query parameters defined in core/QueryParamsGetNode
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket guest-home-id (model/map->GetNodeQueryParams {:include ["path" "permissions"]})) [:body :entry])) [:path :permissions])))
@@ -27,7 +27,7 @@
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket guest-home-id {:include ["path" "permissions"]}) [:body :entry])) [:path :permissions])))))
 
 (deftest update-node
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
@@ -41,7 +41,7 @@
     (is (= 204 (:status (nodes/delete-node ticket node-id))))))
 
 (deftest list-node-children
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         company-home-id (get-in (first (get-in (search/search ticket (search-model/map->SearchBody {:query (search-model/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
         list-node-children-response (nodes/list-node-children ticket company-home-id)]
     (is (= 200 (:status list-node-children-response)))
@@ -49,7 +49,7 @@
     (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
 
 (deftest create-then-delete-node
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
@@ -59,7 +59,7 @@
     (is (= 204 (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id])))))))
 
 (deftest copy-node
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
@@ -76,7 +76,7 @@
 
 (deftest lock-then-unlock-node
   (let
-    [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+    [ticket (get-in (auth/create-ticket user password) [:body :entry])
      parent-id (:id (tu/get-guest-home ticket))
      ;; create a noe
      node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
@@ -97,7 +97,7 @@
     (is (= 204) (:status (nodes/delete-node ticket node-id)))))
 
 (deftest move-node
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
@@ -112,7 +112,7 @@
     (is (= 204 (:status (nodes/delete-node ticket new-parent-id))))))
 
 (deftest get-node-content
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
         create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
@@ -139,7 +139,7 @@
       (io/delete-file downloaded-file))))
 
 (deftest update-node-content
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
         create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type "cm:content"})
@@ -155,13 +155,30 @@
     (is (= 204 (:status (nodes/delete-node ticket node-id))))
     (io/delete-file file-to-be-uploaded)))
 
+;; incomplete: missing list and delete secondary child/children
+(deftest create-secondary-child
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        parent-id (:id (tu/get-guest-home ticket))
+        ;; create the source node
+        source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        ;; create the target node
+        target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+    ;; create association
+    ;; FIXME
+    ;;(is (= 201 (:status (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})]))))
+    (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})])]
+      ;; clean up
+      (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
+      (is (= 204 (:status (nodes/delete-node ticket target-node-id))))
+      response)))
+
 (deftest list-parents
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         node-id (:id (tu/get-guest-home ticket))]
     (is (= "Company Home" (get-in (first (get-in (nodes/list-parents ticket node-id) [:body :list :entries])) [:entry :name])))))
 
 (deftest create-then-list-then-delete-node-assocs
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create the source node
         source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
@@ -185,7 +202,7 @@
     (is (= 204 (:status (nodes/delete-node ticket target-node-id))))))
 
 (deftest create-then-list-then-delete-source-assocs
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create the source node
         source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
@@ -207,19 +224,3 @@
     ;; clean up
     (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
     (is (= 204 (:status (nodes/delete-node ticket target-node-id))))))
-
-(deftest create-secondary-child
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
-        parent-id (:id (tu/get-guest-home ticket))
-        ;; create the source node
-        source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
-        ;; create the target node
-        target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
-    ;; create association
-    ;; FIXME
-    ;;(is (= 201 (:status (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})]))))
-    (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})])]
-      ;; clean up
-      (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
-      (is (= 204 (:status (nodes/delete-node ticket target-node-id))))
-      response)))

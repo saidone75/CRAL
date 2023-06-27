@@ -7,6 +7,8 @@
 (def user "admin")
 (def pass "admin")
 
+;; incomplete
+
 (deftest list-group-memberships
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])]
     (groups/list-group-memberships ticket "admin")))

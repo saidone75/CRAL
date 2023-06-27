@@ -32,7 +32,7 @@
      opts)))
 
 (defn list-groups
-  "List groups."
+  "Gets a list of groups."
   ([^Ticket ticket]
    (list-groups ticket nil))
   ([^Ticket ticket ^ListGroupsQueryParams query-params & [^PersistentHashMap opts]]
@@ -58,7 +58,7 @@
      opts)))
 
 (defn get-group-details
-  "Get group details."
+  "Get details for group group-id."
   ([^Ticket ticket ^String group-id]
    (get-group-details ticket group-id nil))
   ([^Ticket ticket ^String group-id ^GetGroupDetailsQueryParams query-params & [^PersistentHashMap opts]]
@@ -70,7 +70,7 @@
      opts)))
 
 (defn update-group-details
-  "Update group details."
+  "Update details (display-name) for group group-id."
   ([^Ticket ticket ^String group-id ^UpdateGroupBody body]
    (update-group-details ticket group-id body nil))
   ([^Ticket ticket ^String group-id ^UpdateGroupBody body ^UpdateGroupQueryParams query-params & [^PersistentHashMap opts]]
@@ -84,7 +84,7 @@
      opts)))
 
 (defn delete-group
-  "Delete a group."
+  "Delete group group-id."
   ([^Ticket ticket ^String group-id]
    (delete-group ticket group-id nil))
   ([^Ticket ticket ^String group-id ^DeleteGroupQueryParams query-params & [^PersistentHashMap opts]]
@@ -96,7 +96,7 @@
      opts)))
 
 (defn create-group-membership
-  "Create a group membership."
+  "Create a group membership (for an existing person or group) within a group group-id."
   ([^Ticket ticket ^String group-id ^CreateGroupMembershipBody body]
    (create-group-membership ticket group-id body nil))
   ([^Ticket ticket ^String group-id ^CreateGroupMembershipBody body ^CreateGroupMembershipQueryParams query-params & [^PersistentHashMap opts]]
@@ -110,7 +110,7 @@
      opts)))
 
 (defn list-group-memberships
-  "List memberships of a group."
+  "Gets a list of the group memberships for the group group-id."
   ([^Ticket ticket ^String group-id]
    (list-group-memberships ticket group-id nil))
   ([^Ticket ticket ^String group-id ^ListGroupMembershipsQueryParams query-params & [^PersistentHashMap opts]]
@@ -122,7 +122,7 @@
      opts)))
 
 (defn delete-group-membership
-  "Delete a group membership"
+  "Delete group member group-member-id (person or sub-group) from group group-id."
   [^Ticket ticket ^String group-id ^String group-member-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/delete
