@@ -33,7 +33,7 @@
            (java.io File)))
 
 (defn get-node
-  "Get node metadata."
+  "Get information for node node-id."
   ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^GetNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -45,7 +45,7 @@
      opts)))
 
 (defn update-node
-  "Update a node."
+  "Updates the node node-id."
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body]
    (update-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body ^UpdateNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -59,7 +59,7 @@
      opts)))
 
 (defn delete-node
-  "Delete a node."
+  "Deletes the node node-id."
   ([^Ticket ticket ^String node-id]
    (delete-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^DeleteNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -71,7 +71,7 @@
      opts)))
 
 (defn list-node-children
-  "List node children."
+  "Gets a list of children of the parent node node-id."
   ([^Ticket ticket ^String node-id]
    (list-node-children ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListNodeChildrenQueryParams query-params & [^PersistentHashMap opts]]
@@ -83,7 +83,7 @@
      opts)))
 
 (defn create-node
-  "Create a node."
+  "Create a node and add it as a primary child of node node-id."
   ([^Ticket ticket ^String parent-id ^CreateNodeBody body]
    (create-node ticket parent-id body nil))
   ([^Ticket ticket ^String parent-id ^CreateNodeBody body ^CreateNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -97,7 +97,10 @@
      opts)))
 
 (defn copy-node
-  "Copy node."
+  "Copies the node **node-id** to the parent folder node **target-parent-id**. You specify the **target-parent-id** in the request body.
+  The new node has the same name as the source node unless you specify a new **name** in the request body.
+  If the source **node-id** is a folder, then all of its children are also copied.
+  If the source **node-id** is a file, its properties, aspects and tags are copied, its ratings, comments and locks are not."
   ([^Ticket ticket ^String node-id ^CopyNodeBody body]
    (copy-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^CopyNodeBody body ^CopyNodeQueryParams query-params & [^PersistentHashMap opts]]
