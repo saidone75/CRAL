@@ -33,7 +33,8 @@
            (java.io File)))
 
 (defn get-node
-  "Get information for node node-id."
+  "Get information for node node-id.
+  You can use the **include** parameter to return additional information."
   ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^GetNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -45,7 +46,7 @@
      opts)))
 
 (defn update-node
-  "Updates the node node-id."
+  "Updates the node **node-id**."
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body]
    (update-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body ^UpdateNodeQueryParams query-params & [^PersistentHashMap opts]]
