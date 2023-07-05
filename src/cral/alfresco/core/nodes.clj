@@ -33,7 +33,8 @@
            (java.io File)))
 
 (defn get-node
-  "Get information for node node-id."
+  "Get information for node **node-id**.
+  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/getNode)"
   ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^GetNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -45,7 +46,8 @@
      opts)))
 
 (defn update-node
-  "Updates the node node-id."
+  "Update the node **node-id**.
+  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/updateNode)"
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body]
    (update-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body ^UpdateNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -59,7 +61,8 @@
      opts)))
 
 (defn delete-node
-  "Deletes the node node-id."
+  "Delete the node **node-id**.
+  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/deleteNode)"
   ([^Ticket ticket ^String node-id]
    (delete-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^DeleteNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -97,10 +100,11 @@
      opts)))
 
 (defn copy-node
-  "Copies the node **node-id** to the parent folder node **target-parent-id**. You specify the **target-parent-id** in the request body.
-  The new node has the same name as the source node unless you specify a new **name** in the request body.
-  If the source **node-id** is a folder, then all of its children are also copied.
-  If the source **node-id** is a file, its properties, aspects and tags are copied, its ratings, comments and locks are not."
+  "Copy the node **node-id** to the parent folder node **target-parent-id**. The **target-parent-id** should be specified in the request body.
+  The new node will have the same name as the source node unless a new **name** is specified in the request body.
+  If the source **node-id** is a folder then all of its children are also copied.
+  If the source **node-id** is a file then its properties, aspects and tags will be copied, its ratings, comments and locks will not.
+  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/copyNode)"
   ([^Ticket ticket ^String node-id ^CopyNodeBody body]
    (copy-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^CopyNodeBody body ^CopyNodeQueryParams query-params & [^PersistentHashMap opts]]
