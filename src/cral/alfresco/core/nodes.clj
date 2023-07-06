@@ -34,7 +34,7 @@
 
 (defn get-node
   "Get information for node **node-id**.
-  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/getNode)"
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/getNode)."
   ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^GetNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -47,7 +47,7 @@
 
 (defn update-node
   "Update the node **node-id**.
-  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/updateNode)"
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/updateNode)."
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body]
    (update-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^UpdateNodeBody body ^UpdateNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -62,7 +62,9 @@
 
 (defn delete-node
   "Delete the node **node-id**.
-  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/deleteNode)"
+  If **node-id** is a folder, then its children are also deleted.
+  Deleted nodes are moved to the trashcan unless the **permanent** query parameter is set to **true**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/deleteNode)."
   ([^Ticket ticket ^String node-id]
    (delete-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^DeleteNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -74,7 +76,8 @@
      opts)))
 
 (defn list-node-children
-  "Gets a list of children of the parent node node-id."
+  "Gets a list of children of the parent node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/listNodeChildren)."
   ([^Ticket ticket ^String node-id]
    (list-node-children ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListNodeChildrenQueryParams query-params & [^PersistentHashMap opts]]
@@ -86,7 +89,8 @@
      opts)))
 
 (defn create-node
-  "Create a node and add it as a primary child of node node-id."
+  "Create a node and add it as a primary child of node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/createNode)."
   ([^Ticket ticket ^String parent-id ^CreateNodeBody body]
    (create-node ticket parent-id body nil))
   ([^Ticket ticket ^String parent-id ^CreateNodeBody body ^CreateNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -104,7 +108,7 @@
   The new node will have the same name as the source node unless a new **name** is specified in the request body.
   If the source **node-id** is a folder then all of its children are also copied.
   If the source **node-id** is a file then its properties, aspects and tags will be copied, its ratings, comments and locks will not.
-  More info [here].(https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/copyNode)"
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/copyNode)."
   ([^Ticket ticket ^String node-id ^CopyNodeBody body]
    (copy-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^CopyNodeBody body ^CopyNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -118,7 +122,8 @@
      opts)))
 
 (defn lock-node
-  "Lock node."
+  "Places a lock on node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/lockNode)."
   ([^Ticket ticket ^String node-id ^LockNodeBody body]
    (lock-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^LockNodeBody body ^LockNodeQueryParams query-params & [^PersistentHashMap opts]]
