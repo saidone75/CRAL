@@ -137,7 +137,8 @@
      opts)))
 
 (defn unlock-node
-  "Unlock a node."
+  "Deletes a lock on **node node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/unlockNode)."
   ([^Ticket ticket ^String node-id]
    (unlock-node ticket node-id nil))
   ([^Ticket ticket ^String node-id ^UnLockNodeQueryParams query-params & [^PersistentHashMap opts]]
