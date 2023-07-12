@@ -151,7 +151,12 @@
      opts)))
 
 (defn move-node
-  "Move node."
+  "Move the node **node-id** to the parent folder node **target-parent-id**.
+  The target-parent-id is specified in the in request body.
+  The moved node retains its name unless you specify a new name in the request body.
+  If the source **node-id is** a folder, then its children are also moved.
+  The move will effectively change the primary parent.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/moveNode)."
   ([^Ticket ticket ^String node-id ^MoveNodeBody body]
    (move-node ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^MoveNodeBody body ^MoveNodeQueryParams query-params & [^PersistentHashMap opts]]
@@ -165,7 +170,8 @@
      opts)))
 
 (defn get-node-content
-  "Get node content."
+  "Gets the content of the node with identifier **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/getNodeContent)."
   [^Ticket ticket ^String node-id]
   (utils/call-rest
     client/get
@@ -175,7 +181,10 @@
     {:return-headers true}))
 
 (defn update-node-content
-  "Upload node content."
+  "Updates the content of the node with identifier **node-id**.
+  The **major-version** and **comment** parameters can be used to control versioning behaviour. If the content is versionable then a new minor version is created by default.
+  Optionally a new **name** parameter can also be specified that must be unique within the parent folder. If specified and valid then thi will rename the node. If invalid then an error is returned and the content is not updated.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/updateNodeContent)."
   ([^Ticket ticket ^String node-id ^File content]
    (update-node-content ticket node-id content nil))
   ([^Ticket ticket ^String node-id ^File content ^UpdateNodeContentQueryParams query-params & [^PersistentHashMap opts]]
