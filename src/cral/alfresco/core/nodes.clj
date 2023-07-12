@@ -197,7 +197,8 @@
      opts)))
 
 (defn create-secondary-child
-  "Create secondary child."
+  "Create a secondary child association, with the given association type, between the parent **node-id** and a child node.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/createSecondaryChildAssociation)."
   ([^Ticket ticket ^String node-id ^PersistentVector body]
    (create-secondary-child ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateSecondaryChildQueryParams query-params & [^PersistentHashMap opts]]
@@ -211,7 +212,8 @@
      opts)))
 
 (defn list-secondary-children
-  "List secondary children."
+  "Gets a list of secondary child nodes that are associated with the current parent **node-id**, via a secondary child association.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/listSecondaryChildren)."
   ([^Ticket ticket ^String node-id]
    (list-node-children ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListSecondaryChildrenQueryParams query-params & [^PersistentHashMap opts]]
@@ -223,7 +225,10 @@
      opts)))
 
 (defn delete-secondary-child
-  "Delete secondary child or children."
+  "Delete secondary child associations between the parent **node-id** and child nodes for the given association type.
+  If the association type is not specified, then all secondary child associations, of any type in the direction from parent to secondary child, will be deleted.
+  The child will still have a primary parent and may still be associated as a secondary child with other secondary parents.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/deleteSecondaryChildAssociation)."
   ([^Ticket ticket ^String node-id ^String child-id]
    (delete-secondary-child ticket node-id child-id nil))
   ([^Ticket ticket ^String node-id ^String child-id ^DeleteSecondaryChildQueryParams query-params & [^PersistentHashMap opts]]
