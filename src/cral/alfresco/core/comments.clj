@@ -13,7 +13,8 @@
                                      UpdateCommentQueryParams)))
 
 (defn list-comments
-  "List comments."
+  "Gets a list of comments for the node **node-id**, sorted chronologically with the newest comment first.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/comments/listComments)."
   ([^Ticket ticket ^String node-id]
    (list-comments ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListCommentsQueryParams query-params & [^PersistentHashMap opts]]
@@ -25,7 +26,8 @@
      opts)))
 
 (defn create-comment
-  "Create a comment."
+  "Creates a comment on node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/comments/createComment)."
   ([^Ticket ticket ^String node-id ^PersistentVector body]
    (create-comment ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateCommentQueryParams query-params & [^PersistentHashMap opts]]
@@ -39,7 +41,8 @@
      opts)))
 
 (defn update-comment
-  "Update a comment."
+  "Updates an existing comment commentId on node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/comments/updateComment)."
   ([^Ticket ticket ^String node-id ^String comment-id ^UpdateCommentBody body]
    (update-comment ticket node-id comment-id body nil))
   ([^Ticket ticket ^String node-id ^String comment-id ^UpdateCommentBody body ^UpdateCommentQueryParams query-params & [^PersistentHashMap opts]]
@@ -53,7 +56,8 @@
      opts)))
 
 (defn delete-comment
-  "Delete a comment."
+  "Deletes the comment commentId from node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/comments/deleteComment)."
   [^Ticket ticket ^String node-id ^String comment-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/delete
