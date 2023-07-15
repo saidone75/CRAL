@@ -20,7 +20,11 @@
                                      UpdateGroupQueryParams)))
 
 (defn list-user-group-memberships
-  "Gets a list of group membership information for person person-id."
+  "Gets a list of group membership information for person **person-id**.
+  You can use the `-me-` string in place of `person-id` to specify the currently authenticated user.
+  You can use the **include** parameter to return additional information.
+  You can use the **where** parameter to filter the returned groups by **is-root**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/groups/listGroupMembershipsForPerson)."
   ([^Ticket ticket ^String person-id]
    (list-user-group-memberships ticket person-id nil))
   ([^Ticket ticket ^String person-id ^ListGroupMembershipQueryParams query-params & [^PersistentHashMap opts]]
@@ -32,7 +36,10 @@
      opts)))
 
 (defn list-groups
-  "Gets a list of groups."
+  "Gets a list of groups.
+  You can use the **include** parameter to return additional information.
+  You can use the **where** parameter to filter the returned groups by **is-root**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/groups/listGroups)."
   ([^Ticket ticket]
    (list-groups ticket nil))
   ([^Ticket ticket ^ListGroupsQueryParams query-params & [^PersistentHashMap opts]]
