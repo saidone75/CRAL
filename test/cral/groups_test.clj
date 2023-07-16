@@ -10,10 +10,18 @@
 
 ;; incomplete
 
-(deftest list-group-memberships
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])]
-    (groups/list-group-memberships ticket "admin")))
-
+(deftest create-then-list-then-delete-group-memberships
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        group-id (.toString (UUID/randomUUID))
+        create-group-response (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
+                                   (groups/create-group ticket))
+        create-group-membership-response (groups/create-group-membership ticket "GROUP_ALFRESCO_ADMINISTRATORS" (model/map->CreateGroupMembershipBody {:id (str "GROUP_" group-id) :member-type "GROUP"}))]
+    (is (= 201 (:status create-group-membership-response)))
+    ;(println create-group-membership-response)
+    (->> (get-in (groups/list-group-memberships ticket "GROUP_ALFRESCO_ADMINISTRATORS") [:body :list :entries])
+         (map #(get-in % [:entry]))
+         ;(some #(= group-id %))
+         )))
 
 (deftest create-then-delete-group
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
