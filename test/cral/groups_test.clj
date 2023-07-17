@@ -8,20 +8,29 @@
 (def user "admin")
 (def pass "admin")
 
-;; incomplete
-
 (deftest create-then-list-then-delete-group-memberships
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
         group-id (.toString (UUID/randomUUID))
         create-group-response (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
-                                   (groups/create-group ticket))
-        create-group-membership-response (groups/create-group-membership ticket "GROUP_ALFRESCO_ADMINISTRATORS" (model/map->CreateGroupMembershipBody {:id (str "GROUP_" group-id) :member-type "GROUP"}))]
-    (is (= 201 (:status create-group-membership-response)))
-    ;(println create-group-membership-response)
-    (->> (get-in (groups/list-group-memberships ticket "GROUP_ALFRESCO_ADMINISTRATORS") [:body :list :entries])
-         (map #(get-in % [:entry]))
-         ;(some #(= group-id %))
-         )))
+                                   (groups/create-group ticket))]
+    (is (= 201 (:status create-group-response)))
+    ;; create group membership
+    (is (= 201 (:status (->> (model/map->CreateGroupMembershipBody {:id (str "GROUP_" group-id) :member-type "GROUP"})
+                             (groups/create-group-membership ticket parent-group-id)))))
+    ;; ensure that the group membership has been created
+    (loop [list-group-membership-response (groups/list-group-memberships ticket parent-group-id)]
+      (if-not (= true
+                 (->> (get-in list-group-membership-response [:body :list :entries])
+                      (map #(get-in % [:entry :display-name]))
+                      (some #(= group-id %))))
+        (do
+          (Thread/sleep 1000)
+          (recur (groups/list-group-memberships ticket parent-group-id)))))
+    ;; delete group membership
+    (is (= 204 (:status (groups/delete-group-membership ticket parent-group-id (str "GROUP_" group-id)))))
+    ;; clean up
+    (is (= 204 (:status (groups/delete-group ticket (str "GROUP_" group-id)))))))
 
 (deftest create-then-delete-group
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
