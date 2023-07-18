@@ -17,7 +17,9 @@
                                      UpdateSiteQueryParams)))
 
 (defn list-site-membership-requests
-  "Gets a list of the current site membership requests for person person-id."
+  "Gets a list of the current site membership requests for person **person-id**.
+  You can use the `-me-` string in place of `person-id` to specify the currently authenticated user.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMembershipRequestsForPerson)."
   ([^Ticket ticket ^String person-id]
    (list-site-membership-requests ticket person-id nil))
   ([^Ticket ticket ^String person-id ^ListSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]

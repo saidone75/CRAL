@@ -38,7 +38,7 @@
         create-group-response (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                                    (groups/create-group ticket))]
     (is (= 201 (:status create-group-response)))
-    ; clean up
+    ;; clean up
     (is (= 204 (:status (groups/delete-group ticket (str "GROUP_" group-id)))))))
 
 (deftest list-groups
