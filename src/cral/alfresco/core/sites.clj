@@ -31,7 +31,9 @@
      opts)))
 
 (defn list-sites
-  "List sites."
+  "Gets a list of sites in this repository.
+  You can use the **where** parameter to filter the returned sites by **visibility** or site **preset**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSites)."
   ([^Ticket ticket]
    (list-sites ticket nil))
   ([^Ticket ticket ^ListSitesQueryParams query-params & [^PersistentHashMap opts]]
@@ -43,7 +45,10 @@
      opts)))
 
 (defn create-site
-  "Create a site."
+  "Creates a default site with the given details. Unless explicitly specified, the site id will be generated from the site title.
+  The site id must be unique and only contain alphanumeric and/or dash characters.
+  Note: the id of a site cannot be updated once the site has been created.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSite)."
   ([^Ticket ticket ^CreateSiteBody body]
    (create-site ticket body nil))
   ([^Ticket ticket ^CreateSiteBody body ^CreateSiteQueryParams query-params & [^PersistentHashMap opts]]
@@ -57,7 +62,13 @@
      opts)))
 
 (defn get-site
-  "Get a site."
+  "Gets information for site **site-id**.
+  You can use the **relations** parameter to include one or more relate entities in a single response and so reduce network traffic.
+  The entity types in Alfresco are organized in a tree structure.
+  The **sites** entity has two children, **containers** and **members**.
+  The following relations parameter returns all the container and member objects related to the site **site-id**:
+  `containers,members`
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSite)."
   ([^Ticket ticket ^String site-id]
    (get-site ticket site-id nil))
   ([^Ticket ticket ^String site-id ^GetSiteQueryParams query-params & [^PersistentHashMap opts]]
