@@ -80,6 +80,9 @@
      opts)))
 
 (defn update-site
+  "Update the details for the given site **site-id**. Site Manager or otherwise a (site) admin can update title, description or visibility.
+  Note: the id of a site cannot be updated once the site has been created.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSite)."
   ([^Ticket ticket ^String site-id ^UpdateSiteBody body]
    (update-site ticket site-id body nil))
   ([^Ticket ticket ^String site-id ^UpdateSiteBody body ^UpdateSiteQueryParams query-params & [^PersistentHashMap opts]]
@@ -93,7 +96,8 @@
      opts)))
 
 (defn delete-site
-  "Delete a site."
+  "Deletes the site with **site-id**
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSite)."
   ([^Ticket ticket ^String site-id]
    (delete-site ticket site-id nil))
   ([^Ticket ticket ^String site-id ^DeleteSiteQueryParams query-params & [^PersistentHashMap opts]]
