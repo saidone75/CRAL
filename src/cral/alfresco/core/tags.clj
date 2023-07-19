@@ -16,7 +16,8 @@
                                      UpdateTagQueryParams)))
 
 (defn list-node-tags
-  "List tags for a node."
+  "Gets a list of tags for node **node-Id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags/listTagsForNode)."
   ([^Ticket ticket ^String node-id]
    (list-node-tags ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListNodeTagsQueryParams query-params & [^PersistentHashMap opts]]
