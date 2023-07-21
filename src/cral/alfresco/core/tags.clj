@@ -29,7 +29,8 @@
      opts)))
 
 (defn create-node-tag
-  "Create a tag for a node."
+  "Creates a tag on the node *node-id*.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags/createTagForNode)."
   ([^Ticket ticket ^String node-id ^CreateNodeTagBody body]
    (create-node-tag ticket node-id body nil))
   ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateNodeTagQueryParams query-params & [^PersistentHashMap opts]]
@@ -43,7 +44,8 @@
      opts)))
 
 (defn delete-node-tag
-  "Delete a tag for a node."
+  "Deletes tag *tag-id* from node *node-id*.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags/deleteTagFromNode)."
   ([^Ticket ticket ^String node-id ^String tag-id & [^PersistentHashMap opts]]
    (utils/call-rest
      client/delete
