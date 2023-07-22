@@ -55,7 +55,8 @@
      opts)))
 
 (defn list-tags
-  "List tags."
+  "Gets a list of tags in this repository.You can use the *include* parameter to return additional *values* information.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags/listTags)."
   ([^Ticket ticket]
    (list-tags ticket nil))
   ([^Ticket ticket ^ListTagsQueryParams query-params & [^PersistentHashMap opts]]
