@@ -68,7 +68,8 @@
      opts)))
 
 (defn get-tag
-  "Get a tag."
+  "Get a specific tag with **tag-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags/getTag)."
   ([^Ticket ticket ^String tag-id]
    (get-tag ticket tag-id nil))
   ([^Ticket ticket ^String tag-id ^GetTagQueryParams query-params & [^PersistentHashMap opts]]
