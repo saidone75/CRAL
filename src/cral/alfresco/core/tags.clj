@@ -81,7 +81,8 @@
      opts)))
 
 (defn update-tag
-  "Update a tag."
+  "Updates the tag **tag-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags/updateTag)."
   ([^Ticket ticket ^String tag-id ^UpdateTagBody body]
    (update-tag ticket tag-id body nil))
   ([^Ticket ticket ^String tag-id ^UpdateTagBody body ^UpdateTagQueryParams query-params & [^PersistentHashMap opts]]
