@@ -8,7 +8,8 @@
            (cral.alfresco.model.auth Ticket)))
 
 (defn create-ticket
-  "Create a ticket."
+  "Logs in and returns the new authentication ticket.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Authentication%20API#/authentication/createTicket)."
   [^String username ^String password & [^PersistentHashMap opts]]
   (utils/call-rest
     client/post
@@ -28,11 +29,13 @@
     opts))
 
 (defn validate-ticket
-  "Validate a ticket."
+  "Check if the specified ticket is still valid.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Authentication%20API#/authentication/validateTicket)."
   [^Ticket ticket & [^PersistentHashMap opts]]
   (*-ticket client/get ticket opts))
 
 (defn delete-ticket
-  "Delete a ticket."
+  "Deletes logged in ticket (logout).
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Authentication%20API#/authentication/deleteTicket)."
   [^Ticket ticket & [^PersistentHashMap opts]]
   (*-ticket client/delete ticket opts))
