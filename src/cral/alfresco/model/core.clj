@@ -2,31 +2,29 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)))
 
 ;; comments
-
 (defrecord ListCommentsQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreateCommentQueryParams
-  [^PersistentVector fields])
-
-(defrecord UpdateCommentQueryParams
-  [^PersistentVector fields])
-
 (defrecord CreateCommentBody
   [^String content])
+
+(defrecord CreateCommentQueryParams
+  [^PersistentVector fields])
 
 (defrecord UpdateCommentBody
   [^String content])
 
+(defrecord UpdateCommentQueryParams
+  [^PersistentVector fields])
+
 ;; downloads
+(defrecord CreateDownloadBody
+  [^PersistentVector node-ids])
 
 (defrecord CreateDownloadQueryParams
   [^PersistentVector fields])
-
-(defrecord CreateDownloadBody
-  [^PersistentVector node-ids])
 
 (defrecord GetDownloadQueryParams
   [^PersistentVector fields])
