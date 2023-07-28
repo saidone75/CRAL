@@ -1,6 +1,8 @@
 (ns cral.alfresco.model.core
   (:import (clojure.lang PersistentHashMap PersistentVector)))
 
+;; keep same order as fn, bodies first then params
+
 ;; comments
 (defrecord ListCommentsQueryParams
   [^Integer skip-count
@@ -39,6 +41,12 @@
 (defrecord UpdateNodeQueryParams
   [^Boolean permanent])
 
+(defrecord UpdateNodeBody
+  [^String name
+   ^String node-type
+   ^PersistentVector aspect-names
+   ^PersistentHashMap properties])
+
 (defrecord DeleteNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
@@ -52,6 +60,17 @@
    ^String relative-path
    ^Boolean include-source
    ^PersistentVector fields])
+
+(defrecord CreateNodeBody
+  [^String name
+   ^String node-type
+   ^PersistentHashMap properties])
+
+(defrecord CreateNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+;; reorder progress bookmark
 
 (defrecord UpdateNodeContentQueryParams
   [^Boolean major-version
@@ -73,10 +92,6 @@
 
 (defrecord DeleteSecondaryChildQueryParams
   [^String assoc-type])
-
-(defrecord CreateNodeQueryParams
-  [^PersistentVector include
-   ^PersistentVector fields])
 
 (defrecord CopyNodeQueryParams
   [^Boolean auto-rename
@@ -121,12 +136,6 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord UpdateNodeBody
-  [^String name
-   ^String node-type
-   ^PersistentVector aspect-names
-   ^PersistentHashMap properties])
-
 (defrecord CreateSecondaryChildBody
   [^String child-id
    ^String assoc-type])
@@ -139,11 +148,6 @@
 (defrecord Permissions
   [^Boolean is-inheritance-enabled
    ^PersistentVector locally-set])
-
-(defrecord CreateNodeBody
-  [^String name
-   ^String node-type
-   ^PersistentHashMap properties])
 
 (defrecord CopyNodeBody
   [^String target-parent-id
