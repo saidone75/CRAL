@@ -156,7 +156,7 @@
     (io/delete-file file-to-be-uploaded)))
 
 ;; incomplete: missing list and delete secondary child/children
-(deftest create-secondary-child
+(deftest create-then-list-secondary-child
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create the source node
@@ -164,9 +164,14 @@
         ;; create the target node
         target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
     ;; create association
-    ;; FIXME
-    ;;(is (= 201 (:status (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})]))))
     (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})])]
+      ;; FIXME check response return code
+      ;; list secondary children
+      (let [response (nodes/list-secondary-children ticket source-node-id)]
+        (is (= 200 (:status response)))
+        ;; check for target-node-id
+
+        )
       ;; clean up
       (is (= 204 (:status (nodes/delete-node ticket source-node-id))))
       (is (= 204 (:status (nodes/delete-node ticket target-node-id))))
