@@ -63,7 +63,7 @@ services:
     ports:
       - "8180:8080"
   postgres:
-    image: postgres:15.3-alpine3.18
+    image: postgres:16rc1-alpine3.18
     mem_limit: 512m
     environment:
       - POSTGRES_PASSWORD=alfresco
