@@ -3,6 +3,12 @@
 
 ;; keep same order as fn, bodies first then params
 
+;; activities
+(defrecord ListActivitiesQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
 ;; comments
 (defrecord ListCommentsQueryParams
   [^Integer skip-count
