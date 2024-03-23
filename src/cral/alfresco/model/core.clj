@@ -37,8 +37,16 @@
 (defrecord GetDownloadQueryParams
   [^PersistentVector fields])
 
-;; nodes
+;; favorites
+(defrecord ListFavoritesQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^String where
+   ^PersistentVector include
+   ^PersistentVector fields])
 
+;; nodes
 (defrecord GetNodeQueryParams
   [^PersistentVector include
    ^String relative-path
