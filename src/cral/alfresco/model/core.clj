@@ -46,6 +46,13 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord CreateFavoriteBody
+  [^PersistentHashMap target])
+
+(defrecord CreateFavoriteQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 ;; nodes
 (defrecord GetNodeQueryParams
   [^PersistentVector include
