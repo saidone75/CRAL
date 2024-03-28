@@ -53,6 +53,10 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord GetFavoriteQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 ;; nodes
 (defrecord GetNodeQueryParams
   [^PersistentVector include
