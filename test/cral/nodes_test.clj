@@ -1,17 +1,17 @@
 (ns cral.nodes-test
-  (:import (java.util UUID)
-           (java.io File))
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.java.io :as io]
-            [taoensso.timbre :as timbre]
-            [cral.core :refer :all]
+            [clojure.test :refer :all]
+            [cral.alfresco.auth :as auth]
+            [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.model.core :as model]
             [cral.alfresco.model.search :as search-model]
-            [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.search :as search]
-            [cral.alfresco.auth :as auth]
-            [cral.test-utils :as tu]))
+            [cral.core :refer :all]
+            [cral.test-utils :as tu]
+            [taoensso.timbre :as timbre])
+  (:import (java.io File)
+           (java.util UUID)))
 
 (def user "admin")
 (def password "admin")

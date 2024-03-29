@@ -10,7 +10,7 @@
 
 (defn list-activities
   "Gets a list of activities for person **person-id**.
-  More info [here] (https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/activities/listActivitiesForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/activities/listActivitiesForPerson)."
   ([^Ticket ticket ^String person-id]
    (list-activities ticket person-id nil))
   ([^Ticket ticket ^String person-id ^ListActivitiesQueryParams query-params & [^PersistentHashMap opts]]

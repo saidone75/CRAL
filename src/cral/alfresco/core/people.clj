@@ -64,7 +64,7 @@
   You can use the `-me-` string in place of `person-id` to specify the currently authenticated user.
   If applicable, the given person's login access can also be optionally disabled or re-enabled.
   You must have admin rights to update a person — unless updating your own details.
-  f you are changing your password, as a non-admin user, then the existing password must also be supplied (using the old-password field in addition to the new password value).
+  If you are changing your password, as a non-admin user, then the existing password must also be supplied (using the old-password field in addition to the new password value).
   Admin users cannot be disabled by setting enabled to false.
   Non-admin users may not disable themselves.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/people/updatePerson)."

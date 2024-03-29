@@ -1,9 +1,9 @@
 (ns cral.tags-test
   (:require [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
-            [cral.alfresco.model.core :as model]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.core.tags :as tags]
+            [cral.alfresco.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
 
