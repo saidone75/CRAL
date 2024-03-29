@@ -5,4 +5,4 @@
 
 (defn get-guest-home
   [ticket]
-  (nodes/get-node ticket "-root-" (model/map->GetNodeQueryParams {:relative-path "/Guest Home"})))
+  (get-in (nodes/get-node ticket "-root-" (model/map->GetNodeQueryParams {:relative-path "/Guest Home"})) [:body :entry]))

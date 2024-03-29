@@ -10,4 +10,6 @@
 (deftest get-guest-home
   (config/set-log-level :trace)
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
-    (is (= 200 (:status (test-utils/get-guest-home ticket))))))
+    (is (= (:name (test-utils/get-guest-home ticket)) "Guest Home"))))
+
+
