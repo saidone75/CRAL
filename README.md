@@ -94,6 +94,6 @@ but plain maps can be used as well if desired:
  :parent-id "a29adc70-0639-416a-9660-4ed7f247b5a9"}
 ```
 ## License
-Copyright (c) 2023 Saidone
+Copyright (c) 2023-2024 Saidone
 
 Distributed under the GNU General Public License v3.0
