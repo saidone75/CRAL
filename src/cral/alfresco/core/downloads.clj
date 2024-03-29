@@ -2,9 +2,9 @@
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
             [cral.alfresco.config :as config]
-            [cral.utils.utils :as utils]
             [cral.alfresco.model.auth]
-            [cral.alfresco.model.core])
+            [cral.alfresco.model.core]
+            [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.core CreateDownloadBody

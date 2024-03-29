@@ -1,9 +1,9 @@
 (ns cral.groups-test
-  (:import (java.util UUID))
   (:require [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.groups :as groups]
-            [cral.alfresco.model.core :as model]))
+            [cral.alfresco.model.core :as model])
+  (:import (java.util UUID)))
 
 (def user "admin")
 (def pass "admin")

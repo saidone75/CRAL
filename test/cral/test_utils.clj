@@ -1,12 +1,8 @@
 (ns cral.test-utils
   (:require [clojure.test :refer :all]
-            [cral.alfresco.model.search :as search-model]
-            [cral.alfresco.search :as search]))
+            [cral.alfresco.core.nodes :as nodes]
+            [cral.alfresco.model.core :as model]))
 
 (defn get-guest-home
   [ticket]
-  (:entry (first
-            (get-in
-              (let [search-request (search-model/map->SearchBody {:query (search-model/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
-                (search/search ticket search-request))
-              [:body :list :entries]))))
+  (get-in (nodes/get-node ticket "-root-" (model/map->GetNodeQueryParams {:relative-path "/Guest Home"})) [:body :entry]))
