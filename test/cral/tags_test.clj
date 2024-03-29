@@ -1,4 +1,4 @@
-(ns cral.tags-tests
+(ns cral.tags-test
   (:require [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.model.core :as model]
