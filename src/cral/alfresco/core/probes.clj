@@ -3,8 +3,7 @@
             [cral.alfresco.config :as config]
             [cral.alfresco.model.auth]
             [cral.alfresco.model.core]
-            [cral.utils.utils :as utils])
-  (:import (cral.alfresco.model.auth Ticket)))
+            [cral.utils.utils :as utils]))
 
 (defn probes
   "Check readiness and liveness of the repository.
@@ -15,11 +14,9 @@
   **Note:** No authentication is required to call this endpoint.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/probes/getProbe)."
   ([^String probe-id]
-   (probes nil probe-id))
-  ([^Ticket ticket ^String probe-id]
    (utils/call-rest
      client/get
      (format "%s/probes/%s" (config/get-url 'core) probe-id)
-     ticket
+     nil
      nil
      nil)))
