@@ -47,7 +47,7 @@
 (defn create-site
   "Creates a default site with the given details. Unless explicitly specified, the site id will be generated from the site title.
   The site id must be unique and only contain alphanumeric and/or dash characters.
-  Note: the id of a site cannot be updated once the site has been created.
+  **Note:** the id of a site cannot be updated once the site has been created.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSite)."
   ([^Ticket ticket ^CreateSiteBody body]
    (create-site ticket body nil))
@@ -81,7 +81,7 @@
 
 (defn update-site
   "Update the details for the given site **site-id**. Site Manager or otherwise a (site) admin can update title, description or visibility.
-  Note: the id of a site cannot be updated once the site has been created.
+  **Note:** the id of a site cannot be updated once the site has been created.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSite)."
   ([^Ticket ticket ^String site-id ^UpdateSiteBody body]
    (update-site ticket site-id body nil))
