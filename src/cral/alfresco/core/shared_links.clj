@@ -7,7 +7,7 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams)))
+           (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams ListSharedLinksQueryParams)))
 
 (defn create-shared-link
   "Create a shared link to the file **node-id** in the request body. Also, an optional expiry date could be set,
@@ -23,4 +23,19 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn list-shared-links
+  "Get a list of links that the current user has read permission on source node.
+  The list is ordered in descending modified order.
+  **Note:** The list of links is eventually consistent so newly created shared links may not appear immediately.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/listSharedLinks)."
+  ([^Ticket ticket]
+   (list-shared-links ticket nil))
+  ([^Ticket ticket ^ListSharedLinksQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/shared-links" (config/get-url 'core))
+     ticket
+     {:query-params query-params}
      opts)))

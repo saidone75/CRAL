@@ -192,7 +192,6 @@
    ^String assoc-type])
 
 ;; people
-
 (defrecord CreatePersonQueryParams
   [^PersistentVector fields])
 
@@ -316,6 +315,13 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord ListSharedLinksQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^String where
+   ^PersistentVector include
+   ^PersistentVector fields])
+
 ;; sites
 (defrecord ListSiteMembershipRequestsQueryParams
   [^Integer skip-count
@@ -357,7 +363,6 @@
    ^String visibility])
 
 ;; tags
-
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
    ^Integer max-items
