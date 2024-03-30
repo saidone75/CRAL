@@ -1,4 +1,4 @@
-(ns cral.favorites_test
+(ns cral.favorites-test
   (:require [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.favorites :as favorites]
