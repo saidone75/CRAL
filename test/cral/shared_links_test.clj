@@ -20,6 +20,7 @@
         create-node-response (nodes/create-node ticket parent-id create-node-body)]
     (is (= (:status create-node-response) 201))
     (let [create-shared-link-body (model/map->CreateSharedLinkBody {:node-id (get-in create-node-response [:body :entry :id])})
+          ;; create a shared link
           create-shared-link-response (shared-links/create-shared-link ticket create-shared-link-body)]
       (= (:status create-shared-link-response) 200))
     ;; clean up

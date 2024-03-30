@@ -5,8 +5,6 @@
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.model.core :as model]
-            [cral.alfresco.model.search :as search-model]
-            [cral.alfresco.search :as search]
             [cral.core :refer :all]
             [cral.test-utils :as tu]
             [taoensso.timbre :as timbre])
@@ -21,7 +19,7 @@
 (deftest get-node
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         guest-home-id (:id (tu/get-guest-home ticket))]
-    ;; well known fields for query parameters defined in core/QueryParamsGetNode
+    ;; well known fields for query parameters defined in GetNodeQueryParams
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket guest-home-id (model/map->GetNodeQueryParams {:include ["path" "permissions"]})) [:body :entry])) [:path :permissions])))
     ;; but plain maps can be used as well
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket guest-home-id {:include ["path" "permissions"]}) [:body :entry])) [:path :permissions])))))
@@ -42,7 +40,7 @@
 
 (deftest list-node-children
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        company-home-id (get-in (first (get-in (search/search ticket (search-model/map->SearchBody {:query (search-model/map->RequestQuery {:query "PATH:'app:company_home'"})})) [:body :list :entries])) [:entry :id])
+        company-home-id (get-in (nodes/get-node ticket "-root-") [:body :entry :id])
         list-node-children-response (nodes/list-node-children ticket company-home-id)]
     (is (= 200 (:status list-node-children-response)))
     (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
