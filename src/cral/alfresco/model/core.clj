@@ -254,7 +254,6 @@
   [^PersistentVector fields])
 
 ;; groups
-
 (defrecord ListGroupMembershipQueryParams
   [^Integer skip-count
    ^Integer max-items
@@ -308,8 +307,16 @@
    ^String where
    ^PersistentVector fieds])
 
-;; sites
+;; shared-links
+(defrecord CreateSharedLinkBody
+  [^String node-id
+   ^String expires-at])
 
+(defrecord CreateSharedLinkQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+;; sites
 (defrecord ListSiteMembershipRequestsQueryParams
   [^Integer skip-count
    ^Integer max-items
