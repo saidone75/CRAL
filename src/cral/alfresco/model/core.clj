@@ -322,6 +322,9 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord GetSharedLinkQueryParams
+  [^PersistentVector include])
+
 ;; sites
 (defrecord ListSiteMembershipRequestsQueryParams
   [^Integer skip-count

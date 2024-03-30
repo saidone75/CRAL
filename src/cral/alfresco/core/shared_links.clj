@@ -39,3 +39,17 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn get-shared-link
+  "Gets minimal information for the file with shared link identifier **shared-id**.
+  **Note:** No authentication is required to call this endpoint.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/listSharedLinks)."
+  ([^String shared-id]
+   (get-shared-link shared-id nil))
+  ([^String shared-id ^ListSharedLinksQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/shared-links/%s" (config/get-url 'core) shared-id)
+     nil
+     {:query-params query-params}
+     opts)))
