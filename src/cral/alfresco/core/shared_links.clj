@@ -53,3 +53,14 @@
      nil
      {:query-params query-params}
      opts)))
+
+(defn delete-shared-link
+  "Deletes the shared link with identifier **shared-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/deleteSharedLink)."
+  [^Ticket ticket ^String shared-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/shared-links/%s" (config/get-url 'core) shared-id)
+    ticket
+    {}
+    opts))

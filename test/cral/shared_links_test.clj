@@ -12,7 +12,7 @@
 (def user "admin")
 (def password "admin")
 
-(deftest create-then-list-then-get-shared-link
+(deftest create-then-list-then-get-then-delete-shared-link
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
@@ -29,6 +29,8 @@
           (Thread/sleep 1000)
           (recur (shared-links/list-shared-links ticket))))
       ;; get shared link
-      (is (= (:status (shared-links/get-shared-link (get-in create-shared-link-response [:body :entry :id]))) 200)))
+      (is (= (:status (shared-links/get-shared-link (get-in create-shared-link-response [:body :entry :id]))) 200))
+      ;; delete shared link
+      (is (= (:status (shared-links/delete-shared-link ticket (get-in create-shared-link-response [:body :entry :id]))) 204)))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))) 204))))
