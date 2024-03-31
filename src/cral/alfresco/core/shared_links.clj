@@ -7,7 +7,7 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams ListSharedLinksQueryParams)))
+           (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams GetSharedLinkContentQueryParams ListSharedLinksQueryParams)))
 
 (defn create-shared-link
   "Create a shared link to the file **node-id** in the request body. Also, an optional expiry date could be set,
@@ -64,3 +64,17 @@
     ticket
     {}
     opts))
+
+(defn get-shared-link-content
+  "Gets the content of the file with shared link identifier **shared-id**.
+  **Note:** No authentication is required to call this endpoint.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/getSharedLinkContent)."
+  ([^String shared-id]
+   (get-shared-link-content shared-id nil nil {:return-headers true}))
+  ([^String shared-id ^GetSharedLinkContentQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/shared-links/%s/content" (config/get-url 'core) shared-id)
+     nil
+     {:query-params query-params :as :byte-array}
+     opts)))

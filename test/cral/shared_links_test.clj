@@ -1,18 +1,20 @@
 (ns cral.shared-links-test
-  (:require [clojure.test :refer :all])
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
+            [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.shared-links :as shared-links]
             [cral.alfresco.core.nodes :as nodes]
+            [cral.alfresco.core.shared-links :as shared-links]
             [cral.alfresco.model.core]
             [cral.alfresco.model.core :as model]
             [cral.test-utils :as tu])
-  (:import (java.util UUID)))
+  (:import (java.io File)
+           (java.util UUID)))
 
 (def user "admin")
 (def password "admin")
 
-(deftest create-then-list-then-get-then-delete-shared-link
+(deftest create-then-list-then-get-then-get-content-then-delete-shared-link
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
@@ -30,6 +32,16 @@
           (recur (shared-links/list-shared-links ticket))))
       ;; get shared link
       (is (= (:status (shared-links/get-shared-link (get-in create-shared-link-response [:body :entry :id]))) 200))
+      ;; update node content
+      (let [file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+            file-content (.toString (UUID/randomUUID))]
+        (spit file-to-be-uploaded file-content)
+        (nodes/update-node-content ticket (get-in create-node-response [:body :entry :id]) file-to-be-uploaded)
+        ;; get shared link content
+        (let [content (shared-links/get-shared-link-content (get-in create-shared-link-response [:body :entry :id]))]
+          (is (= (apply str (map char (:body content))) file-content)))
+        ;; delete temp file
+        (io/delete-file file-to-be-uploaded))
       ;; delete shared link
       (is (= (:status (shared-links/delete-shared-link ticket (get-in create-shared-link-response [:body :entry :id]))) 204)))
     ;; clean up

@@ -325,6 +325,9 @@
 (defrecord GetSharedLinkQueryParams
   [^PersistentVector include])
 
+(defrecord GetSharedLinkContentQueryParams
+  [^Boolean attachment])
+
 ;; sites
 (defrecord ListSiteMembershipRequestsQueryParams
   [^Integer skip-count
