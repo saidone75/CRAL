@@ -7,7 +7,7 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams GetSharedLinkContentQueryParams ListSharedLinksQueryParams)))
+           (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams EmailSharedLinkBody GetSharedLinkContentQueryParams ListSharedLinksQueryParams)))
 
 (defn create-shared-link
   "Create a shared link to the file **node-id** in the request body. Also, an optional expiry date could be set,
@@ -78,3 +78,16 @@
      nil
      {:query-params query-params :as :byte-array}
      opts)))
+
+(defn email-shared-link
+  "Sends email with app-specific url including identifier **shared-id**.
+  The client and recipient-emails properties are mandatory in the request body.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/emailSharedLink)."
+  [^Ticket ticket ^String shared-id ^EmailSharedLinkBody body & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/post
+    (format "%s/shared-links/%s/email" (config/get-url 'core) shared-id)
+    ticket
+    {:body         (json/write-str (utils/camel-case-stringify-keys body))
+     :content-type :json}
+    opts))

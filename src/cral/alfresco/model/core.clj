@@ -328,6 +328,12 @@
 (defrecord GetSharedLinkContentQueryParams
   [^Boolean attachment])
 
+(defrecord EmailSharedLinkBody
+  [^String client
+   ^PersistentVector recipient-emails
+   ^String message
+   ^String locale])
+
 ;; sites
 (defrecord ListSiteMembershipRequestsQueryParams
   [^Integer skip-count
