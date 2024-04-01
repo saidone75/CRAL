@@ -14,7 +14,7 @@
 (def user "admin")
 (def password "admin")
 
-(deftest create-then-list-then-get-then-get-content-then-delete-shared-link
+(deftest create-then-list-then-get-then-get-content-then-email-then-delete-shared-link
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
@@ -42,6 +42,9 @@
           (is (= (apply str (map char (:body content))) file-content)))
         ;; delete temp file
         (io/delete-file file-to-be-uploaded))
+      ;; email shared link
+      (is (= (:status (shared-links/email-shared-link ticket (get-in create-shared-link-response [:body :entry :id])
+                                                      (model/map->EmailSharedLinkBody {:client "share" :recipient-emails ["saidone@saidone.org"]}))) 202))
       ;; delete shared link
       (is (= (:status (shared-links/delete-shared-link ticket (get-in create-shared-link-response [:body :entry :id]))) 204)))
     ;; clean up
