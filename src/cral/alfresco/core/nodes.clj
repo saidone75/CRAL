@@ -183,7 +183,7 @@
 (defn update-node-content
   "Updates the content of the node with identifier **node-id**.
   The **major-version** and **comment** parameters can be used to control versioning behaviour. If the content is versionable then a new minor version is created by default.
-  Optionally a new **name** parameter can also be specified that must be unique within the parent folder. If specified and valid then thi will rename the node. If invalid then an error is returned and the content is not updated.
+  Optionally a new **name** parameter can also be specified that must be unique within the parent folder. If specified and valid then this will rename the node. If invalid then an error is returned and the content is not updated.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/updateNodeContent)."
   ([^Ticket ticket ^String node-id ^File content]
    (update-node-content ticket node-id content nil))
