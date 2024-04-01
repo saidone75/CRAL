@@ -400,3 +400,9 @@
 
 (defrecord UpdateTagQueryParams
   [^PersistentVector fields])
+
+;; trashcan
+(defrecord GetDeletedNodesQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector include])
