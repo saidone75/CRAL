@@ -18,7 +18,7 @@
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
     (is (= (:status (trashcan/list-deleted-nodes ticket)) 200))))
 
-(deftest create-then-get-deleted-node
+(deftest get-then-delete-deleted-node
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
@@ -29,4 +29,9 @@
     ;; get deleted node
     (let [get-deleted-node-response (trashcan/get-deleted-node ticket (get-in create-node-response [:body :entry :id]))]
       (is (= (:status get-deleted-node-response) 200))
-      (is (= (get-in get-deleted-node-response [:body :entry :id]) (get-in create-node-response [:body :entry :id]))))))
+      (is (= (get-in get-deleted-node-response [:body :entry :id]) (get-in create-node-response [:body :entry :id])))
+      ;; delete deleted node
+      (is (= (:status (trashcan/delete-deleted-node ticket (get-in get-deleted-node-response [:body :entry :id]))) 204))
+      ;; check if node has been permanently deleted
+      (is (= (:status (trashcan/get-deleted-node ticket (get-in create-node-response [:body :entry :id]))) 404))
+      (is (= (:status (trashcan/delete-deleted-node ticket (get-in get-deleted-node-response [:body :entry :id]))) 404)))))
