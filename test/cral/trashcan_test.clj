@@ -10,6 +10,6 @@
 
 (timbre/set-config! {:min-level :info})
 
-(deftest get-deleted-nodes
+(deftest list-deleted-nodes
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
-    (is (= (:status (trashcan/get-deleted-nodes ticket)) 200))))
+    (is (= (:status (trashcan/list-deleted-nodes ticket)) 200))))
