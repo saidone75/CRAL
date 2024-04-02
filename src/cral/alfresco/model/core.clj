@@ -402,7 +402,10 @@
   [^PersistentVector fields])
 
 ;; trashcan
-(defrecord GetDeletedNodesQueryParams
+(defrecord ListDeletedNodesQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector include])
+
+(defrecord GetDeletedNodeQueryParams
+  [^PersistentVector include])
