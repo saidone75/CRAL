@@ -1,5 +1,6 @@
 (ns cral.trashcan-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.core.trashcan :as trashcan]
@@ -7,7 +8,8 @@
             [cral.core :refer :all]
             [cral.test-utils :as tu]
             [taoensso.timbre :as timbre])
-  (:import (java.util UUID)))
+  (:import (java.io File)
+           (java.util UUID)))
 
 (def user "admin")
 (def password "admin")
@@ -24,8 +26,18 @@
         ;; create a node
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         create-node-response (nodes/create-node ticket parent-id create-node-body)]
-    ;; delete node
-    (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))
+    ;; update node content
+    (let [file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+          file-content (.toString (UUID/randomUUID))]
+      (spit file-to-be-uploaded file-content)
+      (nodes/update-node-content ticket (get-in create-node-response [:body :entry :id]) file-to-be-uploaded)
+      ;; delete node
+      (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))
+      ;; get deleted node content
+      (let [content (trashcan/get-deleted-node-content ticket (get-in create-node-response [:body :entry :id]))]
+        (is (= (apply str (map char (:body content))) file-content)))
+      ;; delete temp file
+      (io/delete-file file-to-be-uploaded))
     ;; get deleted node
     (let [get-deleted-node-response (trashcan/get-deleted-node ticket (get-in create-node-response [:body :entry :id]))]
       (is (= (:status get-deleted-node-response) 200))

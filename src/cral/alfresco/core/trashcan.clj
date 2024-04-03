@@ -6,7 +6,7 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core GetDeletedNodeQueryParams ListDeletedNodesQueryParams)))
+           (cral.alfresco.model.core GetDeletedNodeContentQueryParams GetDeletedNodeQueryParams ListDeletedNodesQueryParams)))
 
 (defn list-deleted-nodes
   "Gets a list of deleted nodes for the current user.
@@ -46,3 +46,16 @@
     ticket
     {}
     opts))
+
+(defn get-deleted-node-content
+  "Gets the content of the deleted node with identifier **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/trashcan/getDeletedNodeContent)."
+  ([^Ticket ticket ^String node-id]
+   (get-deleted-node-content ticket node-id nil {:return-headers true}))
+  ([^Ticket ticket ^String node-id ^GetDeletedNodeContentQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/deleted-nodes/%s/content" (config/get-url 'core) node-id)
+     ticket
+     {:query-params query-params :as :byte-array}
+     opts)))

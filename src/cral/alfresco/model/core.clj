@@ -409,3 +409,6 @@
 
 (defrecord GetDeletedNodeQueryParams
   [^PersistentVector include])
+
+(defrecord GetDeletedNodeContentQueryParams
+  [^Boolean attachment])
