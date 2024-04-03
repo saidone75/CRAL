@@ -3,19 +3,17 @@
             [cral.utils.utils :as utils]))
 
 (deftest kebab-case
-  (is (= "kebab-case") (utils/kebab-case "kebabCase")))
+  (is (= (utils/kebab-case "kebabCase")
+         "kebab-case")))
 
 (deftest kebab-keywordize-keys
-  (is (=
-        {:level-one {:level-two "value"}}
-        (utils/kebab-keywordize-keys {"levelOne" {"levelTwo" "value"}}))))
+  (is (= (utils/kebab-keywordize-keys {"levelOne" {"levelTwo" "value"}})
+         {:level-one {:level-two "value"}})))
 
 (deftest camel-case-keywordize-keys
-  (is (=
-        {:levelOne {:levelTwo "value"}}
-        (utils/camel-case-keywordize-keys {"level-one" {"level-two" "value"}}))))
+  (is (= (utils/camel-case-keywordize-keys {"level-one" {"level-two" "value"}})
+         {:levelOne {:levelTwo "value"}})))
 
 (deftest camel-case-stringify-keys
-  (is (=
-        {"levelOne" {"levelTwo" "value"}}
-        (utils/camel-case-stringify-keys {"level-one" {"level-two" "value"}}))))
+  (is (= (utils/camel-case-stringify-keys {"level-one" {"level-two" "value"}})
+         {"levelOne" {"levelTwo" "value"}})))
