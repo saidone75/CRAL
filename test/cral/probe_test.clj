@@ -4,5 +4,5 @@
             [cral.alfresco.model.core]))
 
 (deftest get-probes
-  (is (= 200 (:status (probes/probes "-ready-"))))
-  (is (= 200 (:status (probes/probes "-live-")))))
+  (is (= (:status (probes/probes "-ready-")) 200))
+  (is (= (:status (probes/probes "-live-")) 200)))
