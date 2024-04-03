@@ -11,5 +11,5 @@
         (->> (search-model/map->RequestQuery {:query "PATH:'app:company_home'"})
              (#(search-model/map->SearchBody {:query %}))
              (#(search/search ticket %)))]
-    (is (= 200 (:status response)))
-    (is (= "Company Home") (:name (first (get-in response [:body :list :entries]))))))
+    (is (= (:status response) 200))
+    (is (= (:name (first (get-in response [:body :list :entries]))) "Company Home"))))
