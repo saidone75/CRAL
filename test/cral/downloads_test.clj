@@ -26,21 +26,21 @@
     (let [get-response
           ;; create download
           (let [create-response (downloads/create-download ticket (model/->CreateDownloadBody [node-id1 node-id2]))]
-            (is (= 202 (:status create-response)))
+            (is (= (:status create-response) 202))
             (let [get-response
                   ;; poll download while status is "PENDING"
                   (loop [get-response (downloads/get-download ticket (get-in create-response [:body :entry :id]))]
-                    (if (= "PENDING" (get-in get-response [:body :entry :status]))
+                    (if (= (get-in get-response [:body :entry :status]) "PENDING")
                       (do
                         (Thread/sleep 100)
                         (recur (downloads/get-download ticket (get-in get-response [:body :entry :id]))))
                       get-response))]
-              (is (= 200 (:status get-response)))
+              (is (= (:status get-response) 200))
               get-response))]
       ;; more check for get download response
-      (is (= 2 (get-in get-response [:body :entry :files-added])))
+      (is (= (get-in get-response [:body :entry :files-added]) 2))
       ;; delete download
-      (is (= 202 (:status (downloads/delete-download ticket (get-in get-response [:body :entry :id]))))))
+      (is (= (:status (downloads/delete-download ticket (get-in get-response [:body :entry :id]))) 202)))
     ;; clean up
-    (is (= 204 (:status (nodes/delete-node ticket node-id1))))
-    (is (= 204 (:status (nodes/delete-node ticket node-id2))))))
+    (is (= (:status (nodes/delete-node ticket node-id1)) 204))
+    (is (= (:status (nodes/delete-node ticket node-id2)) 204))))

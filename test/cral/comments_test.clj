@@ -18,11 +18,11 @@
         created-node-id (get-in (nodes/create-node ticket parent-id create-node-body) [:body :entry :id])
         comment-content (.toString (UUID/randomUUID))]
     ;; create comment
-    (is (= 201 (:status (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content comment-content})]))))
+    (is (= (:status (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content comment-content})])) 201))
     ;; list comments and check content
     (let [list-comments-response (comments/list-comments ticket created-node-id)
           comment-entry (:entry (first (get-in list-comments-response [:body :list :entries])))]
-      (is (= 200 (:status list-comments-response)))
+      (is (= (:status list-comments-response) 201))
       (is (= comment-content (:content comment-entry))))
     ;; update comment
     (let [list-comments-response (comments/list-comments ticket created-node-id)
@@ -34,7 +34,7 @@
     ;; delete comment
     (let [list-comments-response (comments/list-comments ticket created-node-id)
           comment-entry (:entry (first (get-in list-comments-response [:body :list :entries])))]
-      (is (= 204 (:status (comments/delete-comment ticket created-node-id (:id comment-entry))))))
+      (is (= (:status (comments/delete-comment ticket created-node-id (:id comment-entry))) 204)))
     ;; clean up
-    (is (= 204 (:status (nodes/delete-node ticket created-node-id))))))
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 

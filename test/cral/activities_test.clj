@@ -10,4 +10,4 @@
 (deftest list-activities
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
     ;; list activities
-    (is (= 200 (:status (activities/list-activities ticket user))))))
+    (is (= (:status (activities/list-activities ticket user)) 200))))

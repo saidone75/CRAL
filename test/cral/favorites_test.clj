@@ -14,7 +14,7 @@
 (deftest list-favorites
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
     ;; list favorites
-    (is (= 200 (:status (favorites/list-favorites ticket user))))))
+    (is (= (:status (favorites/list-favorites ticket user)) 200))))
 
 (deftest create-then-get-then-list-then-delete-favorites
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -25,13 +25,13 @@
     ;; add node to favorites
     (let [favorite-id (get-in (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid node-id}})]) [:body :entry :target-guid])]
       ;; get favorite
-      (is (= 200 (:status (favorites/get-favorite ticket "-me-" favorite-id))))
+      (is (= (:status (favorites/get-favorite ticket "-me-" favorite-id)) 200))
       (let [favorites (favorites/list-favorites ticket user)]
         ;; count favorites
         (is (> (get-in favorites [:body :list :pagination :count]) 0))
         ;; check if node belongs to favorites
         (is (some true? (map #(= (get-in % [:entry :target-guid]) node-id) (get-in favorites [:body :list :entries])))))
       ;; delete favorite
-      (is (= 204 (:status (favorites/delete-favorite ticket "-me-" favorite-id)))))
+      (is (= (:status (favorites/delete-favorite ticket "-me-" favorite-id)) 204)))
     ;; clean up
-    (is (= 204 (:status (nodes/delete-node ticket node-id))))))
+    (is (= (:status (nodes/delete-node ticket node-id)) 204))))
