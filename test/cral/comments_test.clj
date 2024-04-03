@@ -22,7 +22,7 @@
     ;; list comments and check content
     (let [list-comments-response (comments/list-comments ticket created-node-id)
           comment-entry (:entry (first (get-in list-comments-response [:body :list :entries])))]
-      (is (= (:status list-comments-response) 201))
+      (is (= (:status list-comments-response) 200))
       (is (= comment-content (:content comment-entry))))
     ;; update comment
     (let [list-comments-response (comments/list-comments ticket created-node-id)

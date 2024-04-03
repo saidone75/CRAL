@@ -7,7 +7,7 @@
 
 (deftest create-ticket
   (let [response (auth/create-ticket user password)]
-    (is (= (:status response) 200))
+    (is (= (:status response) 201))
     (is (= (get-in response [:body :entry :user-id]) "admin"))
     (is (not (nil? (get-in response [:body :entry :id]))))))
 

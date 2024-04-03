@@ -12,4 +12,4 @@
              (#(search-model/map->SearchBody {:query %}))
              (#(search/search ticket %)))]
     (is (= (:status response) 200))
-    (is (= (:name (first (get-in response [:body :list :entries]))) "Company Home"))))
+    (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :name]) "Company Home"))))
