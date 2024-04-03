@@ -7,14 +7,14 @@
 
 (deftest create-ticket
   (let [response (auth/create-ticket user password)]
-    (is (= 201 (:status response)))
-    (is (= "admin" (get-in response [:body :entry :user-id])))
+    (is (= (:status response) 201))
+    (is (= (get-in response [:body :entry :user-id]) "admin"))
     (is (not (nil? (get-in response [:body :entry :id]))))))
 
 (deftest validate-ticket
   (let [response (auth/create-ticket user password)]
-    (is (= 200 (:status (auth/validate-ticket (get-in response [:body :entry])))))))
+    (is (= (:status (auth/validate-ticket (get-in response [:body :entry]))) 200))))
 
 (deftest delete-ticket
   (let [response (auth/create-ticket user password)]
-    (is (= 204 (:status (auth/delete-ticket (get-in response [:body :entry])))))))
+    (is (= (:status (auth/delete-ticket (get-in response [:body :entry]))) 204))))

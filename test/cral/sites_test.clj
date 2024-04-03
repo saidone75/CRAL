@@ -14,10 +14,10 @@
         create-site-body (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
         ;; create site
         create-site-response (sites/create-site ticket create-site-body)]
-    (is (= 201 (:status create-site-response)))
+    (is (= (:status create-site-response) 201))
     ;; list-sites
     (let [list-sites-response (sites/list-sites ticket)]
-      (is (= 200 (:status list-sites-response)))
+      (is (= (:status list-sites-response) 200))
       ;; check if site is present
       (is (some true?
                 (map
@@ -26,11 +26,11 @@
     ;; update site
     (let [update-site-body (model/map->UpdateSiteBody {:title (.toString (UUID/randomUUID)) :visibility "PRIVATE"})
           update-site-response (sites/update-site ticket site-id update-site-body)]
-      (is (= 200 (:status update-site-response)))
+      (is (= (:status update-site-response) 200))
       ;; check if title and visibility have been updated
-      (is (= (:title update-site-body) (get-in update-site-response [:body :entry :title])))
-      (is (= (:visibility update-site-body) (get-in update-site-response [:body :entry :visibility]))))
+      (is (= (get-in update-site-response [:body :entry :title]) (:title update-site-body)))
+      (is (= (get-in update-site-response [:body :entry :visibility]) (:visibility update-site-body))))
     ;; get-site
-    (is (= 200 (:status (sites/get-site ticket site-id))))
+    (is (= (:status (sites/get-site ticket site-id)) 200))
     ;; delete site
-    (is (= 204 (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true})))))))
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
