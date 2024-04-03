@@ -6,13 +6,9 @@
 
 CRAL is a pure Clojure library for consuming Alfresco Content Services public REST API in an idiomatic way.
 ## Outline
-- Tuned for GraalVM, can be compiled to native binary
-
 - Lean and readable code
-
 - 100% test coverage
-
-*☛ Still incomplete and alpha quality, interface subject to changes*
+- Tuned for GraalVM, can be compiled to native binary
 ## Usage
 Require the relevant namespaces:
 ```clojure
