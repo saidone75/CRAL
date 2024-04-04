@@ -41,7 +41,7 @@
      opts)))
 
 (defn update-comment
-  "Updates an existing comment commentId on node **node-id**.
+  "Updates an existing comment **comment-id** on node **node-id**.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/comments/updateComment)."
   ([^Ticket ticket ^String node-id ^String comment-id ^UpdateCommentBody body]
    (update-comment ticket node-id comment-id body nil))
