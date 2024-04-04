@@ -1,5 +1,6 @@
 (ns cral.downloads-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.downloads :as downloads]
             [cral.alfresco.core.nodes :as nodes]
@@ -43,4 +44,6 @@
       (is (= (:status (downloads/delete-download ticket (get-in get-response [:body :entry :id]))) 202)))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket node-id1)) 204))
-    (is (= (:status (nodes/delete-node ticket node-id2)) 204))))
+    (is (= (:status (nodes/delete-node ticket node-id2)) 204))
+    ;; delete temp file
+    (io/delete-file file-to-be-uploaded)))
