@@ -11,7 +11,7 @@
 (def user "admin")
 (def password "admin")
 
-(deftest create-then-list-then-update-then-delete-comment
+(deftest comments-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
