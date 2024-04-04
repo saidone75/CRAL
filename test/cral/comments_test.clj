@@ -11,6 +11,19 @@
 (def user "admin")
 (def password "admin")
 
+(deftest list-comments-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        created-node-id (get-in (nodes/create-node ticket (:id (tu/get-guest-home ticket)) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        comment-content (.toString (UUID/randomUUID))]
+    ;; create comment
+    (is (= (:status (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content comment-content})])) 201))
+    ;; list comments
+    (let [list-comments-response (comments/list-comments ticket created-node-id)]
+      (is (= (:status list-comments-response) 200))
+      (is (= (:content (:entry (first (get-in list-comments-response [:body :list :entries])))) comment-content)))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
 (deftest comments-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
