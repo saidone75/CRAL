@@ -419,3 +419,10 @@
 
 (defrecord RestoreDeletedNodeQueryParams
   [^PersistentVector fields])
+
+;; versions
+(defrecord ListVersionHistoryQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields
+   ^Integer skip-count
+   ^Integer max-items])
