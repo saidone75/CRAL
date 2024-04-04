@@ -412,3 +412,10 @@
 
 (defrecord GetDeletedNodeContentQueryParams
   [^Boolean attachment])
+
+(defrecord RestoreDeletedNodeBody
+  [^String target-parent-id
+   ^String assoc-type])
+
+(defrecord RestoreDeletedNodeQueryParams
+  [^PersistentVector fields])
