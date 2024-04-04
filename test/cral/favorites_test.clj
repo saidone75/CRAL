@@ -11,12 +11,7 @@
 (def user "admin")
 (def password "admin")
 
-(deftest list-favorites
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
-    ;; list favorites
-    (is (= (:status (favorites/list-favorites ticket user)) 200))))
-
-(deftest create-then-get-then-list-then-delete-favorites
+(deftest favorites-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (:id (tu/get-guest-home ticket))
         ;; create a node
@@ -26,11 +21,13 @@
     (let [favorite-id (get-in (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid node-id}})]) [:body :entry :target-guid])]
       ;; get favorite
       (is (= (:status (favorites/get-favorite ticket "-me-" favorite-id)) 200))
-      (let [favorites (favorites/list-favorites ticket user)]
+      ;; list favorites
+      (let [list-favorites-response (favorites/list-favorites ticket user)]
+        (is (= (:status list-favorites-response) 200))
         ;; count favorites
-        (is (> (get-in favorites [:body :list :pagination :count]) 0))
+        (is (> (get-in list-favorites-response [:body :list :pagination :count]) 0))
         ;; check if node belongs to favorites
-        (is (some true? (map #(= (get-in % [:entry :target-guid]) node-id) (get-in favorites [:body :list :entries])))))
+        (is (some true? (map #(= (get-in % [:entry :target-guid]) node-id) (get-in list-favorites-response [:body :list :entries])))))
       ;; delete favorite
       (is (= (:status (favorites/delete-favorite ticket "-me-" favorite-id)) 204)))
     ;; clean up
