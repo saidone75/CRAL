@@ -7,7 +7,7 @@
 (def user "admin")
 (def password "admin")
 
-(deftest list-activities
+(deftest activities-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
     ;; list activities
     (is (= (:status (activities/list-activities ticket user)) 200))))
