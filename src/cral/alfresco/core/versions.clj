@@ -21,3 +21,14 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn get-version-information
+  "Gets the version information for **version-id** of file node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/getVersion)."
+  ([^Ticket ticket ^String node-id ^String version-id & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/versions/%s" (config/get-url 'core) node-id version-id)
+     ticket
+     nil
+     opts)))
