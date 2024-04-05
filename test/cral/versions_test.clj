@@ -16,7 +16,7 @@
 (deftest list-version-history-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create node
-        created-node-id (get-in (nodes/create-node ticket (:id (tu/get-guest-home ticket)) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
     ;; list version history
     (let [version-history-response (versions/list-version-history ticket created-node-id)]
       (is (= (:status version-history-response) 200))
@@ -39,7 +39,7 @@
 (deftest get-version-information-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create node
-        created-node-id (get-in (nodes/create-node ticket (:id (tu/get-guest-home ticket)) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
         ;; create a temp file
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
     ;; update node content
