@@ -14,7 +14,7 @@
 
 (deftest downloads-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (:id (tu/get-guest-home ticket))
+        parent-id (tu/get-guest-home ticket)
         ;; create a couple of nodes
         node-id1 (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
         node-id2 (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])

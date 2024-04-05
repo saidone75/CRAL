@@ -12,7 +12,7 @@
 
 (deftest create-then-list-then-get-then-delete-node-tags
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
-        parent-id (:id (tu/get-guest-home ticket))
+        parent-id (tu/get-guest-home ticket)
         ;; create a node
         node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
         tag-name (.toString (UUID/randomUUID))]

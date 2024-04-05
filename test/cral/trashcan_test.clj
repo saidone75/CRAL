@@ -18,7 +18,7 @@
 
 (deftest trashcan-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (:id (tu/get-guest-home ticket))
+        parent-id (tu/get-guest-home ticket)
         ;; create a node
         create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
         create-node-response (nodes/create-node ticket parent-id create-node-body)]
