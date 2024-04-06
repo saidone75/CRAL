@@ -3,6 +3,7 @@
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.core.tags :as tags]
+            [cral.alfresco.model.alfresco.cm :as cm]
             [cral.alfresco.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
@@ -14,7 +15,7 @@
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create a node
-        node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         tag-name (.toString (UUID/randomUUID))]
     ;; create a tag for the node
     (= (:status (tags/create-node-tag ticket node-id [(model/map->CreateNodeTagBody {:tag tag-name})])) 201)

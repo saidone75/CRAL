@@ -5,6 +5,7 @@
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.core.shared-links :as shared-links]
+            [cral.alfresco.model.alfresco.cm :as cm]
             [cral.alfresco.model.core]
             [cral.alfresco.model.core :as model]
             [cral.test-utils :as tu])
@@ -18,7 +19,7 @@
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create a node
-        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
         create-node-response (nodes/create-node ticket parent-id create-node-body)]
     (is (= (:status create-node-response) 201))
     (let [create-shared-link-body (model/map->CreateSharedLinkBody {:node-id (get-in create-node-response [:body :entry :id])})
