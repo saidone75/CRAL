@@ -3,6 +3,7 @@
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.favorites :as favorites]
             [cral.alfresco.core.nodes :as nodes]
+            [cral.alfresco.model.alfresco.cm :as cm]
             [cral.alfresco.model.core :as model]
             [cral.alfresco.model.core]
             [cral.test-utils :as tu])
@@ -14,7 +15,7 @@
 (deftest list-favorites-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create a node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; add node to favorites
     (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid created-node-id}})])
     ;; list favorites
@@ -30,7 +31,7 @@
 (deftest create-favorite-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create a node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; create favorite
     (is (= (:status (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid created-node-id}})])) 201))
     ;; clean up
@@ -39,7 +40,7 @@
 (deftest get-favorite-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create a node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; add node to favorites
         created-favorite-id (get-in (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid created-node-id}})]) [:body :entry :target-guid])]
     ;; get favorite
@@ -50,7 +51,7 @@
 (deftest delete-favorite-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create a node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; add node to favorites
         created-favorite-id (get-in (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid created-node-id}})]) [:body :entry :target-guid])]
     ;; delete favorite

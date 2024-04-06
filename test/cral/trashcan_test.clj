@@ -4,6 +4,7 @@
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.core.trashcan :as trashcan]
+            [cral.alfresco.model.alfresco.cm :as cm]
             [cral.alfresco.model.core :as model]
             [cral.core :refer :all]
             [cral.test-utils :as tu]
@@ -20,7 +21,7 @@
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create a node
-        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
         create-node-response (nodes/create-node ticket parent-id create-node-body)]
     ;; update node content
     (let [file-to-be-uploaded (File/createTempFile "tmp." ".txt")
