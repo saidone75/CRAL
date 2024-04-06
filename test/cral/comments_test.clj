@@ -3,6 +3,7 @@
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.comments :as comments]
             [cral.alfresco.core.nodes :as nodes]
+            [cral.alfresco.model.alfresco.cm :as cm]
             [cral.alfresco.model.core]
             [cral.alfresco.model.core :as model]
             [cral.test-utils :as tu])
@@ -14,7 +15,7 @@
 (deftest list-comments-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; create comment
         created-comment-id (get-in (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content (.toString (UUID/randomUUID))})]) [:body :entry :id])]
     ;; list comments
@@ -27,7 +28,7 @@
 (deftest create-comment-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])]
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; create comment
     (is (= (:status (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content (.toString (UUID/randomUUID))})])) 201))
     ;; clean up
@@ -36,7 +37,7 @@
 (deftest update-comment-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; create comment
         created-comment-id (get-in (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content (.toString (UUID/randomUUID))})]) [:body :entry :id])]
     (let [updated-comment-content (.toString (UUID/randomUUID))]
@@ -50,7 +51,7 @@
 (deftest delete-comment-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})) [:body :entry :id])
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; create comment
         created-comment-id (get-in (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content (.toString (UUID/randomUUID))})]) [:body :entry :id])]
     ;; delete comment
