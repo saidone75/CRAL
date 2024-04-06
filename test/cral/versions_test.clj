@@ -12,7 +12,6 @@
 (def password "admin")
 
 (deftest list-version-history-test
-  (println cm/type-content)
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; create node
         created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
