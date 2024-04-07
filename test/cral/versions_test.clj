@@ -42,7 +42,7 @@
         ;; get version information
         (let [get-version-information-response (versions/get-version-information ticket created-node-id (get-in (first (get-in version-history-response [:body :list :entries])) [:entry :id]))]
           (is (= (:status get-version-information-response 200)))
-          (is (= (get-in get-version-information-response [:body :entry :properties :cm:version-type]) "MAJOR")))))
+          (is (= (get-in get-version-information-response [:body :entry :properties cm/prop-version-type]) "MAJOR")))))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 

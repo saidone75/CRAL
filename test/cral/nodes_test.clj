@@ -63,7 +63,7 @@
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; create a folder
-        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:folder"})) [:body :entry :id])
+        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})) [:body :entry :id])
         ;; copy node into the new folder
         copy-node-body (model/map->CopyNodeBody {:target-parent-id new-parent-id :name (.toString (UUID/randomUUID))})
         copy-node-response (nodes/copy-node ticket created-node-id copy-node-body)]
@@ -101,7 +101,7 @@
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; create a new folder
-        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:folder"})) [:body :entry :id])
+        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})) [:body :entry :id])
         move-node-body (model/map->MoveNodeBody {:target-parent-id new-parent-id})
         ;; move node into the new folder
         move-node-response (nodes/move-node ticket created-node-id move-node-body)]
