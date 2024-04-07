@@ -162,7 +162,7 @@
         ;; create the target node
         target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; create association
-    (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type "rn:rendition"})])]
+    (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})])]
       ;; list secondary children
       (let [response (nodes/list-secondary-children ticket source-node-id)]
         (is (= (:status response) 200))
@@ -186,7 +186,7 @@
         ;; create the target node
         target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; create an association between source and target
-    (is (= (:status (nodes/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type "cm:references"})])) 201))
+    (is (= (:status (nodes/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type cm/assoc-references})])) 201))
     ;; list associations
     (let [response (nodes/list-target-assocs ticket source-node-id (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"}))
           entry (:entry (first (get-in response [:body :list :entries])))]
@@ -210,7 +210,7 @@
         ;; create the target node
         target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; create association
-    (is (= (:status (nodes/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type "cm:references"})])) 201))
+    (is (= (:status (nodes/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type cm/assoc-references})])) 201))
     ;; list associations
     (let [response (nodes/list-source-assocs ticket target-node-id (model/map->ListSourceAssocsQueryParams {:where "(assocType='cm:references')"}))
           entry (:entry (first (get-in response [:body :list :entries])))]
