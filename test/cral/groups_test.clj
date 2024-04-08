@@ -33,6 +33,13 @@
     ;; clean up
     (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))))
 
+(deftest get-group-details-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; get group details
+        get-group-details-response (groups/get-group-details ticket "GROUP_ALFRESCO_ADMINISTRATORS")]
+    (is (= (:status get-group-details-response) 200))
+    (is (get-in get-group-details-response [:body :entry :is-root]))))
+
 (deftest groups-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
