@@ -1,12 +1,14 @@
 (ns cral.versions-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.nodes :as nodes]
             [cral.alfresco.core.versions :as versions]
-            [cral.alfresco.model.core :as model]
             [cral.alfresco.model.alfresco.cm :as cm]
+            [cral.alfresco.model.core :as model]
             [cral.test-utils :as tu])
-  (:import (java.util UUID)))
+  (:import (java.io File)
+           (java.util UUID)))
 
 (def user "admin")
 (def password "admin")
@@ -62,3 +64,20 @@
     (is (= (count (get-in (versions/list-version-history ticket created-node-id) [:body :list :entries])) 1))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
+(deftest get-version-content-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create node
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+        file-content (.toString (UUID/randomUUID))]
+    (spit file-to-be-uploaded file-content)
+    ;; update the node content
+    (nodes/update-node-content ticket created-node-id file-to-be-uploaded)
+    ;; create 1.0 version
+    (nodes/update-node ticket created-node-id (model/map->UpdateNodeBody {:aspect-names [cm/asp-versionable]}))
+    ;; get 1.0 version content
+    (is (= (apply str (map char (:body (versions/get-version-content ticket created-node-id "1.0")))) file-content))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+    (io/delete-file file-to-be-uploaded)))

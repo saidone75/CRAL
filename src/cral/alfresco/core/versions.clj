@@ -47,3 +47,14 @@
     ticket
     {}
     opts))
+
+(defn get-version-content
+  "Gets the version content for **version-id** of file node **node-id**.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/getVersionContent)."
+  [^Ticket ticket ^String node-id ^String version-id]
+  (utils/call-rest
+    client/get
+    (format "%s/nodes/%s/versions/%s/content" (config/get-url 'core) node-id version-id)
+    ticket
+    {:as :byte-array}
+    {:return-headers true}))
