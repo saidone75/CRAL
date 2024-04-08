@@ -22,6 +22,17 @@
     (is (= (:status list-groups-response) 200))
     (is (not (empty? (get-in list-groups-response [:body :list :entries]))))))
 
+(deftest create-group-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        group-id (.toString (UUID/randomUUID))
+        ;; create group
+        create-group-response (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
+                                   (groups/create-group ticket))]
+    (is (= (:status create-group-response) 201))
+    (is (= (get-in create-group-response [:body :entry :display-name]) group-id))
+    ;; clean up
+    (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))))
+
 (deftest groups-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
