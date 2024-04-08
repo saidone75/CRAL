@@ -8,6 +8,20 @@
 (def user "admin")
 (def pass "admin")
 
+(deftest list-user-group-memberships-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; list user group membership
+        list-user-group-memberships-response (groups/list-user-group-memberships ticket "-me-")]
+    (is (= (:status list-user-group-memberships-response) 200))
+    (is (= (count (filter #(= (get-in % [:entry :id]) "GROUP_ALFRESCO_ADMINISTRATORS") (get-in list-user-group-memberships-response [:body :list :entries]))) 1))))
+
+(deftest list-groups-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; list groups
+        list-groups-response (groups/list-groups ticket)]
+    (is (= (:status list-groups-response) 200))
+    (is (not (empty? (get-in list-groups-response [:body :list :entries]))))))
+
 (deftest groups-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
