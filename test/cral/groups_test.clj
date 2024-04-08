@@ -40,6 +40,19 @@
     (is (= (:status get-group-details-response) 200))
     (is (get-in get-group-details-response [:body :entry :is-root]))))
 
+(deftest update-group-details-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        group-id (.toString (UUID/randomUUID))
+        ;; create group
+        _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
+               (groups/create-group ticket))
+        new-display-name (.toString (UUID/randomUUID))
+        ;; update group details
+        update-group-details-response (->> (model/map->UpdateGroupBody {:display-name new-display-name})
+                                           (groups/update-group-details ticket (format "GROUP_%s" group-id)))]
+    (is (= (:status update-group-details-response) 200))
+    (is (= (get-in update-group-details-response [:body :entry :display-name]) new-display-name))))
+
 (deftest groups-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
