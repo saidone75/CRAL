@@ -86,3 +86,10 @@
     ;; clean up
     (is (= (:status (groups/delete-group-membership ticket parent-group-id (str "GROUP_" group-id))) 204))
     (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))))
+
+(deftest list-group-memberships-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; list group membership
+        list-group-membership-response (groups/list-group-memberships ticket "GROUP_ALFRESCO_ADMINISTRATORS")]
+    (is (= (:status list-group-membership-response) 200))
+    (is (not (empty? (get-in list-group-membership-response [:body :list :entries]))))))
