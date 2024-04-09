@@ -93,3 +93,27 @@
         list-group-membership-response (groups/list-group-memberships ticket "GROUP_ALFRESCO_ADMINISTRATORS")]
     (is (= (:status list-group-membership-response) 200))
     (is (not (empty? (get-in list-group-membership-response [:body :list :entries]))))))
+
+(deftest delete-group-membership-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
+        group-id (.toString (UUID/randomUUID))
+        ;; create group
+        _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
+               (groups/create-group ticket))]
+    ;; create group membership
+    (is (= (:status (->> (model/map->CreateGroupMembershipBody {:id (str "GROUP_" group-id) :member-type "GROUP"})
+                         (groups/create-group-membership ticket parent-group-id))) 201))
+    ;; ensure that the group membership has been created
+    (loop [list-group-membership-response (groups/list-group-memberships ticket parent-group-id)]
+      (if-not (= true
+                 (->> (get-in list-group-membership-response [:body :list :entries])
+                      (map #(get-in % [:entry :display-name]))
+                      (some #(= group-id %))))
+        (do
+          (Thread/sleep 100)
+          (recur (groups/list-group-memberships ticket parent-group-id)))))
+    ;; delete group membership
+    (is (= (:status (groups/delete-group-membership ticket parent-group-id (str "GROUP_" group-id))) 204))
+    ;; clean up
+    (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))))
