@@ -51,7 +51,18 @@
         update-group-details-response (->> (model/map->UpdateGroupBody {:display-name new-display-name})
                                            (groups/update-group-details ticket (format "GROUP_%s" group-id)))]
     (is (= (:status update-group-details-response) 200))
-    (is (= (get-in update-group-details-response [:body :entry :display-name]) new-display-name))))
+    (is (= (get-in update-group-details-response [:body :entry :display-name]) new-display-name))
+    ;; clean up
+    (is (= (:status (groups/delete-group ticket (format "GROUP_%s" group-id))) 204))))
+
+(deftest delete-group-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        group-id (.toString (UUID/randomUUID))
+        ;; create group
+        create-group-response (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
+                                   (groups/create-group ticket))]
+    ;; delete group
+    (is (= (:status (groups/delete-group ticket (get-in create-group-response [:body :entry :id]))) 204))))
 
 (deftest groups-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
