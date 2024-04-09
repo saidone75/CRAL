@@ -17,7 +17,7 @@
 
 (timbre/set-config! {:min-level :info})
 
-(deftest get-node
+(deftest get-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         guest-home-id (tu/get-guest-home ticket)]
     ;; well known fields for query parameters defined in GetNodeQueryParams
@@ -25,19 +25,30 @@
     ;; but plain maps can be used as well
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket guest-home-id {:include ["path" "permissions"]}) [:body :entry])) [:path :permissions])))))
 
-(deftest update-node
+(deftest update-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create a node
-        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
-        node-id (get-in (nodes/create-node ticket parent-id create-node-body) [:body :entry :id])
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket parent-id)
+                             (#(get-in % [:body :entry :id])))
         new-name (.toString (UUID/randomUUID))]
     ;; update node with the new name
-    (nodes/update-node ticket node-id (model/map->UpdateNodeBody {:name new-name}))
+    (nodes/update-node ticket created-node-id (model/map->UpdateNodeBody {:name new-name}))
     ;; check if name has been updated
-    (is (= (get-in (nodes/get-node ticket node-id) [:body :entry :name]) new-name))
+    (is (= (get-in (nodes/get-node ticket created-node-id) [:body :entry :name]) new-name))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
+(deftest delete-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        parent-id (tu/get-guest-home ticket)
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket parent-id)
+                             (#(get-in % [:body :entry :id])))]
+    ;; delete node
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
 (deftest list-node-children
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
