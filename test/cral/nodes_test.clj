@@ -66,6 +66,72 @@
     ;; delete node
     (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))) 204))))
 
+(deftest copy-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        parent-id (tu/get-guest-home ticket)
+        ;; create a node
+        created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
+        ;; create a folder
+        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})) [:body :entry :id])
+        ;; copy node into the new folder
+        copy-node-response (->> (model/map->CopyNodeBody {:target-parent-id new-parent-id :name (.toString (UUID/randomUUID))})
+                                (nodes/copy-node ticket created-node-id))]
+    (is (= (:status copy-node-response) 201))
+    (is (= (get-in copy-node-response [:body :entry :parent-id]) new-parent-id))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
+
+(deftest lock-node-test
+  (let
+    [ticket (get-in (auth/create-ticket user password) [:body :entry])
+     ;; create a node
+     created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                          (nodes/create-node ticket (tu/get-guest-home ticket))
+                          (#(get-in % [:body :entry :id])))]
+    ;; lock the node
+    (is (= (:status (->> (model/map->LockNodeBody {:time-to-expire 0 :type "ALLOW_OWNER_CHANGES" :lifetime "PERSISTENT"})
+                         (nodes/lock-node ticket created-node-id))) 200))
+    (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime])))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
+(deftest unlock-node-test
+  (let
+    [ticket (get-in (auth/create-ticket user password) [:body :entry])
+     ;; create a node
+     created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                          (nodes/create-node ticket (tu/get-guest-home ticket))
+                          (#(get-in % [:body :entry :id])))]
+    ;; lock the node
+    (is (= (:status (->> (model/map->LockNodeBody {:time-to-expire 0 :type "ALLOW_OWNER_CHANGES" :lifetime "PERSISTENT"})
+                         (nodes/lock-node ticket created-node-id))) 200))
+    (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime])))
+    ;; unlock the node
+    (is (= (:status (nodes/unlock-node ticket created-node-id)) 200))
+    (is (every? false? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime])))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
+(deftest move-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a new folder
+        new-parent-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})
+                           (nodes/create-node ticket (tu/get-guest-home ticket))
+                           (#(get-in % [:body :entry :id])))
+        ;; move node into the new folder
+        move-node-response (->> (model/map->MoveNodeBody {:target-parent-id new-parent-id})
+                                (nodes/move-node ticket created-node-id))]
+    (is (= (:status move-node-response) 200))
+    ;; check if the node has been moved
+    (is (= (get-in move-node-response [:body :entry :parent-id]) new-parent-id))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
+
 (deftest create-then-delete-node
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
@@ -75,22 +141,6 @@
     (is (= (:status create-node-response) 201))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))) 204))))
-
-(deftest copy-node
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
-        ;; create a node
-        created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
-        ;; create a folder
-        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})) [:body :entry :id])
-        ;; copy node into the new folder
-        copy-node-body (model/map->CopyNodeBody {:target-parent-id new-parent-id :name (.toString (UUID/randomUUID))})
-        copy-node-response (nodes/copy-node ticket created-node-id copy-node-body)]
-    ;; check if node has been copied
-    (is (= (get-in copy-node-response [:body :entry :parent-id]) new-parent-id))
-    ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
 
 (deftest lock-then-unlock-node
   (let
