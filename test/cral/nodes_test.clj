@@ -42,21 +42,29 @@
 
 (deftest delete-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
-                             (nodes/create-node ticket parent-id)
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
                              (#(get-in % [:body :entry :id])))]
     ;; delete node
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
-(deftest list-node-children
+(deftest list-node-children-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         company-home-id (get-in (nodes/get-node ticket "-root-") [:body :entry :id])
         list-node-children-response (nodes/list-node-children ticket company-home-id)]
     (is (= (:status list-node-children-response) 200))
     (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
     (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
+
+(deftest create-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        create-node-response (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                                  (nodes/create-node ticket (tu/get-guest-home ticket)))]
+    (is (= (:status create-node-response) 201))
+    ;; delete node
+    (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))) 204))))
 
 (deftest create-then-delete-node
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
