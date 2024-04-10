@@ -82,6 +82,20 @@
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
 
+(deftest lock-node-test
+  (let
+    [ticket (get-in (auth/create-ticket user password) [:body :entry])
+     ;; create a node
+     created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                          (nodes/create-node ticket (tu/get-guest-home ticket))
+                          (#(get-in % [:body :entry :id])))]
+    ;; lock the node
+    (is (= (:status (->> (model/map->LockNodeBody {:time-to-expire 0 :type "ALLOW_OWNER_CHANGES" :lifetime "PERSISTENT"})
+                         (nodes/lock-node ticket created-node-id))) 200))
+    (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime])))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
 (deftest create-then-delete-node
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
