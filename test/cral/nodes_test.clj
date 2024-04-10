@@ -132,6 +132,36 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
 
+(deftest get-node-content-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a temp file
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
+    (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
+    ;; update the node content
+    (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded) 200)))
+    (let [;; get node content
+          response (nodes/get-node-content ticket created-node-id)
+          ;; download content from the node
+          downloaded-file (->> response
+                               (#(get-in % [:headers "content-disposition"]))
+                               (#(second (re-matches #".*\"([^\"]+)\".*" (second (str/split % #";")))))
+                               (#(File. (str (System/getProperty "java.io.tmpdir") "/" %)))
+                               (#(with-open [w (clojure.java.io/output-stream %)]
+                                   (.write w (bytes (:body response)))
+                                   %)))]
+      (is (= (:status response) 200))
+      ;; check if the content is the same of the uploaded file
+      (is (= (apply str (map char (:body response))) (slurp (.getPath file-to-be-uploaded))))
+      (is (= (slurp (.getPath file-to-be-uploaded))) (slurp (.getPath downloaded-file)))
+      ;;clean up
+      (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+      (io/delete-file file-to-be-uploaded)
+      (io/delete-file downloaded-file))))
+
 (deftest create-then-delete-node
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
