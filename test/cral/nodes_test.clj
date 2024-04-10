@@ -113,6 +113,25 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
+(deftest move-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a new folder
+        new-parent-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})
+                           (nodes/create-node ticket (tu/get-guest-home ticket))
+                           (#(get-in % [:body :entry :id])))
+        ;; move node into the new folder
+        move-node-response (->> (model/map->MoveNodeBody {:target-parent-id new-parent-id})
+                                (nodes/move-node ticket created-node-id))]
+    (is (= (:status move-node-response) 200))
+    ;; check if the node has been moved
+    (is (= (get-in move-node-response [:body :entry :parent-id]) new-parent-id))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
+
 (deftest create-then-delete-node
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
