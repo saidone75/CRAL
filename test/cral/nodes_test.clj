@@ -201,24 +201,28 @@
     (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
-(deftest create-then-list-secondary-child
+(deftest list-secondary-children-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
-        source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
         ;; create the target node
-        target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
-    ;; create association
-    (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})])]
-      ;; list secondary children
-      (let [response (nodes/list-secondary-children ticket source-node-id)]
-        (is (= (:status response) 200))
-        ;; check for target-node-id
-        (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :id]) target-node-id)))
-      ;; clean up
-      (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-      (is (= (:status (nodes/delete-node ticket target-node-id)) 204))
-      response)))
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
+    ;; create secondary child
+    (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
+                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+    ;; list secondary children
+    (let [response (nodes/list-secondary-children ticket source-node-id)]
+      (is (= (:status response) 200))
+      ;; check for target-node-id
+      (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :id]) target-node-id)))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
 (deftest list-parents
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
