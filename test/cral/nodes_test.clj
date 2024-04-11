@@ -201,29 +201,79 @@
     (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
-(deftest create-then-list-secondary-child
+(deftest list-secondary-children-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
-        source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
         ;; create the target node
-        target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
-    ;; create association
-    (let [response (nodes/create-secondary-child ticket source-node-id [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})])]
-      ;; list secondary children
-      (let [response (nodes/list-secondary-children ticket source-node-id)]
-        (is (= (:status response) 200))
-        ;; check for target-node-id
-        (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :id]) target-node-id)))
-      ;; clean up
-      (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-      (is (= (:status (nodes/delete-node ticket target-node-id)) 204))
-      response)))
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
+    ;; create secondary child
+    (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
+                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+    ;; list secondary children
+    (let [response (nodes/list-secondary-children ticket source-node-id)]
+      (is (= (:status response) 200))
+      ;; check for target-node-id
+      (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :id]) target-node-id)))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
-(deftest list-parents
+(deftest delete-secondary-child-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        node-id (tu/get-guest-home ticket)]
-    (is (= (get-in (first (get-in (nodes/list-parents ticket node-id) [:body :list :entries])) [:entry :name]) "Company Home"))))
+        parent-id (tu/get-guest-home ticket)
+        ;; create the source node
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
+        ;; create the target node
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
+    ;; create secondary child
+    (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
+                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+    ;; check for target-node-id
+    (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
+    ;; delete secondary child
+    (is (= (:status (nodes/delete-secondary-child ticket source-node-id target-node-id)) 204))
+    ;; check children count
+    (is (= (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :pagination :count]) 0))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+
+(deftest list-parents-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
+    (is (= (get-in (first (get-in (nodes/list-parents ticket (tu/get-guest-home ticket)) [:body :list :entries])) [:entry :name]) "Company Home"))))
+
+(deftest create-node-assocs-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        parent-id (tu/get-guest-home ticket)
+        ;; create the source node
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
+        ;; create the target node
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
+    ;; create an association between source and target
+    (is (= (:status (->> [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type cm/assoc-references})]
+                         (nodes/create-node-assocs ticket source-node-id))) 201))
+    ;; list associations
+    (let [response (->> (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"})
+                        (nodes/list-target-assocs ticket source-node-id))]
+      (is (= (:status response) 200))
+      (is (some #(= % target-node-id) (map #(get-in % [:entry :id]) (get-in response [:body :list :entries])))))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
 (deftest create-then-list-then-delete-node-assocs
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
