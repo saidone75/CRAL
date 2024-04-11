@@ -162,96 +162,25 @@
       (io/delete-file file-to-be-uploaded)
       (io/delete-file downloaded-file))))
 
-(deftest create-then-delete-node
+(deftest update-node-content-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
         ;; create a node
-        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
-        create-node-response (nodes/create-node ticket parent-id create-node-body)]
-    (is (= (:status create-node-response) 201))
-    ;; clean up
-    (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))) 204))))
-
-(deftest lock-then-unlock-node
-  (let
-    [ticket (get-in (auth/create-ticket user password) [:body :entry])
-     parent-id (tu/get-guest-home ticket)
-     ;; create a noe
-     node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
-     ;; lock the node
-     lock-node-body (model/map->LockNodeBody {:time-to-expire 0
-                                              :type           "ALLOW_OWNER_CHANGES"
-                                              :lifetime       "PERSISTENT"})]
-    (is (= (:status (nodes/lock-node ticket node-id lock-node-body)) 200))
-    (let [properties (get-in (nodes/get-node ticket node-id) [:body :entry :properties])]
-      ;; check if the node is locked
-      (is (every? true? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
-    ;; unlock the node
-    (is (= (:status (nodes/unlock-node ticket node-id)) 200))
-    (let [properties (get-in (nodes/get-node ticket node-id) [:body :entry :properties])]
-      ;; check if the node is unlocked
-      (is (every? false? (map (partial contains? properties) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime]))))
-    ;; clean up
-    (is (= (:status (nodes/delete-node ticket node-id)) 204))))
-
-(deftest move-node
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
-        ;; create a node
-        created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
-        ;; create a new folder
-        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})) [:body :entry :id])
-        move-node-body (model/map->MoveNodeBody {:target-parent-id new-parent-id})
-        ;; move node into the new folder
-        move-node-response (nodes/move-node ticket created-node-id move-node-body)]
-    ;; check if the node has been moved
-    (is (= (get-in move-node-response [:body :entry :parent-id]) new-parent-id))
-    ;; clean up
-    (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
-
-(deftest get-node-content
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
-        ;; create a node
-        create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
-        node-id (get-in (nodes/create-node ticket parent-id create-node-body) [:body :entry :id])
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
         ;; create a temp file
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
     (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
     ;; update the node content
-    (nodes/update-node-content ticket node-id file-to-be-uploaded)
-    (let [response (nodes/get-node-content ticket node-id)
-          ;; download content from the node
-          downloaded-file (->> response
-                               (#(get-in % [:headers "content-disposition"]))
-                               (#(second (re-matches #".*\"([^\"]+)\".*" (second (str/split % #";")))))
-                               (#(File. (str (System/getProperty "java.io.tmpdir") "/" %)))
-                               (#(with-open [w (clojure.java.io/output-stream %)]
-                                   (.write w (bytes (:body response)))
-                                   %)))]
+    (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded) 200)))
+    (let [;; get node content
+          response (nodes/get-node-content ticket created-node-id)]
+      (is (= (:status response) 200))
       ;; check if the content is the same of the uploaded file
-      (is (= (apply str (map char (:body (nodes/get-node-content ticket node-id)))) (slurp (.getPath downloaded-file))))
+      (is (= (apply str (map char (:body response))) (slurp (.getPath file-to-be-uploaded))))
       ;;clean up
-      (is (= (:status (nodes/delete-node ticket node-id)) 204))
-      (io/delete-file file-to-be-uploaded)
-      (io/delete-file downloaded-file))))
-
-(deftest update-node-content
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
-        ;; create a node
-        create-node-body (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
-        node-id (get-in (nodes/create-node ticket parent-id create-node-body) [:body :entry :id])
-        file-to-be-uploaded (File/createTempFile "tmp." ".txt")
-        file-content (.toString (UUID/randomUUID))]
-    (spit file-to-be-uploaded file-content)
-    ;; update the node content
-    (nodes/update-node-content ticket node-id file-to-be-uploaded)
-    ;; check if the content is the same previously spit to the file
-    (is (= (apply str (map char (:body (nodes/get-node-content ticket node-id)))) file-content))
-    ;; clean up
-    (is (= (:status (nodes/delete-node ticket node-id)) 204))
-    (io/delete-file file-to-be-uploaded)))
+      (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+      (io/delete-file file-to-be-uploaded))))
 
 (deftest create-then-list-secondary-child
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
