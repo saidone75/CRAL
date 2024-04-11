@@ -182,6 +182,25 @@
       (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
       (io/delete-file file-to-be-uploaded))))
 
+(deftest create-secondary-child-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        parent-id (tu/get-guest-home ticket)
+        ;; create the source node
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
+        ;; create the target node
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
+    ;; create secondary child
+    (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
+                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+    (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+
 (deftest create-then-list-secondary-child
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
