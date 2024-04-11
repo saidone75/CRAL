@@ -248,10 +248,9 @@
     (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
-(deftest list-parents
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        node-id (tu/get-guest-home ticket)]
-    (is (= (get-in (first (get-in (nodes/list-parents ticket node-id) [:body :list :entries])) [:entry :name]) "Company Home"))))
+(deftest list-parents-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
+    (is (= (get-in (first (get-in (nodes/list-parents ticket (tu/get-guest-home ticket)) [:body :list :entries])) [:entry :name]) "Company Home"))))
 
 (deftest create-then-list-then-delete-node-assocs
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
