@@ -224,6 +224,30 @@
     (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
+(deftest delete-secondary-child-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        parent-id (tu/get-guest-home ticket)
+        ;; create the source node
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
+        ;; create the target node
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
+    ;; create secondary child
+    (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
+                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+    ;; check for target-node-id
+    (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
+    ;; delete secondary child
+    (is (= (:status (nodes/delete-secondary-child ticket source-node-id target-node-id)) 204))
+    ;; check children count
+    (is (= (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :pagination :count]) 0))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+
 (deftest list-parents
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         node-id (tu/get-guest-home ticket)]
