@@ -252,6 +252,29 @@
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
     (is (= (get-in (first (get-in (nodes/list-parents ticket (tu/get-guest-home ticket)) [:body :list :entries])) [:entry :name]) "Company Home"))))
 
+(deftest create-node-assocs-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        parent-id (tu/get-guest-home ticket)
+        ;; create the source node
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
+        ;; create the target node
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
+    ;; create an association between source and target
+    (is (= (:status (->> [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type cm/assoc-references})]
+                         (nodes/create-node-assocs ticket source-node-id))) 201))
+    ;; list associations
+    (let [response (->> (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"})
+                        (nodes/list-target-assocs ticket source-node-id))]
+      (is (= (:status response) 200))
+      (is (some #(= % target-node-id) (map #(get-in % [:entry :id]) (get-in response [:body :list :entries])))))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+
 (deftest create-then-list-then-delete-node-assocs
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
