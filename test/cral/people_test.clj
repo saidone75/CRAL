@@ -6,6 +6,18 @@
 (def user "admin")
 (def pass "admin")
 
+;; TODO
+(deftest create-person-test)
+
+;; TODO
+(deftest list-people-test)
+
+;; TODO
+(deftest get-person-test)
+
+;; TODO
+(deftest update-person-test)
+
 (deftest people-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])]
     ;; list people
