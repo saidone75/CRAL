@@ -296,7 +296,6 @@
     (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
-;; TODO
 (deftest delete-node-assocs-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
@@ -323,53 +322,24 @@
     (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
 
-;; TODO
-(deftest list-source-assocs-test)
-
-(deftest create-then-list-then-delete-node-assocs
+(deftest list-source-assocs-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
-        source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
+        source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))
         ;; create the target node
-        target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
+        target-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                            (nodes/create-node ticket parent-id)
+                            (#(get-in % [:body :entry :id])))]
     ;; create an association between source and target
-    (is (= (:status (nodes/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type cm/assoc-references})])) 201))
-    ;; list associations
-    (let [response (nodes/list-target-assocs ticket source-node-id (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"}))
-          entry (:entry (first (get-in response [:body :list :entries])))]
-      (is (= (:status response) 200))
-      (is (= "cm:references") (get-in entry [:association :assoc-type])))
-    ;; delete the association
-    (is (= (:status (nodes/delete-node-assocs ticket source-node-id target-node-id)) 204))
-    ;; check if association has been deleted
-    (let [response (nodes/list-target-assocs ticket source-node-id (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"}))]
-      (is (= (:status response) 200))
-      (is (empty? (get-in response [:body :list :pagination :entries]))))
-    ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
-
-(deftest create-then-list-then-delete-source-assocs
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
-        ;; create the source node
-        source-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
-        ;; create the target node
-        target-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
-    ;; create association
-    (is (= (:status (nodes/create-node-assocs ticket source-node-id [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type cm/assoc-references})])) 201))
-    ;; list associations
-    (let [response (nodes/list-source-assocs ticket target-node-id (model/map->ListSourceAssocsQueryParams {:where "(assocType='cm:references')"}))
-          entry (:entry (first (get-in response [:body :list :entries])))]
-      (is (= (:status response) 200))
-      (is (= (get-in entry [:association :assoc-type]) "cm:references")))
-    ;; delete association
-    (is (= (:status (nodes/delete-node-assocs ticket source-node-id target-node-id)) 204))
-    ;; check if association has been deleted
-    (let [response (nodes/list-source-assocs ticket source-node-id (model/map->ListSourceAssocsQueryParams {:where "(assocType='cm:references')"}))]
-      (is (= (:status response) 200))
-      (is (empty? (get-in response [:body :list :pagination :entries]))))
+    (is (= (:status (->> [(model/map->CreateNodeAssocsBody {:target-id target-node-id :assoc-type cm/assoc-references})]
+                         (nodes/create-node-assocs ticket source-node-id))) 201))
+    ;; check source association
+    (is (not (empty? (->> (model/map->ListSourceAssocsQueryParams {:where "(assocType='cm:references')"})
+                          (nodes/list-source-assocs ticket target-node-id)
+                          (#(get-in % [:body :list :entries]))))))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
     (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
