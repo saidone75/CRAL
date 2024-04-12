@@ -1,4 +1,4 @@
-(defproject org.saidone/cral "0.2.1"
+(defproject org.saidone/cral "0.2.2"
   :description "A library for consuming Alfresco Content Services public REST API"
   :url "https://saidone.org"
   :license {:name "GNU General Public License v3.0"
