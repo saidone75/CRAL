@@ -12,7 +12,10 @@
                                      GetDownloadQueryParams)))
 
 (defn create-download
-  "Creates a new download node asynchronously, the content of which will be the zipped content of the **node-ids** specified in the JSON body.
+  "Creates a new download node asynchronously, the content of which will be the zipped content of the **node-ids** specified in the `body` like this:
+  ```clojure
+  (model/->CreateDownloadBody [\"514ddb33-c5ae-4f7f-a3b2-7ec529f57d54\" \"24c440c8-e015-4879-aeb3-ac3d03dd1440\"])
+  ```
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/downloads/createDownload)."
   ([^Ticket ticket ^CreateDownloadBody body]
    (create-download ticket body nil))
@@ -27,7 +30,7 @@
      opts)))
 
 (defn get-download
-  "Retrieve status information for download node **download-id**.
+  "Retrieve status information for download node `download-id`.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/downloads/getDownload)."
   ([^Ticket ticket ^String download-id]
    (get-download ticket download-id nil))
