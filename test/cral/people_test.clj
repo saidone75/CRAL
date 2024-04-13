@@ -18,8 +18,12 @@
     ;; check if "saidone" has been created
     (is (some #(= "saidone" %) (map #(get-in % [:entry :id]) (get-in (people/list-people ticket) [:body :list :entries]))))))
 
-;; TODO
-(deftest list-people-test)
+(deftest list-people-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; list people
+        list-people-response (people/list-people ticket)]
+    (is (= (:status list-people-response) 200))
+    (is (some #(= "admin" %) (map #(get-in % [:entry :id]) (get-in list-people-response [:body :list :entries]))))))
 
 ;; TODO
 (deftest get-person-test)
