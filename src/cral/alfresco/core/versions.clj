@@ -37,7 +37,7 @@
   "Delete the version identified by `version-id` and `node-id`.
   If the version is successfully deleted then the content and metadata for that versioned node will be deleted and will no longer appear in the version history. This operation cannot be undone.
   If the most recent version is deleted the live node will revert to the next most recent version.
-  We currently do not allow the last version to be deleted. If you wish to clear the history then you can remove the **cm:versionable** aspect (via [[update-node]]) which will also disable versioning.
+  We currently do not allow the last version to be deleted. If you wish to clear the history then you can remove the **cm:versionable** aspect (via [[cral.alfresco.core.nodes/update-node]]) which will also disable versioning.
   In this case, you can re-enable versioning by adding back the **cm:versionable** aspect or using the version params (major-version and comment) on a subsequent file content update.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/deleteVersion)."
   [^Ticket ticket ^String node-id ^String version-id & [^PersistentHashMap opts]]
