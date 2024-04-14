@@ -10,8 +10,8 @@
            (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams EmailSharedLinkBody GetSharedLinkContentQueryParams ListSharedLinksQueryParams)))
 
 (defn create-shared-link
-  "Create a shared link to the file **node-id** in the request body. Also, an optional expiry date could be set,
-  so the shared link would become invalid when the expiry date is reached.
+  "Create a shared link to the file **node-id** in the request `body`. Also, an optional expiry date could be set,
+  so the shared link would become invalid when the expiry date is reached.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/createSharedLink)."
   ([^Ticket ticket ^CreateSharedLinkBody body]
    (create-shared-link ticket body nil))
@@ -27,8 +27,8 @@
 
 (defn list-shared-links
   "Get a list of links that the current user has read permission on source node.
-  The list is ordered in descending modified order.
-  **Note:** The list of links is eventually consistent so newly created shared links may not appear immediately.
+  The list is ordered in descending modified order.\\
+  **Note:** The list of links is eventually consistent so newly created shared links may not appear immediately.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/listSharedLinks)."
   ([^Ticket ticket]
    (list-shared-links ticket nil))
@@ -41,8 +41,8 @@
      opts)))
 
 (defn get-shared-link
-  "Gets minimal information for the file with shared link identifier **shared-id**.
-  **Note:** No authentication is required to call this endpoint.
+  "Gets minimal information for the file with shared link identifier `shared-id`.\\
+  **Note:** No authentication is required to call this endpoint.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/listSharedLinks)."
   ([^String shared-id]
    (get-shared-link shared-id nil))
@@ -55,7 +55,7 @@
      opts)))
 
 (defn delete-shared-link
-  "Deletes the shared link with identifier **shared-id**.
+  "Deletes the shared link with identifier `shared-id`.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/deleteSharedLink)."
   [^Ticket ticket ^String shared-id & [^PersistentHashMap opts]]
   (utils/call-rest
@@ -66,8 +66,8 @@
     opts))
 
 (defn get-shared-link-content
-  "Gets the content of the file with shared link identifier **shared-id**.
-  **Note:** No authentication is required to call this endpoint.
+  "Gets the content of the file with shared link identifier `shared-id`.\\
+  **Note:** No authentication is required to call this endpoint.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/getSharedLinkContent)."
   ([^String shared-id]
    (get-shared-link-content shared-id nil nil {:return-headers true}))
@@ -80,8 +80,8 @@
      opts)))
 
 (defn email-shared-link
-  "Sends email with app-specific url including identifier **shared-id**.
-  The client and recipient-emails properties are mandatory in the request body.
+  "Sends email with app-specific url including identifier `shared-id`.
+  The client and recipient-emails properties are mandatory in the request body.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/emailSharedLink)."
   [^Ticket ticket ^String shared-id ^EmailSharedLinkBody body & [^PersistentHashMap opts]]
   (utils/call-rest

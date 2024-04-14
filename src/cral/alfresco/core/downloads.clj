@@ -30,7 +30,7 @@
      opts)))
 
 (defn get-download
-  "Retrieve status information for download node `download-id`.
+  "Retrieve status information for download node `download-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/downloads/getDownload)."
   ([^Ticket ticket ^String download-id]
    (get-download ticket download-id nil))
@@ -43,11 +43,11 @@
      opts)))
 
 (defn delete-download
-  "Cancels the creation of a download request.
-  **Note:** The download node can be deleted using [[nodes/delete-node]].
+  "Cancels the creation of a download request.\\
+  **Note:** The download node can be deleted using [[nodes/delete-node]].\\
   By default, if the download node is not deleted it will be picked up by a cleaner job which removes download nodes older than a configurable amount of time (default is 1 hour).
   Information about the existing progress at the time of cancelling can be retrieved by calling the [[get-download]] function.
-  The cancel operation is done asynchronously.
+  The cancel operation is done asynchronously.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/downloads/cancelDownload)."
   [^Ticket ticket ^String download-id & [^PersistentHashMap opts]]
   (utils/call-rest

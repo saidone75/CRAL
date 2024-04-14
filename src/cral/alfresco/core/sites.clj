@@ -17,8 +17,8 @@
                                      UpdateSiteQueryParams)))
 
 (defn list-site-membership-requests
-  "Gets a list of the current site membership requests for person **person-id**.
-  You can use the `-me-` string in place of `person-id` to specify the currently authenticated user.
+  "Gets a list of the current site membership requests for person `person-id`.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMembershipRequestsForPerson)."
   ([^Ticket ticket ^String person-id]
    (list-site-membership-requests ticket person-id nil))
@@ -32,7 +32,7 @@
 
 (defn list-sites
   "Gets a list of sites in this repository.
-  You can use the **where** parameter to filter the returned sites by **visibility** or site **preset**.
+  You can use the **where** parameter in `query-params` to filter the returned sites by visibility or site preset.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSites)."
   ([^Ticket ticket]
    (list-sites ticket nil))
@@ -46,8 +46,8 @@
 
 (defn create-site
   "Creates a default site with the given details. Unless explicitly specified, the site id will be generated from the site title.
-  The site id must be unique and only contain alphanumeric and/or dash characters.
-  **Note:** the id of a site cannot be updated once the site has been created.
+  The site id must be unique and only contain alphanumeric and/or dash characters.\\
+  **Note:** the id of a site cannot be updated once the site has been created.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSite)."
   ([^Ticket ticket ^CreateSiteBody body]
    (create-site ticket body nil))
@@ -62,12 +62,12 @@
      opts)))
 
 (defn get-site
-  "Gets information for site **site-id**.
-  You can use the **relations** parameter to include one or more relate entities in a single response and so reduce network traffic.
+  "Gets information for site `site-id`.
+  You can use the **relations** parameter in `query-params` to include one or more relate entities in a single response and so reduce network traffic.
   The entity types in Alfresco are organized in a tree structure.
   The **sites** entity has two children, **containers** and **members**.
-  The following relations parameter returns all the container and member objects related to the site **site-id**:
-  `containers,members`
+  The following relations parameter returns all the container and member objects related to the site `site-id`:
+  `containers,members`\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSite)."
   ([^Ticket ticket ^String site-id]
    (get-site ticket site-id nil))
@@ -80,8 +80,8 @@
      opts)))
 
 (defn update-site
-  "Update the details for the given site **site-id**. Site Manager or otherwise a (site) admin can update title, description or visibility.
-  **Note:** the id of a site cannot be updated once the site has been created.
+  "Update the details for the given site `site-id`. Site Manager or otherwise a (site) admin can update title, description or visibility.\\
+  **Note:** the id of a site cannot be updated once the site has been created.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSite)."
   ([^Ticket ticket ^String site-id ^UpdateSiteBody body]
    (update-site ticket site-id body nil))
@@ -96,7 +96,7 @@
      opts)))
 
 (defn delete-site
-  "Deletes the site with **site-id**
+  "Deletes the site with `site-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSite)."
   ([^Ticket ticket ^String site-id]
    (delete-site ticket site-id nil))
