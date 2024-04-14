@@ -241,7 +241,7 @@
 
 (defn list-parents
   "Gets a list of parent nodes that are associated with the current child `node-id`.
-  The list includes both the primary parent and any secondary parents.
+  The list includes both the primary parent and any secondary parents.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/listParents)."
   ([^Ticket ticket ^String node-id]
    (list-parents ticket node-id nil))
@@ -254,7 +254,7 @@
      opts)))
 
 (defn create-node-assocs
-  "Create an association, with the given association type, between the source `node-id` and a target node.
+  "Create an association, with the given association type, between the source `node-id` and a target node.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/createAssociation)."
   ([^Ticket ticket ^String node-id ^PersistentVector body]
    (create-node-assocs ticket node-id body nil))
@@ -269,7 +269,7 @@
      opts)))
 
 (defn list-target-assocs
-  "Gets a list of target nodes that are associated with the current source `node-id`.
+  "Gets a list of target nodes that are associated with the current source `node-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/listTargetAssociations)."
   ([^Ticket ticket ^String node-id]
    (list-target-assocs ticket node-id nil))
@@ -283,8 +283,8 @@
 
 (defn delete-node-assocs
   "Delete an association, or associations, from the source `node-id` to a target node for the given association type.
-  If the association type is not specified, then all peer associations, of any type, in the direction from source to target, will be deleted.
-  **Note:** After removal of the peer association, or associations, from source to target, the two nodes may still have peer associations in the other direction.
+  If the association type is not specified, then all peer associations, of any type, in the direction from source to target, will be deleted.\\
+  **Note:** After removal of the peer association, or associations, from source to target, the two nodes may still have peer associations in the other direction.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/deleteAssociation)."
   ([^Ticket ticket ^String node-id ^String target-id]
    (delete-node-assocs ticket node-id target-id nil))
@@ -297,7 +297,7 @@
      opts)))
 
 (defn list-source-assocs
-  "Gets a list of source nodes that are associated with the current target `node-id`.
+  "Gets a list of source nodes that are associated with the current target `node-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/listSourceAssociations)."
   ([^Ticket ticket ^String node-id]
    (list-source-assocs ticket node-id nil))
