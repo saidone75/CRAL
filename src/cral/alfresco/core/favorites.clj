@@ -10,8 +10,8 @@
            (cral.alfresco.model.core CreateFavoriteQueryParams GetFavoriteQueryParams ListFavoritesQueryParams)))
 
 (defn list-favorites
-  "Gets a list of favorites for person **person-id**.
-  You can use the **-me-** string in place of **person-id** to specify the currently authenticated user.
+  "Gets a list of favorites for person `person-id`.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/favorites/listFavorites)."
   ([^Ticket ticket ^String person-id]
    (list-favorites ticket person-id nil))
@@ -25,7 +25,7 @@
 
 (defn create-favorite
   "Favorite a site, file, or folder in the repository.
-  You can use the **-me-** string in place of **person-id** to specify the currently authenticated user.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/favorites/createFavorite)."
   ([^Ticket ticket ^String person-id ^PersistentVector body]
    (create-favorite ticket person-id body nil))
@@ -40,8 +40,8 @@
      opts)))
 
 (defn get-favorite
-  "Gets favorite **favorite-id** for person **person-id**.
-  You can use the **-me-** string in place of **person-id** to specify the currently authenticated user.
+  "Gets favorite `favorite-id` for person `person-id`.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/favorites/getFavorite)."
   ([^Ticket ticket ^String person-id ^String favorite-id]
    (get-favorite ticket person-id favorite-id nil))
@@ -54,8 +54,8 @@
      opts)))
 
 (defn delete-favorite
-  "Deletes **favorite-id** as a favorite of person **person-id**.
-  You can use the **-me-** string in place of **person-id** to specify the currently authenticated user.
+  "Deletes `favorite-id` as a favorite of person `person-id`.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/favorites/deleteFavorite)."
   [^Ticket ticket ^String person-id ^String favorite-id & [^PersistentHashMap opts]]
   (utils/call-rest
