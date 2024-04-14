@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [cral.alfresco.auth :as auth]
             [cral.alfresco.core.people :as people]
-            [cral.alfresco.model.core :as model]))
+            [cral.alfresco.model.core :as model])
+  (:import (java.util UUID)))
 
 (def user "admin")
 (def pass "admin")
@@ -39,19 +40,23 @@
     (is (= (:status get-person-response) 200))
     (is (= (get-in get-person-response [:body :entry :id]) saidone))))
 
-;; TODO
-(deftest update-person-test)
-
-;; old tests
-(deftest people-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])]
-    ;; list people
-    (let [list-people-response (people/list-people ticket {})]
-      (is (= (:status list-people-response) 200))
-      (is (some #(= user %) (->> list-people-response
-                                 (#(get-in % [:body :list :entries]))
-                                 (map #(get-in % [:entry :id]))))))
-    ;; get person
-    (let [get-person-response (people/get-person ticket user)]
-      (is (= (:status get-person-response) 200))
-      (is (true? (get-in get-person-response [:body :entry :capabilities :is-admin]))))))
+(deftest update-person-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; create user if not exist
+        _ (->> (model/map->CreatePersonBody {:id         saidone
+                                             :first-name saidone
+                                             :email      "saidone@saidone.org"
+                                             :password   saidone})
+               (people/create-person ticket))
+        new-description (.toString (UUID/randomUUID))
+        ;; update person
+        update-person-response (->> (model/map->UpdatePersonBody {:first-name                  saidone
+                                                                  :email                       "saidone@saidone.org"
+                                                                  :old-password                saidone
+                                                                  :password                    saidone
+                                                                  :description                 new-description
+                                                                  :enabled                     true
+                                                                  :email-notifications-enabled false})
+                                    (people/update-person ticket saidone))]
+    (is (= (:status update-person-response) 200))
+    (is (= (get-in update-person-response [:body :entry :description]) new-description))))
