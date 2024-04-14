@@ -136,7 +136,7 @@
 
 (defn list-group-memberships
   "Gets a list of the group memberships for the group `group-id`.
-  You can use the where parameter in `query-params` to filter the returned groups by **member-type**.
+  You can use the **where** parameter in `query-params` to filter the returned groups by **member-type**.
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/groups/listGroupMemberships)."
   ([^Ticket ticket ^String group-id]
    (list-group-memberships ticket group-id nil))
