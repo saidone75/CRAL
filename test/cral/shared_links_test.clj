@@ -70,6 +70,24 @@
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
+(deftest delete-shared-link-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a shared link
+        created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
+                                    (shared-links/create-shared-link ticket)
+                                    (#(get-in % [:body :entry :id])))]
+    (is (= (get-in (shared-links/get-shared-link created-shared-link-id) [:body :entry :node-id]) created-node-id))
+    ;; delete shared link
+    (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
+    ;; check if shared link has been deleted
+    (is (= (:status (shared-links/get-shared-link created-shared-link-id)) 404))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
 ;; old test
 (deftest create-then-list-then-get-then-get-content-then-email-then-delete-shared-link
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
