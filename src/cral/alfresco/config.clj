@@ -1,12 +1,13 @@
 (ns cral.alfresco.config
   (:require [taoensso.timbre :as timbre]))
 
-(defonce config (atom {:scheme      "http"
-                       :host        "localhost"
-                       :port        8080
-                       :core-path   "alfresco/api/-default-/public/alfresco/versions/1"
-                       :search-path "alfresco/api/-default-/public/search/versions/1"
-                       :auth-path   "alfresco/api/-default-/public/authentication/versions/1"}))
+(defonce config (atom {:scheme         "http"
+                       :host           "localhost"
+                       :port           8080
+                       :core-path      "alfresco/api/-default-/public/alfresco/versions/1"
+                       :search-path    "alfresco/api/-default-/public/search/versions/1"
+                       :auth-path      "alfresco/api/-default-/public/authentication/versions/1"
+                       :discovery-path "alfresco/api/discovery"}))
 
 (defn configure [& [m]]
   (swap! config merge m))
