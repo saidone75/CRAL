@@ -15,6 +15,22 @@
 (def user "admin")
 (def password "admin")
 
+(deftest create-shared-link-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a shared link
+        create-shared-link-response (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
+                                         (shared-links/create-shared-link ticket))]
+    (is (= (:status create-shared-link-response) 201))
+    (is (= (get-in create-shared-link-response [:body :entry :node-id]) created-node-id))
+    ;; clean up
+    (is (= (:status (shared-links/delete-shared-link ticket (get-in create-shared-link-response [:body :entry :id]))) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
+;; old test
 (deftest create-then-list-then-get-then-get-content-then-email-then-delete-shared-link
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
