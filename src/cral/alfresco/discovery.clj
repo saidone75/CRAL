@@ -6,8 +6,9 @@
             [cral.utils.utils :as utils])
   (:import (cral.alfresco.model.auth Ticket)))
 
-(defn get-discovery
-  ""
+(defn get-repo-info
+  "Retrieves the capabilities and detailed version information from the repository.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Discovery%20API#/discovery/getRepositoryInformation)."
   [^Ticket ticket]
   (utils/call-rest
     client/get

@@ -10,5 +10,5 @@
 (deftest get-discovery-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; get discovery
-        get-discovery-response (discovery/get-discovery ticket)]
+        get-discovery-response (discovery/get-repo-info ticket)]
     (is (= (:status get-discovery-response) 200))))
