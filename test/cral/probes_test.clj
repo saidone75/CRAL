@@ -1,4 +1,4 @@
-(ns cral.probe-test
+(ns cral.probes-test
   (:require [clojure.test :refer :all]
             [cral.alfresco.core.probes :as probes]
             [cral.alfresco.model.core]))
