@@ -88,6 +88,30 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
+(deftest get-shared-link-content-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a temp file
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+        _ (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
+        ;; update node content
+        _ (nodes/update-node-content ticket created-node-id file-to-be-uploaded)
+        ;; create a shared link
+        created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
+                                    (shared-links/create-shared-link ticket)
+                                    (#(get-in % [:body :entry :id])))
+        get-shared-link-content-response (shared-links/get-shared-link-content created-shared-link-id)]
+    (is (= (:status get-shared-link-content-response) 200))
+    ;; check if the content is the same of the uploaded file
+    (is (= (apply str (map char (:body get-shared-link-content-response))) (slurp (.getPath file-to-be-uploaded))))
+    ;; clean up
+    (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+    (io/delete-file file-to-be-uploaded)))
+
 ;; old test
 (deftest create-then-list-then-get-then-get-content-then-email-then-delete-shared-link
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
