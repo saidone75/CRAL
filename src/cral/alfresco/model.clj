@@ -23,11 +23,12 @@
      opts)))
 
 (defn get-aspect
-  "Get information for aspect `aspect-id`."
+  "Get information for aspect `aspect-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Model%20API#/aspects/getAspect)."
   [^Ticket ticket ^String aspect-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
-    (format "%s/aspects/%s" (config/get-url 'core) aspect-id)
+    (format "%s/aspects/%s" (config/get-url 'core) (name aspect-id))
     ticket
     nil
     opts))

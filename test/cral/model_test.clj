@@ -17,6 +17,6 @@
 (deftest get-aspect-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; get aspect
-        get-aspect-response (model/get-aspect ticket (name cm/asp-titled))]
+        get-aspect-response (model/get-aspect ticket cm/asp-titled)]
     (is (= (get-in get-aspect-response [:body :entry :id]) (name cm/asp-titled)))
     (is (= (:status get-aspect-response) 200))))
