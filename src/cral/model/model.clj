@@ -14,8 +14,17 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.model.auth)
+(ns cral.model.model
+  (:import (clojure.lang PersistentVector)))
 
-(defrecord Ticket
-  [^String id
-   ^String user-id])
+(defrecord ListAspectsQueryParams
+  [^String where
+   ^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector include])
+
+(defrecord ListTypesQueryParams
+  [^String where
+   ^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector include])

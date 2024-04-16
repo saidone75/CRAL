@@ -16,8 +16,8 @@
 
 (ns cral.probes-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.core.probes :as probes]
-            [cral.alfresco.model.core]))
+            [cral.api.core.probes :as probes]
+            [cral.model.core]))
 
 (deftest get-probes
   (is (= (:status (probes/probes "-ready-")) 200))

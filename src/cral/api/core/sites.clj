@@ -14,23 +14,22 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.sites
+(ns cral.api.core.sites
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateSiteBody
-                                     CreateSiteQueryParams
-                                     DeleteSiteQueryParams
-                                     GetSiteQueryParams
-                                     ListSiteMembershipRequestsQueryParams
-                                     ListSitesQueryParams
-                                     UpdateSiteBody
-                                     UpdateSiteQueryParams)))
+           (cral.model.auth Ticket)
+           (cral.model.core CreateSiteBody
+                            CreateSiteQueryParams
+                            DeleteSiteQueryParams
+                            GetSiteQueryParams
+                            ListSiteMembershipRequestsQueryParams
+                            ListSitesQueryParams
+                            UpdateSiteBody
+                            UpdateSiteQueryParams)))
 
 (defn list-site-membership-requests
   "Gets a list of the current site membership requests for person `person-id`.

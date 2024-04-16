@@ -14,7 +14,7 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.model.alfresco.cm)
+(ns cral.model.alfresco.cm)
 
 (def cm-uri "http://www.alfresco.org/model/content/1.0")
 (def cm-prefix "cm")

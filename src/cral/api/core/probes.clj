@@ -14,11 +14,10 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.probes
+(ns cral.api.core.probes
   (:require [clj-http.lite.client :as client]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils]))
 
 (defn probes

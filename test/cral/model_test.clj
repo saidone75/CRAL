@@ -16,10 +16,10 @@
 
 (ns cral.model-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.model :as model]
-            [cral.alfresco.model.alfresco.cm :as cm]
-            [cral.alfresco.model.core]))
+            [cral.api.auth :as auth]
+            [cral.api.model :as model]
+            [cral.model.alfresco.cm :as cm]
+            [cral.model.core]))
 
 (def user "admin")
 (def password "admin")

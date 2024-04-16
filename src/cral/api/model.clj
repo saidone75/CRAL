@@ -14,15 +14,14 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.model
+(ns cral.api.model
   (:require [clj-http.lite.client :as client]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.model]
+            [cral.config :as config]
+            [cral.model.model]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.model ListAspectsQueryParams ListTypesQueryParams)))
+           (cral.model.auth Ticket)
+           (cral.model.model ListAspectsQueryParams ListTypesQueryParams)))
 
 (defn list-aspects
   "Gets a list of aspects from the data dictionary. The System aspects will be ignored by default.\\

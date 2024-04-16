@@ -16,9 +16,8 @@
 
 (ns cral.discovery-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.discovery :as discovery]
-            [cral.alfresco.model.core]))
+            [cral.api.auth :as auth]
+            [cral.api.discovery :as discovery]))
 
 (def user "admin")
 (def password "admin")

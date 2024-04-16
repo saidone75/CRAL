@@ -16,8 +16,8 @@
 
 (ns cral.test-utils
   (:require [clojure.test :refer :all]
-            [cral.alfresco.core.nodes :as nodes]
-            [cral.alfresco.model.core :as model]))
+            [cral.api.core.nodes :as nodes]
+            [cral.model.core :as model]))
 
 (defn get-guest-home
   [ticket]

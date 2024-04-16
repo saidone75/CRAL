@@ -16,9 +16,8 @@
 
 (ns cral.activities-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.activities :as activities]
-            [cral.alfresco.model.core]))
+            [cral.api.auth :as auth]
+            [cral.api.core.activities :as activities]))
 
 (def user "admin")
 (def password "admin")

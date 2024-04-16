@@ -14,7 +14,7 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.config
+(ns cral.config
   (:require [taoensso.timbre :as timbre]))
 
 (defonce config (atom {:scheme         "http"

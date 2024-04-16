@@ -14,16 +14,15 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.shared-links
+(ns cral.api.core.shared-links
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateSharedLinkBody CreateSharedLinkQueryParams EmailSharedLinkBody GetSharedLinkContentQueryParams ListSharedLinksQueryParams)))
+           (cral.model.auth Ticket)
+           (cral.model.core CreateSharedLinkBody CreateSharedLinkQueryParams EmailSharedLinkBody GetSharedLinkContentQueryParams ListSharedLinksQueryParams)))
 
 (defn create-shared-link
   "Create a shared link to the file **node-id** in the request `body`. Also, an optional expiry date could be set,

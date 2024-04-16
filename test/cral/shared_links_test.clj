@@ -18,12 +18,12 @@
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
             [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.nodes :as nodes]
-            [cral.alfresco.core.shared-links :as shared-links]
-            [cral.alfresco.model.alfresco.cm :as cm]
-            [cral.alfresco.model.core]
-            [cral.alfresco.model.core :as model]
+            [cral.api.auth :as auth]
+            [cral.api.core.nodes :as nodes]
+            [cral.api.core.shared-links :as shared-links]
+            [cral.model.alfresco.cm :as cm]
+            [cral.model.core]
+            [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.io File)
            (java.util UUID)))

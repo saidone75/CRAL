@@ -14,18 +14,17 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.downloads
+(ns cral.api.core.downloads
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateDownloadBody
-                                     CreateDownloadQueryParams
-                                     GetDownloadQueryParams)))
+           (cral.model.auth Ticket)
+           (cral.model.core CreateDownloadBody
+                            CreateDownloadQueryParams
+                            GetDownloadQueryParams)))
 
 (defn create-download
   "Creates a new download node asynchronously, the content of which will be the zipped content of the **node-ids** specified in the `body` like this:

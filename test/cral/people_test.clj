@@ -16,9 +16,9 @@
 
 (ns cral.people-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.people :as people]
-            [cral.alfresco.model.core :as model])
+            [cral.api.auth :as auth]
+            [cral.api.core.people :as people]
+            [cral.model.core :as model])
   (:import (java.util UUID)))
 
 (def user "admin")

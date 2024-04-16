@@ -16,12 +16,11 @@
 
 (ns cral.comments-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.comments :as comments]
-            [cral.alfresco.core.nodes :as nodes]
-            [cral.alfresco.model.alfresco.cm :as cm]
-            [cral.alfresco.model.core]
-            [cral.alfresco.model.core :as model]
+            [cral.api.auth :as auth]
+            [cral.api.core.comments :as comments]
+            [cral.api.core.nodes :as nodes]
+            [cral.model.alfresco.cm :as cm]
+            [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
 

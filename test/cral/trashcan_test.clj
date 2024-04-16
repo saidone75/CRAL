@@ -17,12 +17,11 @@
 (ns cral.trashcan-test
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.nodes :as nodes]
-            [cral.alfresco.core.trashcan :as trashcan]
-            [cral.alfresco.model.alfresco.cm :as cm]
-            [cral.alfresco.model.core :as model]
-            [cral.core :refer :all]
+            [cral.api.auth :as auth]
+            [cral.api.core.nodes :as nodes]
+            [cral.api.core.trashcan :as trashcan]
+            [cral.model.alfresco.cm :as cm]
+            [cral.model.core :as model]
             [cral.test-utils :as tu]
             [taoensso.timbre :as timbre])
   (:import (java.io File)

@@ -16,12 +16,11 @@
 
 (ns cral.favorites-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.favorites :as favorites]
-            [cral.alfresco.core.nodes :as nodes]
-            [cral.alfresco.model.alfresco.cm :as cm]
-            [cral.alfresco.model.core :as model]
-            [cral.alfresco.model.core]
+            [cral.api.auth :as auth]
+            [cral.api.core.favorites :as favorites]
+            [cral.api.core.nodes :as nodes]
+            [cral.model.alfresco.cm :as cm]
+            [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
 

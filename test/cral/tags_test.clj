@@ -16,11 +16,11 @@
 
 (ns cral.tags-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.core.nodes :as nodes]
-            [cral.alfresco.core.tags :as tags]
-            [cral.alfresco.model.alfresco.cm :as cm]
-            [cral.alfresco.model.core :as model]
+            [cral.api.auth :as auth]
+            [cral.api.core.nodes :as nodes]
+            [cral.api.core.tags :as tags]
+            [cral.model.alfresco.cm :as cm]
+            [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
 

@@ -14,15 +14,14 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.versions
+(ns cral.api.core.versions
   (:require [clj-http.lite.client :as client]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core ListVersionHistoryQueryParams)))
+           (cral.model.auth Ticket)
+           (cral.model.core ListVersionHistoryQueryParams)))
 
 (defn list-version-history
   "Gets the version history as an ordered list of versions for the specified `node-id`.

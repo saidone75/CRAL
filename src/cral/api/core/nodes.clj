@@ -14,38 +14,37 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.nodes
+(ns cral.api.core.nodes
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CopyNodeBody
-                                     CopyNodeQueryParams
-                                     CreateNodeAssocsQueryParams
-                                     CreateNodeBody
-                                     CreateNodeQueryParams
-                                     CreateSecondaryChildQueryParams
-                                     DeleteNodeAssocsQueryParams
-                                     DeleteNodeQueryParams
-                                     DeleteSecondaryChildQueryParams
-                                     GetNodeQueryParams
-                                     ListNodeChildrenQueryParams
-                                     ListParentsQueryParams
-                                     ListSecondaryChildrenQueryParams
-                                     ListSourceAssocsQueryParams
-                                     ListTargetAssocsQueryParams
-                                     LockNodeBody
-                                     LockNodeQueryParams
-                                     MoveNodeBody
-                                     MoveNodeQueryParams
-                                     UnLockNodeQueryParams
-                                     UpdateNodeBody
-                                     UpdateNodeContentQueryParams
-                                     UpdateNodeQueryParams)
+           (cral.model.auth Ticket)
+           (cral.model.core CopyNodeBody
+                            CopyNodeQueryParams
+                            CreateNodeAssocsQueryParams
+                            CreateNodeBody
+                            CreateNodeQueryParams
+                            CreateSecondaryChildQueryParams
+                            DeleteNodeAssocsQueryParams
+                            DeleteNodeQueryParams
+                            DeleteSecondaryChildQueryParams
+                            GetNodeQueryParams
+                            ListNodeChildrenQueryParams
+                            ListParentsQueryParams
+                            ListSecondaryChildrenQueryParams
+                            ListSourceAssocsQueryParams
+                            ListTargetAssocsQueryParams
+                            LockNodeBody
+                            LockNodeQueryParams
+                            MoveNodeBody
+                            MoveNodeQueryParams
+                            UnLockNodeQueryParams
+                            UpdateNodeBody
+                            UpdateNodeContentQueryParams
+                            UpdateNodeQueryParams)
            (java.io File)))
 
 (defn get-node
