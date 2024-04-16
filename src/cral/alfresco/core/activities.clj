@@ -37,4 +37,3 @@
      ticket
      {:query-params query-params}
      opts)))
-
