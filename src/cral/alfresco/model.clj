@@ -8,7 +8,6 @@
            (cral.alfresco.model.auth Ticket)
            (cral.alfresco.model.model ListAspectsQueryParams ListTypesQueryParams)))
 
-
 (defn list-aspects
   "Gets a list of aspects from the data dictionary. The System aspects will be ignored by default.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Model%20API#/aspects/listAspects)."
