@@ -14,24 +14,19 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.search
+(ns cral.api.discovery
   (:require [clj-http.lite.client :as client]
-            [clojure.data.json :as json]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.search]
+            [cral.config :as config]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.search SearchBody)))
+  (:import (cral.model.auth Ticket)))
 
-(defn search
-  "Searches Alfresco"
-  [^Ticket ticket ^SearchBody search-request & [^PersistentHashMap opts]]
+(defn get-repo-info
+  "Retrieves the capabilities and detailed version information from the repository.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Discovery%20API#/discovery/getRepositoryInformation)."
+  [^Ticket ticket]
   (utils/call-rest
-    client/post
-    (format "%s/search" (config/get-url 'search))
+    client/get
+    (config/get-url 'discovery)
     ticket
-    {:body         (json/write-str (utils/camel-case-stringify-keys search-request))
-     :content-type :json}
-    opts))
+    nil
+    nil))

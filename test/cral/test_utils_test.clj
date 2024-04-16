@@ -16,9 +16,9 @@
 
 (ns cral.test-utils-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.core.nodes :as nodes]
+            [cral.api.auth :as auth]
+            [cral.config :as config]
+            [cral.api.core.nodes :as nodes]
             [cral.test-utils :as test-utils]))
 
 (defonce user "admin")

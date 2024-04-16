@@ -14,7 +14,7 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.model.core
+(ns cral.model.core
   (:import (clojure.lang PersistentHashMap PersistentVector)))
 
 ;; keep same order as fn, bodies first then params

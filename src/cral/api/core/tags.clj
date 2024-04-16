@@ -14,22 +14,21 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.tags
+(ns cral.api.core.tags
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateNodeTagBody
-                                     CreateNodeTagQueryParams
-                                     GetTagQueryParams
-                                     ListNodeTagsQueryParams
-                                     ListTagsQueryParams
-                                     UpdateTagBody
-                                     UpdateTagQueryParams)))
+           (cral.model.auth Ticket)
+           (cral.model.core CreateNodeTagBody
+                            CreateNodeTagQueryParams
+                            GetTagQueryParams
+                            ListNodeTagsQueryParams
+                            ListTagsQueryParams
+                            UpdateTagBody
+                            UpdateTagQueryParams)))
 
 (defn list-node-tags
   "Gets a list of tags for node `node-id`.\\

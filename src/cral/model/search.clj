@@ -14,17 +14,8 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.model.model
-  (:import (clojure.lang PersistentVector)))
+(ns cral.model.search)
 
-(defrecord ListAspectsQueryParams
-  [^String where
-   ^Integer skip-count
-   ^Integer max-items
-   ^PersistentVector include])
-
-(defrecord ListTypesQueryParams
-  [^String where
-   ^Integer skip-count
-   ^Integer max-items
-   ^PersistentVector include])
+(defrecord RequestQuery [^String language ^String user-query ^String query])
+(defrecord Paging [^Integer max-items ^Integer skip-count])
+(defrecord SearchBody [^RequestQuery query ^Paging paging])

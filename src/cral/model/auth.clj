@@ -14,8 +14,8 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.model.search)
+(ns cral.model.auth)
 
-(defrecord RequestQuery [^String language ^String user-query ^String query])
-(defrecord Paging [^Integer max-items ^Integer skip-count])
-(defrecord SearchBody [^RequestQuery query ^Paging paging])
+(defrecord Ticket
+  [^String id
+   ^String user-id])

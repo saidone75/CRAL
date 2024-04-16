@@ -14,16 +14,15 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.alfresco.core.favorites
+(ns cral.api.core.favorites
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
-            [cral.alfresco.config :as config]
-            [cral.alfresco.model.auth]
-            [cral.alfresco.model.core]
+            [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
-           (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.core CreateFavoriteQueryParams GetFavoriteQueryParams ListFavoritesQueryParams)))
+           (cral.model.auth Ticket)
+           (cral.model.core CreateFavoriteQueryParams GetFavoriteQueryParams ListFavoritesQueryParams)))
 
 (defn list-favorites
   "Gets a list of favorites for person `person-id`.

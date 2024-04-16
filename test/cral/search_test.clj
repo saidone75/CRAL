@@ -16,10 +16,9 @@
 
 (ns cral.search-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]
-            [cral.alfresco.model.search :as search-model]
-            [cral.alfresco.search :as search]
-            [cral.core :refer :all]))
+            [cral.api.auth :as auth]
+            [cral.model.search :as search-model]
+            [cral.api.search :as search]))
 
 (deftest search
   (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])

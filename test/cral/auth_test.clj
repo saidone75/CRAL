@@ -16,7 +16,7 @@
 
 (ns cral.auth-test
   (:require [clojure.test :refer :all]
-            [cral.alfresco.auth :as auth]))
+            [cral.api.auth :as auth]))
 
 (defonce user "admin")
 (defonce password "admin")
