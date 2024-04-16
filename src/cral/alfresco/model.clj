@@ -21,3 +21,13 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn get-aspect
+  ""
+  [^Ticket ticket ^String aspect-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/aspects/%s" (config/get-url 'core) aspect-id)
+    ticket
+    nil
+    opts))
