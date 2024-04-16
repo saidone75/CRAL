@@ -6,7 +6,7 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.alfresco.model.auth Ticket)
-           (cral.alfresco.model.model ListAspectsQueryParams)))
+           (cral.alfresco.model.model ListAspectsQueryParams ListTypesQueryParams)))
 
 
 (defn list-aspects
@@ -32,3 +32,16 @@
     ticket
     nil
     opts))
+
+(defn list-types
+  "Gets a list of types from the data dictionary. The System types will be ignored by default.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Model%20API#/types/listTypes)."
+  ([^Ticket ticket]
+   (list-types ticket nil))
+  ([^Ticket ticket ^ListTypesQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/types" (config/get-url 'core))
+     ticket
+     {:query-params query-params}
+     opts)))

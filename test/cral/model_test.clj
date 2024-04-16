@@ -20,3 +20,9 @@
         get-aspect-response (model/get-aspect ticket cm/asp-titled)]
     (is (= (get-in get-aspect-response [:body :entry :id]) (name cm/asp-titled)))
     (is (= (:status get-aspect-response) 200))))
+
+(deftest list-types-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; list types
+        list-types-response (model/list-types ticket)]
+    (is (= (:status list-types-response) 200))))

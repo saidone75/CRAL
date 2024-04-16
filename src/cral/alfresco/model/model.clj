@@ -6,3 +6,9 @@
    ^Integer skip-count
    ^Integer max-items
    ^PersistentVector include])
+
+(defrecord ListTypesQueryParams
+  [^String where
+   ^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector include])
