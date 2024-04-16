@@ -92,7 +92,7 @@
     ;; lock the node
     (is (= (:status (->> (model/map->LockNodeBody {:time-to-expire 0 :type "ALLOW_OWNER_CHANGES" :lifetime "PERSISTENT"})
                          (nodes/lock-node ticket created-node-id))) 200))
-    (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime])))
+    (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [cm/prop-lock-type cm/prop-lock-owner cm/prop-lock-lifetime])))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
@@ -106,10 +106,10 @@
     ;; lock the node
     (is (= (:status (->> (model/map->LockNodeBody {:time-to-expire 0 :type "ALLOW_OWNER_CHANGES" :lifetime "PERSISTENT"})
                          (nodes/lock-node ticket created-node-id))) 200))
-    (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime])))
+    (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [cm/prop-lock-type cm/prop-lock-owner cm/prop-lock-lifetime])))
     ;; unlock the node
     (is (= (:status (nodes/unlock-node ticket created-node-id)) 200))
-    (is (every? false? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [:cm:lock-type :cm:lock-owner :cm:lock-lifetime])))
+    (is (every? false? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [cm/prop-lock-type cm/prop-lock-owner cm/prop-lock-lifetime])))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
