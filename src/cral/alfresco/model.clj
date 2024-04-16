@@ -23,7 +23,7 @@
      opts)))
 
 (defn get-aspect
-  ""
+  "Get information for aspect `aspect-id`."
   [^Ticket ticket ^String aspect-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
