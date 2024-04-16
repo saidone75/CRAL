@@ -60,3 +60,14 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn get-type
+  "Get information for type `type-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Model%20API#/types/getType)."
+  [^Ticket ticket ^String type-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/types/%s" (config/get-url 'core) (name type-id))
+    ticket
+    nil
+    opts))

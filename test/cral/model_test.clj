@@ -42,3 +42,10 @@
         ;; list types
         list-types-response (model/list-types ticket)]
     (is (= (:status list-types-response) 200))))
+
+(deftest get-type-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; get type
+        get-type-response (model/get-type ticket cm/type-content)]
+    (is (= (get-in get-type-response [:body :entry :id]) (name cm/type-content)))
+    (is (= (:status get-type-response) 200))))
