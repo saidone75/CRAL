@@ -14,10 +14,10 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.model-test
+(ns cral.aspects-test
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
-            [cral.api.model :as model]
+            [cral.api.model.aspects :as aspects]
             [cral.model.alfresco.cm :as cm]
             [cral.model.core]))
 
@@ -27,25 +27,12 @@
 (deftest list-aspects-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; list aspects
-        list-aspects-response (model/list-aspects ticket)]
+        list-aspects-response (aspects/list-aspects ticket)]
     (is (= (:status list-aspects-response) 200))))
 
 (deftest get-aspect-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; get aspect
-        get-aspect-response (model/get-aspect ticket cm/asp-titled)]
+        get-aspect-response (aspects/get-aspect ticket cm/asp-titled)]
     (is (= (get-in get-aspect-response [:body :entry :id]) (name cm/asp-titled)))
     (is (= (:status get-aspect-response) 200))))
-
-(deftest list-types-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        ;; list types
-        list-types-response (model/list-types ticket)]
-    (is (= (:status list-types-response) 200))))
-
-(deftest get-type-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        ;; get type
-        get-type-response (model/get-type ticket cm/type-content)]
-    (is (= (get-in get-type-response [:body :entry :id]) (name cm/type-content)))
-    (is (= (:status get-type-response) 200))))
