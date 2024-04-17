@@ -46,10 +46,10 @@
      opts)))
 
 (defn create-site-membership-requests
-  "Create a site membership request for yourself on the site with the identifier of id, specified in the `body`. The result of the request differs depending on the type of site.\\
+  "Create a site membership request for yourself on the site with the identifier of id, specified in the `body`. The result of the request differs depending on the type of site.
   - For a **public** site, you join the site immediately as a SiteConsumer.
-  - For a *moderated* site, your request is added to the site membership request list. The request waits for approval from the Site Manager.\\
-  - You cannot request membership of a private site. Members are invited by the site administrator.\\
+  - For a **moderated** site, your request is added to the site membership request list. The request waits for approval from the Site Manager.
+  - You cannot request membership of a private site. Members are invited by the site administrator.\n\n
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^PersistentVector body]
