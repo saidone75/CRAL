@@ -10,15 +10,15 @@ CRAL is a pure Clojure library for consuming Alfresco Content Services public RE
 - 100% test coverage
 - Tuned for GraalVM, can be compiled to native binary
 ## Usage
-Require the relevant namespaces:
+Require the relevant namespaces, e.g.:
 ```clojure
 (:require
-  [cral.alfresco.model :as model]
-  [cral.alfresco.core.nodes :as nodes]
-  [cral.alfresco.search :as search]
-  [cral.alfresco.auth :as auth])
+  [cral.api.auth :as auth]
+  [cral.api.search :as search]
+  [cral.api.core.nodes :as nodes]
+  [cral.model.core :as model])
 ```
-Default configuration is stored in `config` atom defined in `cral.alfresco.config`:
+Default configuration is stored in `config` atom defined in `cral.config`:
 ```clojure
 @config/config
 =>

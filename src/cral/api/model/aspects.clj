@@ -14,14 +14,14 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.api.model
+(ns cral.api.model.aspects
   (:require [clj-http.lite.client :as client]
             [cral.config :as config]
             [cral.model.model]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.model ListAspectsQueryParams ListTypesQueryParams)))
+           (cral.model.model ListAspectsQueryParams)))
 
 (defn list-aspects
   "Gets a list of aspects from the data dictionary. The System aspects will be ignored by default.\\
@@ -43,30 +43,6 @@
   (utils/call-rest
     client/get
     (format "%s/aspects/%s" (config/get-url 'core) (name aspect-id))
-    ticket
-    nil
-    opts))
-
-(defn list-types
-  "Gets a list of types from the data dictionary. The System types will be ignored by default.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Model%20API#/types/listTypes)."
-  ([^Ticket ticket]
-   (list-types ticket nil))
-  ([^Ticket ticket ^ListTypesQueryParams query-params & [^PersistentHashMap opts]]
-   (utils/call-rest
-     client/get
-     (format "%s/types" (config/get-url 'core))
-     ticket
-     {:query-params query-params}
-     opts)))
-
-(defn get-type
-  "Get information for type `type-id`.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Model%20API#/types/getType)."
-  [^Ticket ticket ^String type-id & [^PersistentHashMap opts]]
-  (utils/call-rest
-    client/get
-    (format "%s/types/%s" (config/get-url 'core) (name type-id))
     ticket
     nil
     opts))
