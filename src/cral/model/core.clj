@@ -361,6 +361,9 @@
    ^String id
    ^String title])
 
+(defrecord GetSiteMembershipRequestsQueryParams
+  [^PersistentVector fields])
+
 (defrecord ListSitesQueryParams
   [^Integer skip-count
    ^Integer max-items
