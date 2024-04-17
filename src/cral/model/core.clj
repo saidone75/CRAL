@@ -356,6 +356,9 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord CreateSiteMembershipRequestBody
+  [])
+
 (defrecord ListSitesQueryParams
   [^Integer skip-count
    ^Integer max-items

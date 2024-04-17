@@ -17,13 +17,34 @@
 (ns cral.sites-test
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
+            [cral.api.core.people :as people]
             [cral.api.core.sites :as sites]
             [cral.model.core :as model])
   (:import (java.util UUID)))
 
 (def user "admin")
 (def pass "admin")
+(def saidone "saidone")
 
+(deftest list-site-membership-requests-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
+               (sites/create-site ticket))
+        ;; create user if not exist
+        _ (->> (model/map->CreatePersonBody {:id         saidone
+                                             :first-name saidone
+                                             :email      "saidone@saidone.org"
+                                             :password   saidone})
+               (people/create-person ticket))]
+
+    ;; todo
+
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+;; old tests
 (deftest create-then-list-then-update-then-get-then-delete-site
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         site-id (.toString (UUID/randomUUID))
