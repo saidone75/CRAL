@@ -20,7 +20,7 @@
             [cral.config :as config]
             [cral.model.core]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap)
+  (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core CreateSiteBody
                             CreateSiteQueryParams
@@ -43,6 +43,25 @@
      (format "%s/people/%s/site-membership-requests" (config/get-url 'core) person-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn create-site-membership-requests
+  "Create a site membership request for yourself on the site with the identifier of id, specified in the `body`. The result of the request differs depending on the type of site.\\
+  - For a **public** site, you join the site immediately as a SiteConsumer.
+  - For a *moderated* site, your request is added to the site membership request list. The request waits for approval from the Site Manager.\\
+  - You cannot request membership of a private site. Members are invited by the site administrator.\\
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSiteMembershipRequestForPerson)."
+  ([^Ticket ticket ^String person-id ^PersistentVector body]
+   (create-site-membership-requests ticket person-id body nil))
+  ([^Ticket ticket ^String person-id ^PersistentVector body ^ListSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/people/%s/site-membership-requests" (config/get-url 'core) person-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
 
 (defn list-sites

@@ -83,11 +83,14 @@
 
 (deftest copy-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
         ;; create a node
-        created-node-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
         ;; create a folder
-        new-parent-id (get-in (nodes/create-node ticket parent-id (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})) [:body :entry :id])
+        new-parent-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})
+                           (nodes/create-node ticket (tu/get-guest-home ticket))
+                           (#(get-in % [:body :entry :id])))
         ;; copy node into the new folder
         copy-node-response (->> (model/map->CopyNodeBody {:target-parent-id new-parent-id :name (.toString (UUID/randomUUID))})
                                 (nodes/copy-node ticket created-node-id))]
