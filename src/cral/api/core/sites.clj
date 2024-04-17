@@ -25,7 +25,7 @@
            (cral.model.core CreateSiteBody
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
-                            GetSiteQueryParams
+                            GetSiteMembershipRequestsQueryParams GetSiteQueryParams
                             ListSiteMembershipRequestsQueryParams
                             ListSitesQueryParams
                             UpdateSiteBody
@@ -62,6 +62,20 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn get-site-membership-request
+  "Gets the site membership request for site `site-id` for person `person-id`, if one exists.\\
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipRequestForPerson)."
+  ([^Ticket ticket ^String person-id ^String site-id]
+   (get-site-membership-request ticket person-id site-id nil))
+  ([^Ticket ticket ^String person-id ^String site-id ^GetSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
+     ticket
+     {:query-params query-params}
      opts)))
 
 (defn list-sites
