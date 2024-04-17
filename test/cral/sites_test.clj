@@ -19,6 +19,7 @@
             [cral.api.auth :as auth]
             [cral.api.core.people :as people]
             [cral.api.core.sites :as sites]
+            [cral.config :as config]
             [cral.model.core :as model])
   (:import (java.util UUID)))
 
@@ -29,18 +30,24 @@
 (deftest list-site-membership-requests-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         site-id (.toString (UUID/randomUUID))
-        ;; create a site
-        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
+        ;; create a moderated site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
                (sites/create-site ticket))
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
-               (people/create-person ticket))]
-
-    ;; todo
-
+               (people/create-person ticket))
+        ;; create a personal ticket
+        saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
+        ;; create site membership request
+        _ (->> [(model/map->CreateSiteMembershipRequestBody {:message "Please can you add me"
+                                                             :id      site-id
+                                                             :title   (format "Request for %s site" site-id)})]
+               (sites/create-site-membership-requests saidone-ticket "-me-"))]
+    ;; list site membership request
+    (is (= (:status (sites/list-site-membership-requests saidone-ticket "-me-")) 200))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 

@@ -357,7 +357,9 @@
    ^PersistentVector fields])
 
 (defrecord CreateSiteMembershipRequestBody
-  [])
+  [^String message
+   ^String id
+   ^String title])
 
 (defrecord ListSitesQueryParams
   [^Integer skip-count
