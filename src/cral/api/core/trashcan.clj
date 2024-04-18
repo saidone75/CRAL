@@ -23,7 +23,11 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.core GetDeletedNodeContentQueryParams GetDeletedNodeQueryParams ListDeletedNodesQueryParams RestoreDeletedNodeBody RestoreDeletedNodeQueryParams)))
+           (cral.model.core GetDeletedNodeContentQueryParams
+                            GetDeletedNodeQueryParams
+                            ListDeletedNodesQueryParams
+                            RestoreDeletedNodeBody
+                            RestoreDeletedNodeQueryParams)))
 
 (defn list-deleted-nodes
   "Gets a list of deleted nodes for the current user.

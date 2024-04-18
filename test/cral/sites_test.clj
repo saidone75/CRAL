@@ -40,12 +40,12 @@
                (people/create-person ticket))
         ;; create a personal ticket
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
-        ;; create site membership request
+        ;; create membership request
         _ (->> [(model/map->CreateSiteMembershipRequestBody {:message "Please can you add me"
                                                              :id      site-id
                                                              :title   (format "Request for %s site" site-id)})]
                (sites/create-site-membership-requests saidone-ticket "-me-"))]
-    ;; list site membership request
+    ;; list membership requests
     (is (= (:status (sites/list-site-membership-requests saidone-ticket "-me-")) 200))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
@@ -90,10 +90,36 @@
                                                              :id      site-id
                                                              :title   (format "Request for %s site" site-id)})]
                (sites/create-site-membership-requests saidone-ticket "-me-"))
-        ;; get site membership request
+        ;; get membership request
         get-site-membership-requests-response (sites/get-site-membership-request ticket saidone site-id)]
     (is (= (:status get-site-membership-requests-response) 200))
     (is (= (get-in get-site-membership-requests-response [:body :entry :site :id]) site-id))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest update-site-membership-request-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a moderated site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
+               (sites/create-site ticket))
+        ;; create user if not exist
+        _ (->> (model/map->CreatePersonBody {:id         saidone
+                                             :first-name saidone
+                                             :email      "saidone@saidone.org"
+                                             :password   saidone})
+               (people/create-person ticket))
+        ;; create a personal ticket
+        saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
+        ;; create membership request
+        _ (->> [(model/map->CreateSiteMembershipRequestBody {:message "Please can you add me"
+                                                             :id      site-id
+                                                             :title   (format "Request for %s site" site-id)})]
+               (sites/create-site-membership-requests saidone-ticket "-me-"))]
+    ;; update membership request
+    (is (= (:status (->> (model/map->UpdateSiteMembershipRequestBody {:message "New message"})
+                         (sites/update-site-membership-request saidone-ticket "-me-" site-id))) 200))
+    (is (= (get-in (sites/get-site-membership-request ticket saidone site-id) [:body :entry :message]) "New message"))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 

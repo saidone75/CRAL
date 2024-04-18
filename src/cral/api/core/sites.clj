@@ -25,10 +25,13 @@
            (cral.model.core CreateSiteBody
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
-                            GetSiteMembershipRequestsQueryParams GetSiteQueryParams
+                            GetSiteMembershipRequestsQueryParams
+                            GetSiteQueryParams
                             ListSiteMembershipRequestsQueryParams
                             ListSitesQueryParams
                             UpdateSiteBody
+                            UpdateSiteMembershipRequestBody
+                            UpdateSiteMembershipRequestQueryParams
                             UpdateSiteQueryParams)))
 
 (defn list-site-membership-requests
@@ -76,6 +79,22 @@
      (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn update-site-membership-request
+  "Updates the message for the site membership request to site `site-id` for person `person-id`.\\
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSiteMembershipRequestForPerson)."
+  ([^Ticket ticket ^String person-id ^String site-id ^UpdateSiteMembershipRequestBody body]
+   (update-site-membership-request ticket person-id site-id body nil))
+  ([^Ticket ticket ^String person-id ^String site-id ^UpdateSiteMembershipRequestBody body ^UpdateSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/put
+     (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
 
 (defn list-sites

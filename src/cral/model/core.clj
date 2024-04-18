@@ -364,6 +364,12 @@
 (defrecord GetSiteMembershipRequestsQueryParams
   [^PersistentVector fields])
 
+(defrecord UpdateSiteMembershipRequestBody
+  [^String message])
+
+(defrecord UpdateSiteMembershipRequestQueryParams
+  [^PersistentVector fields])
+
 (defrecord ListSitesQueryParams
   [^Integer skip-count
    ^Integer max-items
