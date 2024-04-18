@@ -119,6 +119,7 @@
     ;; update membership request
     (is (= (:status (->> (model/map->UpdateSiteMembershipRequestBody {:message "New message"})
                          (sites/update-site-membership-request saidone-ticket "-me-" site-id))) 200))
+    ;; check if request has been updated
     (is (= (get-in (sites/get-site-membership-request ticket saidone site-id) [:body :entry :message]) "New message"))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
