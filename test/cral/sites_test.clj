@@ -264,6 +264,21 @@
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
+(deftest update-site-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a public site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
+               (sites/create-site ticket))
+        new-title (.toString (UUID/randomUUID))]
+    ;; update site with a new title
+    (is (= (:status (->> (model/map->UpdateSiteBody {:title new-title :visibility "PUBLIC"})
+                         (sites/update-site ticket site-id))) 200))
+    ;; check if title has been changed
+    (is (= (get-in (sites/get-site ticket site-id) [:body :entry :title]) new-title))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
 ;; old tests
 (deftest create-then-list-then-update-then-get-then-delete-site
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
