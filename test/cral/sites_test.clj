@@ -241,6 +241,17 @@
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
+(deftest create-site-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        site-id (.toString (UUID/randomUUID))]
+    ;; create a public site
+    (is (= (:status (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
+                         (sites/create-site ticket))) 201))
+    ;; check if site has been created
+    (is (some #(= (get-in % [:entry :id]) site-id) (get-in (sites/list-sites ticket) [:body :list :entries])))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
 ;; old tests
 (deftest create-then-list-then-update-then-get-then-delete-site
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
