@@ -40,18 +40,10 @@ services:
             -Ddsync.service.uris=http://localhost:9090/alfresco
             -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=80
             -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000
-            -Dcom.sun.management.jmxremote=true
-            -Djava.rmi.server.hostname=localhost
-            -Dcom.sun.management.jmxremote.port=50800
-            -Dcom.sun.management.jmxremote.rmi.port=50801
-            -Dcom.sun.management.jmxremote.authenticate=false
-            -Dcom.sun.management.jmxremote.ssl=false
             "
     ports:
       - "8000:8000"
       - "8080:8080"
-      - "50800:50800"
-      - "50801:50801"
     volumes:
       - cral-acs-volume:/usr/local/tomcat/alf_data
   share:

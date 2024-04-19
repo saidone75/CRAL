@@ -141,7 +141,9 @@
      opts)))
 
 (defn get-site-membership
-  ""
+  "Gets site membership information for person `person-id` on site `site-id`.\\
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipForPerson)."
   [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
