@@ -14,6 +14,8 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+; generated with https://saidone.org/#/cm
+
 (ns cral.model.alfresco.cm)
 
 (def cm-uri "http://www.alfresco.org/model/content/1.0")

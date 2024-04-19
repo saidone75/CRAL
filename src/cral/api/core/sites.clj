@@ -28,6 +28,7 @@
                             GetSiteMembershipRequestsQueryParams
                             GetSiteQueryParams
                             ListSiteMembershipRequestsQueryParams
+                            ListSiteMembershipsQueryParams
                             ListSitesQueryParams
                             UpdateSiteBody
                             UpdateSiteMembershipRequestBody
@@ -107,6 +108,36 @@
      (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
      ticket
      nil
+     opts)))
+
+(defn list-site-memberships
+  "Gets a list of site membership information for person `person-id`.\\
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  You can use the **where** parameter in `query-params` to filter the returned sites by **visibility** or site **preset**.\\
+  Example to filter by **visibility**, use any one of:
+  ```clojure
+  (visibility='PRIVATE')
+  (visibility='PUBLIC')
+  (visibility='MODERATED')
+  ```
+  Example to filter by site **preset**:
+  ```clojure
+  (preset='site-dashboard')
+  ```
+  The default sort order for the returned list is for sites to be sorted by ascending title.\\
+  You can override the default by using the **order-by** parameter in `query-params`. You can specify one or more of the following fields in the **order-by** parameter:
+  - id
+  - title
+  - role\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMembershipsForPerson)."
+  ([^Ticket ticket ^String person-id]
+   (list-site-memberships ticket person-id nil))
+  ([^Ticket ticket ^String person-id ^ListSiteMembershipsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/people/%s/sites" (config/get-url 'core) person-id)
+     ticket
+     {:query-params query-params}
      opts)))
 
 (defn list-sites
