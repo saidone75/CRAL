@@ -164,14 +164,15 @@
                (people/create-person ticket))
         ;; create a personal ticket
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])]
-    ;(->> [(model/map->CreateSiteMembershipRequestBody {:message "Please can you add me"
-    ;                                                   :id      site-id
-    ;                                                   :title   (format "Request for %s site" site-id)})]
-    ;     (sites/create-site-membership-requests saidone-ticket "-me-"))
-
-    ;; fixme
-    (println (sites/list-site-memberships saidone-ticket "-me-"))
-
+    ;; check if list is empty
+    (is (= (empty? (get-in (sites/list-site-memberships saidone-ticket "-me-") [:body :list :entries])) true))
+    ;; add new request
+    (->> [(model/map->CreateSiteMembershipRequestBody {:message "Please can you add me"
+                                                       :id      site-id
+                                                       :title   (format "Request for %s site" site-id)})]
+         (sites/create-site-membership-requests saidone-ticket "-me-"))
+    ;; check if list is not empty
+    (is (= (not (empty? (get-in (sites/list-site-memberships saidone-ticket "-me-") [:body :list :entries]))) true))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
