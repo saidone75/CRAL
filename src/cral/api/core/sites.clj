@@ -152,6 +152,18 @@
     nil
     opts))
 
+(defn delete-site-membership
+  "Deletes person `person-id` as a member of site `site-id`.\\
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipForPerson)."
+  [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/people/%s/sites/%s" (config/get-url 'core) person-id site-id)
+    ticket
+    nil
+    opts))
+
 (defn list-sites
   "Gets a list of sites in this repository.
   You can use the **where** parameter in `query-params` to filter the returned sites by visibility or site preset.\\
