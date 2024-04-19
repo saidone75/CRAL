@@ -27,6 +27,24 @@
 (def user "admin")
 (def pass "admin")
 
+(deftest list-node-tags
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        tag-name (.toString (UUID/randomUUID))
+        ;; create a tag for the node
+        _ (tags/create-node-tag ticket created-node-id [(model/map->CreateNodeTagBody {:tag tag-name})])
+        ;; list tags
+        list-node-tag-response (tags/list-node-tags ticket created-node-id)]
+    (is (= (:status list-node-tag-response) 200))
+    (is (= (count (get-in list-node-tag-response [:body :list :entries])) 1))
+    ;; clean up
+    (is (= (:status (tags/delete-node-tag ticket created-node-id (get-in (first (get-in list-node-tag-response [:body :list :entries])) [:entry :id]))) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
+;; old tests
 (deftest create-then-list-then-get-then-delete-node-tags
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         parent-id (tu/get-guest-home ticket)
