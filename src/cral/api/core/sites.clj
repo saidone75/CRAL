@@ -140,6 +140,16 @@
      {:query-params query-params}
      opts)))
 
+(defn get-site-membership
+  ""
+  [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/people/%s/sites/%s" (config/get-url 'core) person-id site-id)
+    ticket
+    nil
+    opts))
+
 (defn list-sites
   "Gets a list of sites in this repository.
   You can use the **where** parameter in `query-params` to filter the returned sites by visibility or site preset.\\
