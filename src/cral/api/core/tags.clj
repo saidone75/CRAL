@@ -92,7 +92,7 @@
    (create-tag ticket body nil))
   ([^Ticket ticket ^UpdateTagBody body ^CreateTagQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
-     client/put
+     client/post
      (format "%s/tags" (config/get-url 'core))
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
@@ -127,3 +127,15 @@
       :query-params query-params
       :content-type :json}
      opts)))
+
+(defn delete-tag
+  "Deletes the tag with `tag-id`. This will cause the tag to be removed from all nodes.\\
+  You must have admin rights to delete a tag.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags)."
+  ([^Ticket ticket ^String ^String tag-id]
+   (utils/call-rest
+     client/delete
+     (format "%s/tags/%s" (config/get-url 'core) tag-id)
+     ticket
+     {}
+     nil)))
