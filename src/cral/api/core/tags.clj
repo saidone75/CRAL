@@ -24,6 +24,8 @@
            (cral.model.auth Ticket)
            (cral.model.core CreateNodeTagBody
                             CreateNodeTagQueryParams
+                            CreateTagBody
+                            CreateTagQueryParams
                             GetTagQueryParams
                             ListNodeTagsQueryParams
                             ListTagsQueryParams
@@ -80,6 +82,22 @@
      (format "%s/tags" (config/get-url 'core))
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn create-tag
+  "Creates a new tag.\\
+  You must have admin rights to create a tag with this endpoint.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags)."
+  ([^Ticket ticket ^CreateTagBody body]
+   (create-tag ticket body nil))
+  ([^Ticket ticket ^UpdateTagBody body ^CreateTagQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/put
+     (format "%s/tags" (config/get-url 'core))
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
 
 (defn get-tag

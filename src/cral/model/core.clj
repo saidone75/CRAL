@@ -430,6 +430,13 @@
    ^PersistentVector fields
    ^PersistentVector include])
 
+(defrecord CreateTagBody
+  [^String tag])
+
+(defrecord CreateTagQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord GetTagQueryParams
   [^PersistentVector fields])
 
