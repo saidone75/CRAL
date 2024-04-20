@@ -87,6 +87,29 @@
     ;; clean up
     (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
 
+(deftest create-tag-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; create a tag
+        create-tag-response (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
+                                 (tags/create-tag ticket))]
+    (is (= (:status create-tag-response) 201))
+    ;; check if tag has been created
+    (is (some #(= (get-in % [:entry :id]) (get-in create-tag-response [:body :entry :id])) (get-in (tags/list-tags ticket) [:body :list :entries])))
+    ;; clean up
+    (is (= (:status (tags/delete-tag ticket (get-in create-tag-response [:body :entry :id]))) 204))))
+
+(deftest get-tag-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; create a tag
+        created-tag-id (get-in (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
+                                    (tags/create-tag ticket)) [:body :entry :id])
+        ;; get tag
+        get-tag-response (tags/get-tag ticket created-tag-id)]
+    (is (= (:status get-tag-response) 200))
+    (is (= (get-in get-tag-response [:body :entry :id] created-tag-id)))
+    ;; clean up
+    (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
+
 ;; old tests
 (deftest create-then-list-then-get-then-delete-node-tags
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
