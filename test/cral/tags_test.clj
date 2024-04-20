@@ -27,7 +27,7 @@
 (def user "admin")
 (def pass "admin")
 
-(deftest list-node-tags
+(deftest list-node-tags-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -44,7 +44,7 @@
     (is (= (:status (tags/delete-node-tag ticket created-node-id (get-in (first (get-in list-node-tag-response [:body :list :entries])) [:entry :id]))) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
-(deftest create-node-tags
+(deftest create-node-tags-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -56,6 +56,25 @@
     (is (= (:status create-node-tags-response) 201))
     ;; clean up
     (is (= (:status (tags/delete-node-tag ticket created-node-id (get-in create-node-tags-response [:body :entry :id]))) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+
+(deftest delete-node-tags-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        tag-name (.toString (UUID/randomUUID))
+        ;; create a tag for the node
+        create-node-tags-response (tags/create-node-tag ticket created-node-id [(model/map->CreateNodeTagBody {:tag tag-name})])]
+    (is (= (:status create-node-tags-response) 201))
+    ;; delete tag
+    (is (= (:status (tags/delete-node-tag ticket created-node-id (get-in create-node-tags-response [:body :entry :id]))) 204))
+    ;; check if tag has been deleted
+    (is (= (count (get-in (tags/list-node-tags ticket created-node-id) [:body :list :entries])) 0))
+    ;; status should be 404
+    ;; (is (= (:status (tags/delete-node-tag ticket created-node-id (get-in create-node-tags-response [:body :entry :id]))) 404))
+    ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
 
 ;; old tests
