@@ -38,7 +38,8 @@
       (is (= (:status list-comments-response) 200))
       (is (= (get-in (first (get-in list-comments-response [:body :list :entries])) [:entry :id]) created-comment-id)))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (->> (model/->DeleteNodeQueryParams true)
+                         (nodes/delete-node ticket created-node-id))) 204))))
 
 (deftest create-comment-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -47,7 +48,8 @@
     ;; create comment
     (is (= (:status (comments/create-comment ticket created-node-id [(model/map->CreateCommentBody {:content (.toString (UUID/randomUUID))})])) 201))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (->> (model/->DeleteNodeQueryParams true)
+                         (nodes/delete-node ticket created-node-id))) 204))))
 
 (deftest update-comment-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -61,7 +63,8 @@
       ;; check if comment has been updated
       (is (= updated-comment-content) (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content])))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (->> (model/->DeleteNodeQueryParams true)
+                         (nodes/delete-node ticket created-node-id))) 204))))
 
 (deftest delete-comment-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -74,4 +77,5 @@
     ;; check if comment list is empty
     (is (= (get-in (comments/list-comments ticket created-node-id) [:body :list :pagination :count]) 0))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (->> (model/->DeleteNodeQueryParams true)
+                         (nodes/delete-node ticket created-node-id))) 204))))
