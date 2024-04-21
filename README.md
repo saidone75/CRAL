@@ -68,11 +68,11 @@ Results are returned as maps that can be easily handled in Clojure, please note 
 Post bodies and request parameters with well known keys are modeled as records:
 ```clojure
 (model/map->GetNodeQueryParams {:include ["path" "permissions"]})
-=> #cral.alfresco.model.GetNodeQueryParams{:include ["path" "permissions"], :relative-path nil, :fields nil}
+=> #cral.model.core.GetNodeQueryParams{:include ["path" "permissions"], :relative-path nil, :fields nil}
 
 (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
 =>
-#cral.alfresco.model.CreateNodeBody{:name "50075900-f0ef-461c-8534-116945f29b58",
+#cral.model.core.CreateNodeBody{:name "50075900-f0ef-461c-8534-116945f29b58",
                                     :node-type "cm:content",
                                     :properties nil}
 ```
