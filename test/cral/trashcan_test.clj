@@ -22,16 +22,27 @@
             [cral.api.core.trashcan :as trashcan]
             [cral.model.alfresco.cm :as cm]
             [cral.model.core :as model]
-            [cral.test-utils :as tu]
-            [taoensso.timbre :as timbre])
+            [cral.test-utils :as tu])
   (:import (java.io File)
            (java.util UUID)))
 
 (def user "admin")
 (def password "admin")
 
-(timbre/set-config! {:min-level :info})
+(deftest list-deleted-nodes-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)
+        ;; list deleted nodes
+        list-deleted-nodes-response (trashcan/list-deleted-nodes ticket)]
+    (is (= (:status list-deleted-nodes-response) 200))
+    (is (some #(is (= (get-in % [:entry :id]) created-node-id)) (get-in list-deleted-nodes-response [:body :list :entries])))))
 
+;; old tests
 (deftest trashcan-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
