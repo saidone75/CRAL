@@ -43,7 +43,8 @@ and can be overwritten by passing a map with the new values to `config/configure
 Results are returned as maps that can be easily handled in Clojure, please note that all map keys are converted to proper kebab-case keywords and query parameters as well as POST bodies JSON keys are automatically converted to camel case before they are sent: 
 ```clojure
 (auth/create-ticket "admin" "admin")
-=> {:status 201, :body {:entry {:id "TICKET_5905a2c41cf63c003a2044ebdae69aa48691fdc8", :user-id "admin"}}}
+=>
+{:status 201, :body {:entry {:id "TICKET_5905a2c41cf63c003a2044ebdae69aa48691fdc8", :user-id "admin"}}}
 
 (let [ticket (model/map->Ticket (get-in (auth/create-ticket user pass) [:body :entry]))
       search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
@@ -68,13 +69,12 @@ Results are returned as maps that can be easily handled in Clojure, please note 
 Post bodies and request parameters with well known keys are modeled as records:
 ```clojure
 (model/map->GetNodeQueryParams {:include ["path" "permissions"]})
-=> #cral.model.core.GetNodeQueryParams{:include ["path" "permissions"], :relative-path nil, :fields nil}
+=>
+#cral.model.core.GetNodeQueryParams{:include ["path" "permissions"], :relative-path nil, :fields nil}
 
 (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
 =>
-#cral.model.core.CreateNodeBody{:name "50075900-f0ef-461c-8534-116945f29b58",
-                                    :node-type "cm:content",
-                                    :properties nil}
+#cral.model.core.CreateNodeBody{:name "cfa7c592-e357-4efc-9d91-f5dd98ab910c", :node-type "cm:content", :properties nil}
 ```
 but plain maps can be used as well if desired:
 ```clojure
