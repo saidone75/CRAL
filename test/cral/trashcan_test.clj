@@ -59,6 +59,21 @@
     ;; clean up
     (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
 
+(deftest delete-deleted-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)]
+    ;; delete deleted node
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))
+    ;; check if node have been deleted
+    (is (= (:status (trashcan/get-deleted-node ticket created-node-id)) 404))
+    ;; clean up
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 404))))
+
 ;; old tests
 (deftest trashcan-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
