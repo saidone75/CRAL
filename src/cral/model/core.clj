@@ -86,11 +86,11 @@
    ^PersistentHashMap properties])
 
 (defrecord UpdateNodeQueryParams
-  [^Boolean permanent])
-
-(defrecord DeleteNodeQueryParams
   [^PersistentVector include
    ^PersistentVector fields])
+
+(defrecord DeleteNodeQueryParams
+  [^Boolean permanent])
 
 (defrecord ListNodeChildrenQueryParams
   [^Integer skip-count
