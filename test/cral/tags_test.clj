@@ -110,6 +110,20 @@
     ;; clean up
     (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
 
+(deftest update-tag-test
+  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+        ;; create a tag
+        created-tag-id (get-in (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
+                                    (tags/create-tag ticket)) [:body :entry :id])
+        ;; update tag with new name
+        new-tag-name (.toString (UUID/randomUUID))
+        update-tag-response (->> (model/map->UpdateTagBody {:tag new-tag-name})
+                                 (tags/update-tag ticket created-tag-id))]
+    (is (= (:status update-tag-response) 200))
+    (is (= (get-in update-tag-response [:body :entry :tag]) new-tag-name))
+    ;; clean up
+    (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
+
 ;; old tests
 (deftest create-then-list-then-get-then-delete-node-tags
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
