@@ -22,7 +22,7 @@
 (def user "admin")
 (def password "admin")
 
-(deftest get-discovery-test
+(deftest discovery-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
         ;; get repo info
         get-discovery-response (discovery/get-repo-info ticket)]
