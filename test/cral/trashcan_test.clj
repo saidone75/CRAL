@@ -40,7 +40,60 @@
         ;; list deleted nodes
         list-deleted-nodes-response (trashcan/list-deleted-nodes ticket)]
     (is (= (:status list-deleted-nodes-response) 200))
-    (is (some #(is (= (get-in % [:entry :id]) created-node-id)) (get-in list-deleted-nodes-response [:body :list :entries])))))
+    (is (some #(is (= (get-in % [:entry :id]) created-node-id)) (get-in list-deleted-nodes-response [:body :list :entries])))
+    ;; clean up
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
+
+(deftest get-deleted-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)
+        ;; get deleted node
+        get-deleted-node-response (trashcan/get-deleted-node ticket created-node-id)]
+    (is (= (:status get-deleted-node-response) 200))
+    (is (= (get-in get-deleted-node-response [:body :entry :id]) created-node-id))
+    ;; clean up
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
+
+(deftest delete-deleted-node-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)]
+    ;; delete deleted node
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))
+    ;; check if node have been deleted
+    (is (= (:status (trashcan/get-deleted-node ticket created-node-id)) 404))
+    ;; clean up
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 404))))
+
+(deftest get-deleted-node-content
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+        file-content (.toString (UUID/randomUUID))
+        _ (spit file-to-be-uploaded file-content)
+        ;; update node content
+        _ (nodes/update-node-content ticket created-node-id file-to-be-uploaded)
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)
+        ;; get deleted node content
+        get-deleted-node-content-response (trashcan/get-deleted-node-content ticket created-node-id)]
+    (is (= (:status get-deleted-node-content-response) 200))
+    (is (= (apply str (map char (:body get-deleted-node-content-response))) file-content))
+    ;; clean up
+    (io/delete-file file-to-be-uploaded)
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
 
 ;; old tests
 (deftest trashcan-test
