@@ -23,6 +23,7 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core CreateSiteBody
+                            CreateSiteMembershipRequestQueryParams
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
                             GetSiteMembershipRequestsQueryParams
@@ -58,7 +59,7 @@
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^PersistentVector body]
    (create-site-membership-requests ticket person-id body nil))
-  ([^Ticket ticket ^String person-id ^PersistentVector body ^ListSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^String person-id ^PersistentVector body ^CreateSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
      (format "%s/people/%s/site-membership-requests" (config/get-url 'core) person-id)

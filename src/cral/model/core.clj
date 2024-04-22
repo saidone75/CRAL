@@ -148,8 +148,6 @@
 (defrecord GetNodeContentQueryParams
   [^Boolean attachment])
 
-;; reorder progress bookmark
-
 (defrecord UpdateNodeContentQueryParams
   [^Boolean major-version
    ^String comment
@@ -183,12 +181,18 @@
    ^Boolean include-source
    ^PersistentVector fields])
 
+(defrecord CreateNodeAssocsBody
+  [^String target-id
+   ^String assoc-type])
+
 (defrecord CreateNodeAssocsQueryParams
   [^PersistentVector fields])
 
 (defrecord ListTargetAssocsQueryParams
   [^String where
    ^PersistentVector include
+   ^Integer skip-count
+   ^Integer max-items
    ^PersistentVector fields])
 
 (defrecord DeleteNodeAssocsQueryParams
@@ -197,33 +201,13 @@
 (defrecord ListSourceAssocsQueryParams
   [^String where
    ^PersistentVector include
+   ^Integer skip-count
+   ^Integer max-items
    ^PersistentVector fields])
-
-(defrecord LocallySet
-  [^String authority-id
-   ^String name
-   ^String access-status])
-
-(defrecord Permissions
-  [^Boolean is-inheritance-enabled
-   ^PersistentVector locally-set])
-
-(defrecord CreateNodeAssocsBody
-  [^String target-id
-   ^String assoc-type])
 
 ;; people
-(defrecord CreatePersonQueryParams
-  [^PersistentVector fields])
-
-(defrecord ListPeopleQueryParams
-  [^Integer skip-count
-   ^Integer max-items
-   ^PersistentVector order-by
-   ^PersistentVector include
-   ^PersistentVector fields])
-
 (defrecord CreatePersonBody
+  ;; TODO Company definition missing
   [^String id
    ^String first-name
    ^String last-name
@@ -244,12 +228,21 @@
    ^PersistentVector aspect-names
    ^PersistentHashMap properties])
 
-;; FIXME Company definition missing
+(defrecord CreatePersonQueryParams
+  [^PersistentVector fields])
+
+(defrecord ListPeopleQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector include
+   ^PersistentVector fields])
 
 (defrecord GetPersonQueryParams
   [^PersistentVector fields])
 
 (defrecord UpdatePersonBody
+  ;; TODO Company definition missing
   [^String first-name
    ^String last-name
    ^String description
@@ -293,6 +286,7 @@
 (defrecord CreateGroupBody
   [^String id
    ^String display-name
+   ^String description
    ^PersistentVector parent-ids])
 
 (defrecord CreateGroupQueryParams
@@ -304,7 +298,8 @@
    ^PersistentVector fields])
 
 (defrecord UpdateGroupBody
-  [^String display-name])
+  [^String display-name
+   ^String description])
 
 (defrecord UpdateGroupQueryParams
   [^PersistentVector include
@@ -360,9 +355,9 @@
 
 (defrecord EmailSharedLinkBody
   [^String client
-   ^PersistentVector recipient-emails
    ^String message
-   ^String locale])
+   ^String locale
+   ^PersistentVector recipient-emails])
 
 ;; sites
 (defrecord ListSiteMembershipRequestsQueryParams
@@ -373,7 +368,11 @@
 (defrecord CreateSiteMembershipRequestBody
   [^String message
    ^String id
-   ^String title])
+   ^String title
+   ^String client])
+
+(defrecord CreateSiteMembershipRequestQueryParams
+  [^PersistentVector fields])
 
 (defrecord GetSiteMembershipRequestsQueryParams
   [^PersistentVector fields])
@@ -400,10 +399,25 @@
    ^PersistentVector fields
    ^String where])
 
+(defrecord CreateSiteBody
+  [^String id
+   ^String title
+   ^String description
+   ^String visibility])
+
 (defrecord CreateSiteQueryParams
   [^Boolean skip-configuration
    ^Boolean skip-add-to-favorites
    ^PersistentVector fields])
+
+(defrecord GetSiteQueryParams
+  [^PersistentHashMap relations
+   ^PersistentVector fields])
+
+(defrecord UpdateSiteBody
+  [^String title
+   ^String description
+   ^String visibility])
 
 (defrecord UpdateSiteQueryParams
   [^PersistentVector fields])
@@ -411,38 +425,25 @@
 (defrecord DeleteSiteQueryParams
   [^Boolean permanent])
 
-(defrecord GetSiteQueryParams
-  [^PersistentHashMap relations
-   ^PersistentVector fields])
-
-(defrecord CreateSiteBody
-  [^String id
-   ^String title
-   ^String description
-   ^String visibility])
-
-(defrecord UpdateSiteBody
-  [^String title
-   ^String description
-   ^String visibility])
-
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreateNodeTagQueryParams
-  [^PersistentVector fields])
-
 (defrecord CreateNodeTagBody
   [^String tag])
+
+(defrecord CreateNodeTagQueryParams
+  [^PersistentVector fields])
 
 (defrecord ListTagsQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector fields
-   ^PersistentVector include])
+   ^PersistentVector include
+   ^PersistentVector order-by
+   ^String where])
 
 (defrecord CreateTagBody
   [^String tag])
@@ -452,13 +453,15 @@
    ^PersistentVector fields])
 
 (defrecord GetTagQueryParams
-  [^PersistentVector fields])
+  [^PersistentVector include
+   ^PersistentVector fields])
 
 (defrecord UpdateTagBody
   [^String tag])
 
 (defrecord UpdateTagQueryParams
-  [^PersistentVector fields])
+  [^PersistentVector include
+   ^PersistentVector fields])
 
 ;; trashcan
 (defrecord ListDeletedNodesQueryParams
@@ -485,3 +488,16 @@
    ^PersistentVector fields
    ^Integer skip-count
    ^Integer max-items])
+
+(defrecord GetVersionContentQueryParams
+  [^Boolean attachment])
+
+;; permissions
+(defrecord LocallySet
+  [^String authority-id
+   ^String name
+   ^String access-status])
+
+(defrecord Permissions
+  [^Boolean is-inheritance-enabled
+   ^PersistentVector locally-set])
