@@ -110,7 +110,10 @@
    ^PersistentHashMap properties])
 
 (defrecord CreateNodeQueryParams
-  [^PersistentVector include
+  [^Boolean auto-rename
+   ^Boolean major-version
+   ^Boolean versioning-enabled
+   ^PersistentVector include
    ^PersistentVector fields])
 
 (defrecord UpdateNodeContentQueryParams
