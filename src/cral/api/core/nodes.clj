@@ -31,6 +31,7 @@
                             DeleteNodeAssocsQueryParams
                             DeleteNodeQueryParams
                             DeleteSecondaryChildQueryParams
+                            GetNodeContentQueryParams
                             GetNodeQueryParams
                             ListNodeChildrenQueryParams
                             ListParentsQueryParams
@@ -187,13 +188,16 @@
 (defn get-node-content
   "Gets the content of the node with identifier `node-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/getNodeContent)."
-  [^Ticket ticket ^String node-id]
-  (utils/call-rest
-    client/get
-    (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
-    ticket
-    {:as :byte-array}
-    {:return-headers true}))
+  ([^Ticket ticket ^String node-id]
+   (get-node-content ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^GetNodeContentQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/content" (config/get-url 'core) node-id)
+     ticket
+     {:as           :byte-array
+      :query-params query-params}
+     (merge {:return-headers true} opts))))
 
 (defn update-node-content
   "Updates the content of the node with identifier `node-id`.\\
