@@ -20,7 +20,8 @@
             [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.model.auth Ticket)))
+           (cral.model.auth Ticket)
+           (cral.model.core ListPreferencesQueryParams)))
 
 (defn list-preferences
   "Gets a list of preferences for person `person-id`.\\
