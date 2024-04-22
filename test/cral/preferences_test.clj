@@ -27,3 +27,10 @@
         ;; list preferences
         list-preferences-response (preferences/list-preferences ticket "-me-")]
     (is (= (:status list-preferences-response) 200))))
+
+(deftest get-preference-test
+  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+        ;; list preferences
+        preferences (get-in (preferences/list-preferences ticket "-me-") [:body :list :entries])]
+    ;; get random preference
+    (is (= (:status (preferences/get-preference ticket "-me-" (get-in (rand-nth preferences) [:entry :id]))) 200))))
