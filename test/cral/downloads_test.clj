@@ -60,7 +60,7 @@
       ;; delete download
       (is (= (:status (downloads/delete-download ticket (get-in get-response [:body :entry :id]))) 202)))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket node-id1)) 204))
-    (is (= (:status (nodes/delete-node ticket node-id2)) 204))
+    (is (= (:status (nodes/delete-node ticket node-id1 {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket node-id2 {:permanent true})) 204))
     ;; delete temp file
     (io/delete-file file-to-be-uploaded)))

@@ -53,7 +53,7 @@
     ;; check if name has been updated
     (is (= (get-in (nodes/get-node ticket created-node-id) [:body :entry :name]) new-name))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -62,7 +62,7 @@
                              (nodes/create-node ticket (tu/get-guest-home ticket))
                              (#(get-in % [:body :entry :id])))]
     ;; delete node
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest list-node-children-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -79,7 +79,7 @@
                                   (nodes/create-node ticket (tu/get-guest-home ticket)))]
     (is (= (:status create-node-response) 201))
     ;; delete node
-    (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))) 204))))
+    (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]) {:permanent true})) 204))))
 
 (deftest copy-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -97,8 +97,8 @@
     (is (= (:status copy-node-response) 201))
     (is (= (get-in copy-node-response [:body :entry :parent-id]) new-parent-id))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket new-parent-id {:permanent true})) 204))))
 
 (deftest lock-node-test
   (let
@@ -112,7 +112,7 @@
                          (nodes/lock-node ticket created-node-id))) 200))
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [cm/prop-lock-type cm/prop-lock-owner cm/prop-lock-lifetime])))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest unlock-node-test
   (let
@@ -129,7 +129,7 @@
     (is (= (:status (nodes/unlock-node ticket created-node-id)) 200))
     (is (every? false? (map (partial contains? (get-in (nodes/get-node ticket created-node-id) [:body :entry :properties])) [cm/prop-lock-type cm/prop-lock-owner cm/prop-lock-lifetime])))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest move-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -148,7 +148,7 @@
     ;; check if the node has been moved
     (is (= (get-in move-node-response [:body :entry :parent-id]) new-parent-id))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket new-parent-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket new-parent-id {:permanent true})) 204))))
 
 (deftest get-node-content-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -176,7 +176,7 @@
       (is (= (apply str (map char (:body response))) (slurp (.getPath file-to-be-uploaded))))
       (is (= (slurp (.getPath file-to-be-uploaded))) (slurp (.getPath downloaded-file)))
       ;;clean up
-      (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+      (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
       (io/delete-file file-to-be-uploaded)
       (io/delete-file downloaded-file))))
 
@@ -197,7 +197,7 @@
       ;; check if the content is the same of the uploaded file
       (is (= (apply str (map char (:body response))) (slurp (.getPath file-to-be-uploaded))))
       ;;clean up
-      (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+      (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
       (io/delete-file file-to-be-uploaded))))
 
 (deftest create-secondary-child-test
@@ -216,8 +216,8 @@
                          (nodes/create-secondary-child ticket source-node-id)) 200)))
     (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-secondary-children-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -239,8 +239,8 @@
       ;; check for target-node-id
       (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :id]) target-node-id)))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest delete-secondary-child-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -263,8 +263,8 @@
     ;; check children count
     (is (= (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :pagination :count]) 0))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-parents-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
@@ -288,8 +288,8 @@
     (is (some #(= % target-node-id) (map #(get-in % [:entry :id]) (get-in (->> (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"})
                                                                                (nodes/list-target-assocs ticket source-node-id)) [:body :list :entries]))))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-target-assocs-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -311,8 +311,8 @@
       (is (= (:status response) 200))
       (is (some #(= % target-node-id) (map #(get-in % [:entry :id]) (get-in response [:body :list :entries])))))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest delete-node-assocs-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -337,8 +337,8 @@
     (is (empty? (get-in (->> (model/map->ListTargetAssocsQueryParams {:where "(assocType='cm:references')"})
                              (nodes/list-target-assocs ticket source-node-id)) [:body :list :entries])))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-source-assocs-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -359,5 +359,5 @@
                           (nodes/list-source-assocs ticket target-node-id)
                           (#(get-in % [:body :list :entries]))))))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket source-node-id)) 204))
-    (is (= (:status (nodes/delete-node ticket target-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
+    (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
