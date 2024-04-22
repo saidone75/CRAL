@@ -328,6 +328,9 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord GetPreferenceQueryParams
+  [^PersistentVector fields])
+
 ;; shared-links
 (defrecord CreateSharedLinkBody
   [^String node-id
