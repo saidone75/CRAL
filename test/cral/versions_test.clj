@@ -46,7 +46,7 @@
       ;; assert that history is not empty
       (is (not (empty? (get-in version-history-response [:body :list :entries])))))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest get-version-information-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -62,7 +62,7 @@
           (is (= (:status get-version-information-response 200)))
           (is (= (get-in get-version-information-response [:body :entry :properties cm/prop-version-type]) "MAJOR")))))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-version-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -79,7 +79,7 @@
     ;; count versions
     (is (= (count (get-in (versions/list-version-history ticket created-node-id) [:body :list :entries])) 1))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest get-version-content-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -95,5 +95,5 @@
     ;; get 1.0 version content
     (is (= (apply str (map char (:body (versions/get-version-content ticket created-node-id "1.0")))) file-content))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
     (io/delete-file file-to-be-uploaded)))

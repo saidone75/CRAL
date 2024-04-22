@@ -42,7 +42,7 @@
     (is (= (count (get-in list-node-tag-response [:body :list :entries])) 1))
     ;; clean up
     (is (= (:status (tags/delete-node-tag ticket created-node-id (get-in (first (get-in list-node-tag-response [:body :list :entries])) [:entry :id]))) 204))
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest create-node-tags-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
@@ -56,7 +56,7 @@
     (is (= (:status create-node-tags-response) 201))
     ;; clean up
     (is (= (:status (tags/delete-node-tag ticket created-node-id (get-in create-node-tags-response [:body :entry :id]))) 204))
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-node-tags-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
@@ -73,7 +73,7 @@
     ;; check if tag has been deleted
     (is (= (count (get-in (tags/list-node-tags ticket created-node-id) [:body :list :entries])) 0))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest list-tags-test
   (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])

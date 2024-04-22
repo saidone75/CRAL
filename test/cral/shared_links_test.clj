@@ -44,7 +44,7 @@
     (is (= (get-in create-shared-link-response [:body :entry :node-id]) created-node-id))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket (get-in create-shared-link-response [:body :entry :id]))) 204))
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest list-shared-link-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -66,7 +66,7 @@
     (is (= (:status list-shared-link-response) 200))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest get-shared-link-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -84,7 +84,7 @@
     (is (= (get-in get-shared-link-response [:body :entry :node-id]) created-node-id))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-shared-link-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -102,7 +102,7 @@
     ;; check if shared link has been deleted
     (is (= (:status (shared-links/get-shared-link created-shared-link-id)) 404))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest get-shared-link-content-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -125,7 +125,7 @@
     (is (= (apply str (map char (:body get-shared-link-content-response))) (slurp (.getPath file-to-be-uploaded))))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
     (io/delete-file file-to-be-uploaded)))
 
 (deftest email-shared-link-test
@@ -144,4 +144,4 @@
     (is (= (:status email-shared-link-response) 202))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id))) 204)
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))

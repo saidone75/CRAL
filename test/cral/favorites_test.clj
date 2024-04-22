@@ -41,7 +41,7 @@
       ;; check if node belongs to favorites
       (is (some true? (map #(= (get-in % [:entry :target-guid]) created-node-id) (get-in list-favorites-response [:body :list :entries])))))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest create-favorite-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -50,7 +50,7 @@
     ;; create favorite
     (is (= (:status (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid created-node-id}})])) 201))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest get-favorite-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -61,7 +61,7 @@
     ;; get favorite
     (is (= (:status (favorites/get-favorite ticket "-me-" created-favorite-id)) 200))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-favorite-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
@@ -72,4 +72,4 @@
     ;; delete favorite
     (is (= (:status (favorites/delete-favorite ticket "-me-" created-favorite-id)) 204))
     ;; clean up
-    (is (= (:status (nodes/delete-node ticket created-node-id)) 204))))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
