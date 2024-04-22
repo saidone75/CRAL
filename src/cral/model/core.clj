@@ -360,30 +360,30 @@
    ^PersistentVector recipient-emails])
 
 ;; sites
-(defrecord ListSiteMembershipRequestsQueryParams
+(defrecord ListPersonSiteMembershipRequestsQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreateSiteMembershipRequestBody
+(defrecord CreatePersonSiteMembershipRequestBody
   [^String message
    ^String id
    ^String title
    ^String client])
 
-(defrecord CreateSiteMembershipRequestQueryParams
+(defrecord CreatePersonSiteMembershipRequestQueryParams
   [^PersistentVector fields])
 
-(defrecord GetSiteMembershipRequestsQueryParams
+(defrecord GetPersonSiteMembershipRequestsQueryParams
   [^PersistentVector fields])
 
-(defrecord UpdateSiteMembershipRequestBody
+(defrecord UpdatePersonSiteMembershipRequestBody
   [^String message])
 
-(defrecord UpdateSiteMembershipRequestQueryParams
+(defrecord UpdatePersonSiteMembershipRequestQueryParams
   [^PersistentVector fields])
 
-(defrecord ListSiteMembershipsQueryParams
+(defrecord ListPersonSiteMembershipsQueryParams
   [^Integer skip-count
    ^Integer max-items
    ^PersistentVector order-by

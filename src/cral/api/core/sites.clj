@@ -23,26 +23,26 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core CreateSiteBody
-                            CreateSiteMembershipRequestQueryParams
+                            CreatePersonSiteMembershipRequestQueryParams
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
-                            GetSiteMembershipRequestsQueryParams
+                            GetPersonSiteMembershipRequestsQueryParams
                             GetSiteQueryParams
-                            ListSiteMembershipRequestsQueryParams
-                            ListSiteMembershipsQueryParams
+                            ListPersonSiteMembershipRequestsQueryParams
+                            ListPersonSiteMembershipsQueryParams
                             ListSitesQueryParams
                             UpdateSiteBody
-                            UpdateSiteMembershipRequestBody
-                            UpdateSiteMembershipRequestQueryParams
+                            UpdatePersonSiteMembershipRequestBody
+                            UpdatePersonSiteMembershipRequestQueryParams
                             UpdateSiteQueryParams)))
 
-(defn list-site-membership-requests
+(defn list-person-site-membership-requests
   "Gets a list of the current site membership requests for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMembershipRequestsForPerson)."
   ([^Ticket ticket ^String person-id]
-   (list-site-membership-requests ticket person-id nil))
-  ([^Ticket ticket ^String person-id ^ListSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
+   (list-person-site-membership-requests ticket person-id nil))
+  ([^Ticket ticket ^String person-id ^ListPersonSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
      (format "%s/people/%s/site-membership-requests" (config/get-url 'core) person-id)
@@ -50,7 +50,7 @@
      {:query-params query-params}
      opts)))
 
-(defn create-site-membership-requests
+(defn create-person-site-membership-requests
   "Create a site membership request for yourself on the site with the identifier of id, specified in the `body`. The result of the request differs depending on the type of site.
   - For a **public** site, you join the site immediately as a SiteConsumer.
   - For a **moderated** site, your request is added to the site membership request list. The request waits for approval from the Site Manager.
@@ -58,8 +58,8 @@
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^PersistentVector body]
-   (create-site-membership-requests ticket person-id body nil))
-  ([^Ticket ticket ^String person-id ^PersistentVector body ^CreateSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
+   (create-person-site-membership-requests ticket person-id body nil))
+  ([^Ticket ticket ^String person-id ^PersistentVector body ^CreatePersonSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
      (format "%s/people/%s/site-membership-requests" (config/get-url 'core) person-id)
@@ -69,13 +69,13 @@
       :content-type :json}
      opts)))
 
-(defn get-site-membership-request
+(defn get-person-site-membership-request
   "Gets the site membership request for site `site-id` for person `person-id`, if one exists.\\
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^String site-id]
-   (get-site-membership-request ticket person-id site-id nil))
-  ([^Ticket ticket ^String person-id ^String site-id ^GetSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
+   (get-person-site-membership-request ticket person-id site-id nil))
+  ([^Ticket ticket ^String person-id ^String site-id ^GetPersonSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
      (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
@@ -83,13 +83,13 @@
      {:query-params query-params}
      opts)))
 
-(defn update-site-membership-request
+(defn update-person-site-membership-request
   "Updates the message for the site membership request to site `site-id` for person `person-id`.\\
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSiteMembershipRequestForPerson)."
-  ([^Ticket ticket ^String person-id ^String site-id ^UpdateSiteMembershipRequestBody body]
-   (update-site-membership-request ticket person-id site-id body nil))
-  ([^Ticket ticket ^String person-id ^String site-id ^UpdateSiteMembershipRequestBody body ^UpdateSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^String person-id ^String site-id ^UpdatePersonSiteMembershipRequestBody body]
+   (update-person-site-membership-request ticket person-id site-id body nil))
+  ([^Ticket ticket ^String person-id ^String site-id ^UpdatePersonSiteMembershipRequestBody body ^UpdatePersonSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/put
      (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
@@ -99,7 +99,7 @@
       :content-type :json}
      opts)))
 
-(defn delete-site-membership-request
+(defn delete-person-site-membership-request
   "Deletes the site membership request to site `site-id` for person `person-id`.\\
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipRequestForPerson)."
@@ -111,7 +111,7 @@
      nil
      opts)))
 
-(defn list-site-memberships
+(defn list-person-site-memberships
   "Gets a list of site membership information for person `person-id`.\\
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   You can use the **where** parameter in `query-params` to filter the returned sites by **visibility** or site **preset**.\\
@@ -132,8 +132,8 @@
   - role\n\n
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMembershipsForPerson)."
   ([^Ticket ticket ^String person-id]
-   (list-site-memberships ticket person-id nil))
-  ([^Ticket ticket ^String person-id ^ListSiteMembershipsQueryParams query-params & [^PersistentHashMap opts]]
+   (list-person-site-memberships ticket person-id nil))
+  ([^Ticket ticket ^String person-id ^ListPersonSiteMembershipsQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
      (format "%s/people/%s/sites" (config/get-url 'core) person-id)
@@ -141,7 +141,7 @@
      {:query-params query-params}
      opts)))
 
-(defn get-site-membership
+(defn get-person-site-membership
   "Gets site membership information for person `person-id` on site `site-id`.\\
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipForPerson)."
@@ -153,7 +153,7 @@
     nil
     opts))
 
-(defn delete-site-membership
+(defn delete-person-site-membership
   "Deletes person `person-id` as a member of site `site-id`.\\
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipForPerson)."
