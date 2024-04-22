@@ -29,4 +29,4 @@ docker run --rm \
     --git /$PROJECT \
 
 # start server
-docker run --rm -p 8000:8000 -v /tmp/cljdoc:/app/data -v $HOME/.m2:/root/.m2 cljdoc/cljdoc
+docker run --rm -p 9000:8000 -v /tmp/cljdoc:/app/data -v $HOME/.m2:/root/.m2 cljdoc/cljdoc
