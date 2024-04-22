@@ -116,6 +116,40 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord CopyNodeBody
+  [^String target-parent-id
+   ^String name])
+
+(defrecord CopyNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+(defrecord LockNodeBody
+  [^Integer time-to-expire
+   ^String type
+   ^String lifetime])
+
+(defrecord LockNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+(defrecord UnLockNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+(defrecord MoveNodeBody
+  [^String target-parent-id
+   ^String name])
+
+(defrecord MoveNodeQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
+(defrecord GetNodeContentQueryParams
+  [^Boolean attachment])
+
+;; reorder progress bookmark
+
 (defrecord UpdateNodeContentQueryParams
   [^Boolean major-version
    ^String comment
@@ -149,27 +183,6 @@
    ^Boolean include-source
    ^PersistentVector fields])
 
-;; reorder progress bookmark
-
-(defrecord CopyNodeQueryParams
-  [^Boolean auto-rename
-   ^Boolean major-version
-   ^Boolean versioning-enabled
-   ^PersistentVector include
-   ^PersistentVector fields])
-
-(defrecord LockNodeQueryParams
-  [^PersistentVector include
-   ^PersistentVector fields])
-
-(defrecord UnLockNodeQueryParams
-  [^PersistentVector include
-   ^PersistentVector fields])
-
-(defrecord MoveNodeQueryParams
-  [^PersistentVector include
-   ^PersistentVector fields])
-
 (defrecord CreateNodeAssocsQueryParams
   [^PersistentVector fields])
 
@@ -194,19 +207,6 @@
 (defrecord Permissions
   [^Boolean is-inheritance-enabled
    ^PersistentVector locally-set])
-
-(defrecord CopyNodeBody
-  [^String target-parent-id
-   ^String name])
-
-(defrecord LockNodeBody
-  [^Integer time-to-expire
-   ^String type
-   ^String lifetime])
-
-(defrecord MoveNodeBody
-  [^String target-parent-id
-   ^String name])
 
 (defrecord CreateNodeAssocsBody
   [^String target-id
