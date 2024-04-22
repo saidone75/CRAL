@@ -95,39 +95,22 @@
     (io/delete-file file-to-be-uploaded)
     (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
 
-;; old tests
-(deftest trashcan-test
+(deftest restore-deleted-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
-        parent-id (tu/get-guest-home ticket)
         ;; create a node
-        create-node-body (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
-        create-node-response (nodes/create-node ticket parent-id create-node-body)]
-    ;; update node content
-    (let [file-to-be-uploaded (File/createTempFile "tmp." ".txt")
-          file-content (.toString (UUID/randomUUID))]
-      (spit file-to-be-uploaded file-content)
-      (nodes/update-node-content ticket (get-in create-node-response [:body :entry :id]) file-to-be-uploaded)
-      ;; delete node
-      (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))
-      ;; list deleted nodes
-      (is (= (:status (trashcan/list-deleted-nodes ticket)) 200))
-      ;; get deleted node content
-      (let [content (trashcan/get-deleted-node-content ticket (get-in create-node-response [:body :entry :id]))]
-        (is (= (apply str (map char (:body content))) file-content)))
-      ;; delete temp file
-      (io/delete-file file-to-be-uploaded))
-    ;; get deleted node
-    (let [get-deleted-node-response (trashcan/get-deleted-node ticket (get-in create-node-response [:body :entry :id]))]
-      (is (= (:status get-deleted-node-response) 200))
-      (is (= (get-in get-deleted-node-response [:body :entry :id]) (get-in create-node-response [:body :entry :id])))
-      ;; restore deleted node
-      (is (= (:status (trashcan/restore-deleted-node ticket (get-in create-node-response [:body :entry :id]) nil)) 200))
-      ;; check if the node has been restored
-      (is (= (get-in (nodes/get-node ticket (get-in create-node-response [:body :entry :id])) [:body :entry :parent-id]) parent-id))
-      ;; delete node again
-      (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]))) 204))
-      ;; delete deleted node
-      (is (= (:status (trashcan/delete-deleted-node ticket (get-in get-deleted-node-response [:body :entry :id]))) 204))
-      ;; check if node has been permanently deleted
-      (is (= (:status (trashcan/get-deleted-node ticket (get-in create-node-response [:body :entry :id]))) 404))
-      (is (= (:status (trashcan/delete-deleted-node ticket (get-in get-deleted-node-response [:body :entry :id]))) 404)))))
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)]
+    ;; check if node have been deleted
+    (is (= (:status (nodes/get-node ticket created-node-id)) 404))
+    ;; restore deleted node
+    (is (= (:status (->> (model/map->RestoreDeletedNodeBody {:target-parent-id (tu/get-guest-home ticket)
+                                                             :assoc-type       cm/assoc-contains})
+                         (trashcan/restore-deleted-node ticket created-node-id))) 200))
+    ;; check if node have been restored
+    (is (= (:status (nodes/get-node ticket created-node-id)) 200))
+    ;; clean up
+    (is (= (:status (->> (model/->DeleteNodeQueryParams true)
+                         (nodes/delete-node ticket created-node-id))) 204))))
