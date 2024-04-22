@@ -23,6 +23,8 @@
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
    ^Integer max-items
+   ^String who
+   ^String site-id
    ^PersistentVector fields])
 
 ;; comments
