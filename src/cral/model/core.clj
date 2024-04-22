@@ -320,7 +320,13 @@
    ^Integer max-items
    ^PersistentVector order-by
    ^String where
-   ^PersistentVector fieds])
+   ^PersistentVector fields])
+
+;; preferences
+(defrecord ListPreferencesQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
 
 ;; shared-links
 (defrecord CreateSharedLinkBody
