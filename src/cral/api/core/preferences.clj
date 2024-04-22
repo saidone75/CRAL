@@ -21,7 +21,8 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.core ListPreferencesQueryParams)))
+           (cral.model.core GetPreferenceQueryParams
+                            ListPreferencesQueryParams)))
 
 (defn list-preferences
   "Gets a list of preferences for person `person-id`.\\
@@ -35,6 +36,20 @@
    (utils/call-rest
      client/get
      (format "%s/people/%s/preferences" (config/get-url 'core) person-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn get-preference
+  "Gets a specific preference for person person `person-id`.\\
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/preferences/getPreference)."
+  ([^Ticket ticket ^String person-id ^String preference-name]
+   (get-preference ticket person-id preference-name nil))
+  ([^Ticket ticket ^String person-id ^String preference-name ^GetPreferenceQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/people/%s/preferences/%s" (config/get-url 'core) person-id preference-name)
      ticket
      {:query-params query-params}
      opts)))
