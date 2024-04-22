@@ -31,7 +31,8 @@
                             DeleteNodeAssocsQueryParams
                             DeleteNodeQueryParams
                             DeleteSecondaryChildQueryParams
-                            GetNodeContentQueryParams GetNodeQueryParams
+                            GetNodeContentQueryParams
+                            GetNodeQueryParams
                             ListNodeChildrenQueryParams
                             ListParentsQueryParams
                             ListSecondaryChildrenQueryParams
