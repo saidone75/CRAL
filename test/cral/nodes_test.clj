@@ -22,15 +22,12 @@
             [cral.api.core.nodes :as nodes]
             [cral.model.alfresco.cm :as cm]
             [cral.model.core :as model]
-            [cral.test-utils :as tu]
-            [taoensso.timbre :as timbre])
+            [cral.test-utils :as tu])
   (:import (java.io File)
            (java.util UUID)))
 
 (def user "admin")
 (def password "admin")
-
-(timbre/set-config! {:min-level :info})
 
 (deftest get-node-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
