@@ -24,6 +24,6 @@
 (use-fixtures :once fixtures/setup)
 
 (deftest list-activities-test
-  (let [ticket (get-in (auth/create-ticket (c/user) (c/password)) [:body :entry])]
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
     ;; list activities
-    (is (= (:status (activities/list-activities ticket (c/user))) 200))))
+    (is (= (:status (activities/list-activities ticket c/user)) 200))))

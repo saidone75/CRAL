@@ -17,13 +17,14 @@
 (ns cral.discovery-test
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
-            [cral.api.discovery :as discovery]))
+            [cral.api.discovery :as discovery]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]))
 
-(def user "admin")
-(def password "admin")
+(use-fixtures :once fixtures/setup)
 
 (deftest discovery-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; get repo info
         get-discovery-response (discovery/get-repo-info ticket)]
     (is (= (:status get-discovery-response) 200))))

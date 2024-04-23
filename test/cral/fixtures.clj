@@ -27,6 +27,7 @@
   (if (.exists (io/file config-file))
     ;; load configuration
     (c/configure (immu/load config-file))
-    (t/log! (format "unable to find %s, using defaults")))
+    (t/log! :warn (format "unable to find %s, using defaults" config-file)))
   (t/set-kind-filter! {:deny :trace})
+  (t/set-ns-filter! {:deny "cral.utils.utils"})
   (f))

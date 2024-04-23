@@ -25,6 +25,6 @@
 (use-fixtures :once fixtures/setup)
 
 (deftest get-guest-home
-  (let [ticket (get-in (auth/create-ticket (c/user) (c/password)) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         guest-home-id (test-utils/get-guest-home ticket)]
     (is (= (get-in (nodes/get-node ticket guest-home-id) [:body :entry :properties :cm:title]) "Guest Home"))))

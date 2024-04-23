@@ -1,16 +1,16 @@
 ;  CRAL
 ;  Copyright (C) 2023-2024 Saidone
-;
+;  
 ;  This program is free software: you can redistribute it and/or modify
 ;  it under the terms of the GNU General Public License as published by
 ;  the Free Software Foundation, either version 3 of the License, or
 ;  (at your option) any later version.
-;
+;  
 ;  This program is distributed in the hope that it will be useful,
 ;  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;  GNU General Public License for more details.
-;
+;  
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -20,17 +20,18 @@
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]
             [cral.model.alfresco.cm :as cm]
             [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.io File)
            (java.util UUID)))
 
-(def user "admin")
-(def password "admin")
+(use-fixtures :once fixtures/setup)
 
 (deftest get-node-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         guest-home-id (tu/get-guest-home ticket)]
     ;; well known fields for query parameters defined in GetNodeQueryParams
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket guest-home-id (model/map->GetNodeQueryParams {:include ["path" "permissions"]})) [:body :entry])) [:path :permissions])))
@@ -38,7 +39,7 @@
     (is (every? true? (map (partial contains? (get-in (nodes/get-node ticket guest-home-id {:include ["path" "permissions"]}) [:body :entry])) [:path :permissions])))))
 
 (deftest update-node-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -53,7 +54,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-node-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -62,7 +63,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest list-node-children-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         company-home-id (get-in (nodes/get-node ticket "-root-") [:body :entry :id])
         list-node-children-response (nodes/list-node-children ticket company-home-id)]
     (is (= (:status list-node-children-response) 200))
@@ -70,7 +71,7 @@
     (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
 
 (deftest create-node-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         create-node-response (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                                   (nodes/create-node ticket (tu/get-guest-home ticket)))]
@@ -79,7 +80,7 @@
     (is (= (:status (nodes/delete-node ticket (get-in create-node-response [:body :entry :id]) {:permanent true})) 204))))
 
 (deftest copy-node-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -99,7 +100,7 @@
 
 (deftest lock-node-test
   (let
-    [ticket (get-in (auth/create-ticket user password) [:body :entry])
+    [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
      ;; create a node
      created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                           (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -113,7 +114,7 @@
 
 (deftest unlock-node-test
   (let
-    [ticket (get-in (auth/create-ticket user password) [:body :entry])
+    [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
      ;; create a node
      created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                           (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -129,7 +130,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest move-node-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -148,7 +149,7 @@
     (is (= (:status (nodes/delete-node ticket new-parent-id {:permanent true})) 204))))
 
 (deftest get-node-content-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -178,7 +179,7 @@
       (io/delete-file downloaded-file))))
 
 (deftest update-node-content-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -198,7 +199,7 @@
       (io/delete-file file-to-be-uploaded))))
 
 (deftest create-secondary-child-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
         source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -217,7 +218,7 @@
     (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-secondary-children-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
         source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -240,7 +241,7 @@
     (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest delete-secondary-child-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
         source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -264,11 +265,11 @@
     (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-parents-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
     (is (= (get-in (first (get-in (nodes/list-parents ticket (tu/get-guest-home ticket)) [:body :list :entries])) [:entry :name]) "Company Home"))))
 
 (deftest create-node-assocs-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
         source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -289,7 +290,7 @@
     (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-target-assocs-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
         source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -312,7 +313,7 @@
     (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest delete-node-assocs-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
         source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
@@ -338,7 +339,7 @@
     (is (= (:status (nodes/delete-node ticket target-node-id {:permanent true})) 204))))
 
 (deftest list-source-assocs-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create the source node
         source-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
