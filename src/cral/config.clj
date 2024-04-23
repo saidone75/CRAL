@@ -23,10 +23,17 @@
                        :core-path      "alfresco/api/-default-/public/alfresco/versions/1"
                        :search-path    "alfresco/api/-default-/public/search/versions/1"
                        :auth-path      "alfresco/api/-default-/public/authentication/versions/1"
-                       :discovery-path "alfresco/api/discovery"}))
+                       :discovery-path "alfresco/api/discovery"
+                       :user           "admin"
+                       :password       "admin"}))
+
+(def user "admin")
+(def password "admin")
 
 (defn configure [& [m]]
-  (swap! config merge m))
+  (swap! config merge m)
+  (alter-var-root #'user (constantly (:user @config)))
+  (alter-var-root #'password (constantly (:password @config))))
 
 (defn set-log-level
   [level]
@@ -35,6 +42,3 @@
 (defn get-url [path]
   (let [path (keyword (str path "-path"))]
     (format "%s://%s:%s/%s" (:scheme @config) (:host @config) (:port @config) (path @config))))
-
-(defn user [] (:user @config))
-(defn password [] (:password @config))

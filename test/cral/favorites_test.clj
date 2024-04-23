@@ -1,16 +1,16 @@
 ;  CRAL
 ;  Copyright (C) 2023-2024 Saidone
-;
+;  
 ;  This program is free software: you can redistribute it and/or modify
 ;  it under the terms of the GNU General Public License as published by
 ;  the Free Software Foundation, either version 3 of the License, or
 ;  (at your option) any later version.
-;
+;  
 ;  This program is distributed in the hope that it will be useful,
 ;  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;  GNU General Public License for more details.
-;
+;  
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -19,22 +19,23 @@
             [cral.api.auth :as auth]
             [cral.api.core.favorites :as favorites]
             [cral.api.core.nodes :as nodes]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]
             [cral.model.alfresco.cm :as cm]
             [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
 
-(def user "admin")
-(def password "admin")
+(use-fixtures :once fixtures/setup)
 
 (deftest list-favorites-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; add node to favorites
     (favorites/create-favorite ticket "-me-" [(model/->CreateFavoriteBody {:file {:guid created-node-id}})])
     ;; list favorites
-    (let [list-favorites-response (favorites/list-favorites ticket user)]
+    (let [list-favorites-response (favorites/list-favorites ticket c/user)]
       (is (= (:status list-favorites-response) 200))
       ;; count favorites
       (is (> (get-in list-favorites-response [:body :list :pagination :count]) 0))
@@ -44,7 +45,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest create-favorite-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
     ;; create favorite
@@ -53,7 +54,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest get-favorite-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; add node to favorites
@@ -64,7 +65,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-favorite-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])
         ;; add node to favorites

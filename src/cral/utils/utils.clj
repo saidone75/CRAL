@@ -77,7 +77,7 @@
 (defn ok-response
   "Build a successful response."
   [r return-headers]
-  (t/trace! (with-out-str (clojure.pprint/pprint r)))
+  (t/trace! r)
   (let [response {:status (:status r)
                   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
                             (kebab-keywordize-keys (json/read-str (:body r)))
@@ -89,7 +89,7 @@
 (defn ex-response
   "Build a response from a client exception."
   [^Exception e]
-  (t/trace! (with-out-str (clojure.pprint/pprint e)))
+  (t/error! e)
   (if (instance? SSLException e)
     {:status  500
      :message (.getMessage e)}

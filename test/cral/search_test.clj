@@ -17,11 +17,15 @@
 (ns cral.search-test
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
-            [cral.model.search :as search-model]
-            [cral.api.search :as search]))
+            [cral.api.search :as search]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]
+            [cral.model.search :as search-model]))
+
+(use-fixtures :once fixtures/setup)
 
 (deftest search
-  (let [ticket (get-in (auth/create-ticket "admin" "admin") [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         response
         (->> (search-model/map->RequestQuery {:query "PATH:'app:company_home'"})
              (#(search-model/map->SearchBody {:query %}))

@@ -1,16 +1,16 @@
 ;  CRAL
 ;  Copyright (C) 2023-2024 Saidone
-;
+;  
 ;  This program is free software: you can redistribute it and/or modify
 ;  it under the terms of the GNU General Public License as published by
 ;  the Free Software Foundation, either version 3 of the License, or
 ;  (at your option) any later version.
-;
+;  
 ;  This program is distributed in the hope that it will be useful,
 ;  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;  GNU General Public License for more details.
-;
+;  
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -19,16 +19,17 @@
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
             [cral.api.core.tags :as tags]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]
             [cral.model.alfresco.cm :as cm]
             [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
 
-(def user "admin")
-(def pass "admin")
+(use-fixtures :once fixtures/setup)
 
 (deftest list-node-tags-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -45,7 +46,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest create-node-tags-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -59,7 +60,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest delete-node-tags-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
@@ -76,7 +77,7 @@
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest list-tags-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a tag
         created-tag-id (get-in (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
                                     (tags/create-tag ticket)) [:body :entry :id])
@@ -88,7 +89,7 @@
     (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
 
 (deftest create-tag-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a tag
         create-tag-response (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
                                  (tags/create-tag ticket))]
@@ -99,7 +100,7 @@
     (is (= (:status (tags/delete-tag ticket (get-in create-tag-response [:body :entry :id]))) 204))))
 
 (deftest get-tag-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a tag
         created-tag-id (get-in (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
                                     (tags/create-tag ticket)) [:body :entry :id])
@@ -111,7 +112,7 @@
     (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
 
 (deftest update-tag-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a tag
         created-tag-id (get-in (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
                                     (tags/create-tag ticket)) [:body :entry :id])
@@ -125,7 +126,7 @@
     (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
 
 (deftest delete-tag-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a tag
         created-tag-id (get-in (->> (model/map->CreateTagBody {:tag (.toString (UUID/randomUUID))})
                                     (tags/create-tag ticket)) [:body :entry :id])]

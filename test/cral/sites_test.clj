@@ -1,16 +1,16 @@
 ;  CRAL
 ;  Copyright (C) 2023-2024 Saidone
-;
+;  
 ;  This program is free software: you can redistribute it and/or modify
 ;  it under the terms of the GNU General Public License as published by
 ;  the Free Software Foundation, either version 3 of the License, or
 ;  (at your option) any later version.
-;
+;  
 ;  This program is distributed in the hope that it will be useful,
 ;  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;  GNU General Public License for more details.
-;
+;  
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -19,15 +19,16 @@
             [cral.api.auth :as auth]
             [cral.api.core.people :as people]
             [cral.api.core.sites :as sites]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]
             [cral.model.core :as model])
   (:import (java.util UUID)))
 
-(def user "admin")
-(def pass "admin")
+(use-fixtures :once fixtures/setup)
 (def saidone "saidone")
 
 (deftest list-site-membership-requests-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a moderated site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
@@ -51,7 +52,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest create-site-membership-requests-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a moderated site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
@@ -72,7 +73,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest get-site-membership-requests-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a moderated site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
@@ -98,7 +99,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest update-site-membership-request-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a moderated site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
@@ -125,7 +126,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest delete-site-membership-requests-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a moderated site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
@@ -151,7 +152,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest list-site-memberships-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a public site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -177,7 +178,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest get-site-membership-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a public site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -201,7 +202,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest delete-site-membership-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a public site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -229,7 +230,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest list-sites-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a public site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -242,7 +243,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest create-site-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))]
     ;; create a public site
     (is (= (:status (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -253,7 +254,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest get-site-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a public site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -265,7 +266,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest update-site-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a public site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
@@ -280,7 +281,7 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
 (deftest delete-site-test
-  (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a public site
         _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})

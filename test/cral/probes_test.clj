@@ -17,7 +17,10 @@
 (ns cral.probes-test
   (:require [clojure.test :refer :all]
             [cral.api.core.probes :as probes]
+            [cral.fixtures :as fixtures]
             [cral.model.core]))
+
+(use-fixtures :once fixtures/setup)
 
 (deftest get-probes
   (is (= (:status (probes/probes "-ready-")) 200))

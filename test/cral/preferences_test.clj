@@ -17,19 +17,20 @@
 (ns cral.preferences-test
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
-            [cral.api.core.preferences :as preferences]))
+            [cral.api.core.preferences :as preferences]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]))
 
-(def user "admin")
-(def password "admin")
+(use-fixtures :once fixtures/setup)
 
 (deftest list-preferences-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; list preferences
         list-preferences-response (preferences/list-preferences ticket "-me-")]
     (is (= (:status list-preferences-response) 200))))
 
 (deftest get-preference-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; list preferences
         preferences (get-in (preferences/list-preferences ticket "-me-") [:body :list :entries])]
     ;; get random preference
