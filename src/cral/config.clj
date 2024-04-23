@@ -27,6 +27,7 @@
                        :user           "admin"
                        :password       "admin"}))
 
+;; shorthand used in tests
 (def user "admin")
 (def password "admin")
 
