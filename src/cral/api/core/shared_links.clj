@@ -70,7 +70,7 @@
      opts)))
 
 (defn delete-shared-link
-  "Deletes the shared link with identifier `shared-id`.
+  "Deletes the shared link with identifier `shared-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/deleteSharedLink)."
   [^Ticket ticket ^String shared-id & [^PersistentHashMap opts]]
   (utils/call-rest

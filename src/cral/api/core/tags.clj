@@ -85,7 +85,7 @@
      opts)))
 
 (defn create-tag
-  "Creates a new tag.\\
+  "Creates a new tag.
   You must have admin rights to create a tag with this endpoint.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags)."
   ([^Ticket ticket ^CreateTagBody body]
@@ -129,7 +129,7 @@
      opts)))
 
 (defn delete-tag
-  "Deletes the tag with `tag-id`. This will cause the tag to be removed from all nodes.\\
+  "Deletes the tag with `tag-id`. This will cause the tag to be removed from all nodes.
   You must have admin rights to delete a tag.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags)."
   ([^Ticket ticket ^String ^String tag-id]

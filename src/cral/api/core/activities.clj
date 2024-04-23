@@ -24,7 +24,7 @@
            (cral.model.core ListActivitiesQueryParams)))
 
 (defn list-activities
-  "Gets a list of activities for person `person-id`.\\
+  "Gets a list of activities for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/activities/listActivitiesForPerson)."
   ([^Ticket ticket ^String person-id]
