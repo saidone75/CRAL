@@ -19,7 +19,7 @@
             [clojure.string :as str]
             [clojure.walk :as walk]
             [cral.model.auth]
-            [taoensso.timbre :as timbre])
+            [taoensso.telemere :as t])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
            (java.util Base64)
@@ -77,7 +77,7 @@
 (defn ok-response
   "Build a successful response."
   [r return-headers]
-  (timbre/trace (with-out-str (clojure.pprint/pprint r)))
+  (t/trace! (with-out-str (clojure.pprint/pprint r)))
   (let [response {:status (:status r)
                   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
                             (kebab-keywordize-keys (json/read-str (:body r)))
@@ -89,7 +89,7 @@
 (defn ex-response
   "Build a response from a client exception."
   [^Exception e]
-  (timbre/trace (with-out-str (clojure.pprint/pprint e)))
+  (t/trace! (with-out-str (clojure.pprint/pprint e)))
   (if (instance? SSLException e)
     {:status  500
      :message (.getMessage e)}

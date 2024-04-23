@@ -18,11 +18,14 @@
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.model.aspects :as aspects]
+            [cral.fixtures :as fixtures]
             [cral.model.alfresco.cm :as cm]
             [cral.model.core]))
 
 (def user "admin")
 (def password "admin")
+
+(use-fixtures :once fixtures/setup)
 
 (deftest list-aspects-test
   (let [ticket (get-in (auth/create-ticket user password) [:body :entry])

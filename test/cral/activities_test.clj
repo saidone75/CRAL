@@ -17,12 +17,13 @@
 (ns cral.activities-test
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
-            [cral.api.core.activities :as activities]))
+            [cral.api.core.activities :as activities]
+            [cral.fixtures :as fixtures]
+            [cral.config :as c]))
 
-(def user "admin")
-(def password "admin")
+(use-fixtures :once fixtures/setup)
 
 (deftest list-activities-test
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])]
+  (let [ticket (get-in (auth/create-ticket (c/user) (c/password)) [:body :entry])]
     ;; list activities
-    (is (= (:status (activities/list-activities ticket user)) 200))))
+    (is (= (:status (activities/list-activities ticket (c/user))) 200))))

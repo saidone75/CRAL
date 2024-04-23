@@ -15,7 +15,7 @@
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns cral.config
-  (:require [taoensso.timbre :as timbre]))
+  (:require [taoensso.telemere :as t]))
 
 (defonce config (atom {:scheme         "http"
                        :host           "localhost"
@@ -30,8 +30,11 @@
 
 (defn set-log-level
   [level]
-  (timbre/set-config! {:min-level level}))
+  (t/set-min-level! level))
 
 (defn get-url [path]
   (let [path (keyword (str path "-path"))]
     (format "%s://%s:%s/%s" (:scheme @config) (:host @config) (:port @config) (path @config))))
+
+(defn user [] (:user @config))
+(defn password [] (:password @config))

@@ -14,14 +14,19 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(defproject org.saidone/cral "0.3.1-SNAPSHOT"
-  :description "A library for consuming Alfresco Content Services public REST API"
-  :url "https://saidone.org"
-  :license {:name "GNU General Public License v3.0"
-            :url  "https://www.gnu.org/licenses/gpl-3.0.txt"}
-  :dependencies [[org.clojure/clojure "1.11.2"]
-                 [org.clojure/data.json "2.5.0"]
-                 [org.clj-commons/clj-http-lite "1.0.13"]
-                 [levand/immuconf "0.1.0"]
-                 [com.taoensso.debug/telemere "1.0.0-beta1-f01"]]
-  :repl-options {:init-ns cral.alfresco})
+(ns cral.fixtures
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
+            [cral.config :as c]
+            [immuconf.config :as immu]
+            [taoensso.telemere :as t]))
+
+(def config-file "config.edn")
+
+(defn setup [f]
+  (if (.exists (io/file config-file))
+    ;; load configuration
+    (c/configure (immu/load config-file))
+    (t/log! (format "unable to find %s, using defaults")))
+  (t/set-kind-filter! {:deny :trace})
+  (f))

@@ -17,15 +17,14 @@
 (ns cral.test-utils-test
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
-            [cral.config :as config]
             [cral.api.core.nodes :as nodes]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]
             [cral.test-utils :as test-utils]))
 
-(defonce user "admin")
-(defonce password "admin")
+(use-fixtures :once fixtures/setup)
 
 (deftest get-guest-home
-  (config/set-log-level :trace)
-  (let [ticket (get-in (auth/create-ticket user password) [:body :entry])
+  (let [ticket (get-in (auth/create-ticket (c/user) (c/password)) [:body :entry])
         guest-home-id (test-utils/get-guest-home ticket)]
     (is (= (get-in (nodes/get-node ticket guest-home-id) [:body :entry :properties :cm:title]) "Guest Home"))))

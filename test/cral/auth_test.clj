@@ -16,10 +16,13 @@
 
 (ns cral.auth-test
   (:require [clojure.test :refer :all]
-            [cral.api.auth :as auth]))
+            [cral.api.auth :as auth]
+            [cral.fixtures :as fixtures]))
 
 (defonce user "admin")
 (defonce password "admin")
+
+(use-fixtures :once fixtures/setup)
 
 (deftest create-ticket-test
   ;; create ticket
