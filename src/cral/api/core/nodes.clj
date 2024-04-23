@@ -49,7 +49,7 @@
            (java.io File)))
 
 (defn get-node
-  "Get information for node `node-id`.\\
+  "Get information for node `node-id`. You can use the **include** parameter in `query-params` to return additional information.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/getNode)."
   ([^Ticket ticket ^String node-id]
    (get-node ticket node-id nil))
@@ -77,9 +77,8 @@
      opts)))
 
 (defn delete-node
-  "Delete the node `node-id`.\\
-  If **node-id** is a folder, then its children are also deleted.
-  Deleted nodes are moved to the trashcan unless the **permanent** query parameter is set to **true**.
+  "Delete the node `node-id`. If **node-id** is a folder, then its children are also deleted.
+  Deleted nodes are moved to the trashcan unless the **permanent** query parameter is set to **true**.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/deleteNode)."
   ([^Ticket ticket ^String node-id]
    (delete-node ticket node-id nil))
@@ -170,7 +169,7 @@
   "Move the node `node-id` to the parent folder node **target-parent-id**.
   The **target-parent-id** is specified in the in request `body`.
   The moved node retains its name unless you specify a new name in the request `body`.
-  If the source `node-id`` is a folder, then its children are also moved.
+  If the source `node-id` is a folder, then its children are also moved.
   The move will effectively change the primary parent.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/moveNode)."
   ([^Ticket ticket ^String node-id ^MoveNodeBody body]
@@ -200,9 +199,11 @@
      (merge {:return-headers true} opts))))
 
 (defn update-node-content
-  "Updates the content of the node with identifier `node-id`.\\
-  The **major-version** and **comment** in `query-params` can be used to control versioning behaviour. If the content is versionable then a new minor version is created by default.
-  Optionally a new **name** that must be unique within the parent folder can also be specified in `query-params`. If specified and valid then this will rename the node. If invalid then an error is returned and the content is not updated.
+  "Updates the content of the node with identifier `node-id`.
+  The **major-version** and **comment** in `query-params` can be used to control versioning behaviour.
+  If the content is versionable then a new minor version is created by default.
+  Optionally a new **name** that must be unique within the parent folder can also be specified in `query-params`.
+  If specified and valid then this will rename the node. If invalid then an error is returned and the content is not updated.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/updateNodeContent)."
   ([^Ticket ticket ^String node-id ^File content]
    (update-node-content ticket node-id content nil))

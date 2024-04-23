@@ -25,7 +25,7 @@
                             ListPreferencesQueryParams)))
 
 (defn list-preferences
-  "Gets a list of preferences for person `person-id`.\\
+  "Gets a list of preferences for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   Note that each preference consists of an **id** and a **value**.\\
   The value can be of any JSON type.\\
@@ -41,7 +41,7 @@
      opts)))
 
 (defn get-preference
-  "Gets a specific preference for person person `person-id`.\\
+  "Gets a specific preference for person person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/preferences/getPreference)."
   ([^Ticket ticket ^String person-id ^String preference-name]

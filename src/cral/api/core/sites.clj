@@ -70,7 +70,7 @@
      opts)))
 
 (defn get-person-site-membership-request
-  "Gets the site membership request for site `site-id` for person `person-id`, if one exists.\\
+  "Gets the site membership request for site `site-id` for person `person-id`, if one exists.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^String site-id]
@@ -84,7 +84,7 @@
      opts)))
 
 (defn update-person-site-membership-request
-  "Updates the message for the site membership request to site `site-id` for person `person-id`.\\
+  "Updates the message for the site membership request to site `site-id` for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^String site-id ^UpdatePersonSiteMembershipRequestBody body]
@@ -100,7 +100,7 @@
      opts)))
 
 (defn delete-person-site-membership-request
-  "Deletes the site membership request to site `site-id` for person `person-id`.\\
+  "Deletes the site membership request to site `site-id` for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
@@ -112,8 +112,8 @@
      opts)))
 
 (defn list-person-site-memberships
-  "Gets a list of site membership information for person `person-id`.\\
-  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  "Gets a list of site membership information for person `person-id`.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.
   You can use the **where** parameter in `query-params` to filter the returned sites by **visibility** or site **preset**.\\
   Example to filter by **visibility**, use any one of:
   ```clojure
@@ -142,7 +142,7 @@
      opts)))
 
 (defn get-person-site-membership
-  "Gets site membership information for person `person-id` on site `site-id`.\\
+  "Gets site membership information for person `person-id` on site `site-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipForPerson)."
   [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
@@ -154,7 +154,7 @@
     opts))
 
 (defn delete-person-site-membership
-  "Deletes person `person-id` as a member of site `site-id`.\\
+  "Deletes person `person-id` as a member of site `site-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipForPerson)."
   [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
@@ -201,8 +201,7 @@
   You can use the **relations** parameter in `query-params` to include one or more relate entities in a single response and so reduce network traffic.
   The entity types in Alfresco are organized in a tree structure.
   The **sites** entity has two children, **containers** and **members**.
-  The following relations parameter returns all the container and member objects related to the site `site-id`:
-  `containers,members`\\
+  The following relations parameter returns all the container and member objects related to the site `site-id`: `containers,members`\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSite)."
   ([^Ticket ticket ^String site-id]
    (get-site ticket site-id nil))
