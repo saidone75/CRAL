@@ -27,9 +27,11 @@
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
                             GetPersonSiteMembershipRequestsQueryParams
+                            GetSiteContainerQueryParams
                             GetSiteQueryParams
                             ListPersonSiteMembershipRequestsQueryParams
                             ListPersonSiteMembershipsQueryParams
+                            ListSiteContainersQueryParams
                             ListSitesQueryParams
                             UpdateSiteBody
                             UpdatePersonSiteMembershipRequestBody
@@ -238,6 +240,32 @@
    (utils/call-rest
      client/delete
      (format "%s/sites/%s" (config/get-url 'core) site-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn list-site-containers
+  "Gets a list of containers for site `site-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteContainers)."
+  ([^Ticket ticket ^String site-id]
+   (get-site ticket site-id nil))
+  ([^Ticket ticket ^String site-id ^ListSiteContainersQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s/containers" (config/get-url 'core) site-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn get-site-container
+  "Gets information on the container `container-id` in site `site-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteContainer)."
+  ([^Ticket ticket ^String site-id ^String container-id]
+   (get-site ticket site-id container-id nil))
+  ([^Ticket ticket ^String site-id ^String container-id ^GetSiteContainerQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s/containers/%s" (config/get-url 'core) site-id container-id)
      ticket
      {:query-params query-params}
      opts)))
