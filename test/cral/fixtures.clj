@@ -27,8 +27,6 @@
   (if (.exists (io/file config-file))
     ;; load configuration
     (let [config (immu/load config-file)]
-      (c/configure (:alfresco config))
-      (t/set-kind-filter! (get-in config [:telemere :kind-filter]))
-      (t/set-ns-filter! (get-in config [:telemere :ns-filter])))
+      (c/load-config config))
     (t/log! :warn (format "unable to find %s, using defaults" config-file)))
   (f))
