@@ -301,3 +301,14 @@
     (is (= (:status (sites/list-site-containers ticket site-id)) 200))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest get-site-container-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
+               (sites/create-site ticket))
+        containers (get-in (sites/list-site-containers ticket site-id) [:body :list :entries])]
+    (is (= (:status (sites/get-site-container ticket site-id (get-in (rand-nth containers) [:entry :folder-id]))) 200))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
