@@ -433,6 +433,12 @@
 (defrecord GetSiteContainerQueryParams
   [^PersistentVector fields])
 
+(defrecord GetSiteMembershipRequestsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^String where
+   ^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count

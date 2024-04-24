@@ -28,6 +28,7 @@
                             DeleteSiteQueryParams
                             GetPersonSiteMembershipRequestsQueryParams
                             GetSiteContainerQueryParams
+                            GetSiteMembershipRequestsQueryParams
                             GetSiteQueryParams
                             ListPersonSiteMembershipRequestsQueryParams
                             ListPersonSiteMembershipsQueryParams
@@ -266,6 +267,31 @@
    (utils/call-rest
      client/get
      (format "%s/sites/%s/containers/%s" (config/get-url 'core) site-id container-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn get-site-membership-request
+  "Get the list of site membership requests the user can action.
+  You can use the **where** parameter in `query-params` to filter the returned site membership requests by `site-id`. For example:
+  ```clojure
+  (siteId=mySite)
+  ```
+  The **where** parameter can also be used to filter by `person-id`. For example:
+  ```clojure
+  where=(personId=person)
+  ```
+  This may be combined with the `site-id` filter, as shown below:
+  ```clojure
+  where=(siteId=mySite AND personId=person)
+  ```
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipRequests)."
+  ([^Ticket ticket]
+   (get-site-membership-request ticket nil))
+  ([^Ticket ticket ^GetSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/site-membership-requests" (config/get-url 'core))
      ticket
      {:query-params query-params}
      opts)))
