@@ -430,6 +430,9 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord GetSiteContainerQueryParams
+  [^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
