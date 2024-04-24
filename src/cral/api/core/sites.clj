@@ -248,7 +248,7 @@
   "Gets a list of containers for site `site-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteContainers)."
   ([^Ticket ticket ^String site-id]
-   (get-site ticket site-id nil))
+   (list-site-containers ticket site-id nil))
   ([^Ticket ticket ^String site-id ^ListSiteContainersQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
@@ -261,7 +261,7 @@
   "Gets information on the container `container-id` in site `site-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteContainer)."
   ([^Ticket ticket ^String site-id ^String container-id]
-   (get-site ticket site-id container-id nil))
+   (get-site-container ticket site-id container-id nil))
   ([^Ticket ticket ^String site-id ^String container-id ^GetSiteContainerQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
