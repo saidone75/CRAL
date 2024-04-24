@@ -43,8 +43,8 @@
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
         ;; create membership request
         _ (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                             :id            site-id
-                                                             :title         (format "Request for %s site" site-id)})]
+                                                                   :id      site-id
+                                                                   :title   (format "Request for %s site" site-id)})]
                (sites/create-person-site-membership-requests saidone-ticket "-me-"))]
     ;; list membership requests
     (is (= (:status (sites/list-person-site-membership-requests saidone-ticket "-me-")) 200))
@@ -66,8 +66,8 @@
         ;; create a personal ticket
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])]
     (is (= (:status (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                                       :id            site-id
-                                                                       :title         (format "Request for %s site" site-id)})]
+                                                                             :id      site-id
+                                                                             :title   (format "Request for %s site" site-id)})]
                          (sites/create-person-site-membership-requests saidone-ticket "-me-")) 201)))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
@@ -88,8 +88,8 @@
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
         ;; create membership request
         _ (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                             :id            site-id
-                                                             :title         (format "Request for %s site" site-id)})]
+                                                                   :id      site-id
+                                                                   :title   (format "Request for %s site" site-id)})]
                (sites/create-person-site-membership-requests saidone-ticket "-me-"))
         ;; get membership request
         get-site-membership-requests-response (sites/get-person-site-membership-request ticket saidone site-id)]
@@ -114,8 +114,8 @@
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
         ;; create membership request
         _ (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                             :id            site-id
-                                                             :title         (format "Request for %s site" site-id)})]
+                                                                   :id      site-id
+                                                                   :title   (format "Request for %s site" site-id)})]
                (sites/create-person-site-membership-requests saidone-ticket "-me-"))]
     ;; update membership request
     (is (= (:status (->> (model/map->UpdatePersonSiteMembershipRequestBody {:message "New message"})
@@ -141,8 +141,8 @@
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
         ;; create membership request
         _ (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                             :id            site-id
-                                                             :title         (format "Request for %s site" site-id)})]
+                                                                   :id      site-id
+                                                                   :title   (format "Request for %s site" site-id)})]
                (sites/create-person-site-membership-requests saidone-ticket "-me-"))]
     ;; delete membership request
     (is (= (:status (sites/delete-person-site-membership-request saidone-ticket "-me-" site-id)) 204))
@@ -169,8 +169,8 @@
     (is (= (empty? (get-in (sites/list-person-site-memberships saidone-ticket "-me-") [:body :list :entries])) true))
     ;; join site
     (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                       :id            site-id
-                                                       :title         (format "Request for %s site" site-id)})]
+                                                             :id      site-id
+                                                             :title   (format "Request for %s site" site-id)})]
          (sites/create-person-site-membership-requests saidone-ticket "-me-"))
     ;; check if list is not empty
     (is (= (not (empty? (get-in (sites/list-person-site-memberships saidone-ticket "-me-") [:body :list :entries]))) true))
@@ -193,8 +193,8 @@
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])]
     ;; join site
     (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                       :id            site-id
-                                                       :title         (format "Request for %s site" site-id)})]
+                                                             :id      site-id
+                                                             :title   (format "Request for %s site" site-id)})]
          (sites/create-person-site-membership-requests saidone-ticket "-me-"))
     ;; get site membership
     (is (= (:status (sites/get-person-site-membership saidone-ticket "-me-" site-id)) 200))
@@ -217,8 +217,8 @@
         saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])]
     ;; join site
     (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
-                                                       :id            site-id
-                                                       :title         (format "Request for %s site" site-id)})]
+                                                             :id      site-id
+                                                             :title   (format "Request for %s site" site-id)})]
          (sites/create-person-site-membership-requests saidone-ticket "-me-"))
     ;; get site membership
     (is (= (:status (sites/get-person-site-membership saidone-ticket "-me-" site-id)) 200))
@@ -291,3 +291,13 @@
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))
     ;; check if site has been deleted
     (is (= (:status (sites/get-site ticket site-id)) 404))))
+
+(deftest list-site-containers-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
+               (sites/create-site ticket))]
+    (is (= (:status (sites/list-site-containers ticket site-id)) 200))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
