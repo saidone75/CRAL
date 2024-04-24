@@ -17,28 +17,43 @@
 (ns cral.config
   (:require [taoensso.telemere :as t]))
 
-(defonce config (atom {:scheme         "http"
-                       :host           "localhost"
-                       :port           8080
-                       :core-path      "alfresco/api/-default-/public/alfresco/versions/1"
-                       :search-path    "alfresco/api/-default-/public/search/versions/1"
-                       :auth-path      "alfresco/api/-default-/public/authentication/versions/1"
-                       :discovery-path "alfresco/api/discovery"
-                       :user           "admin"
-                       :password       "admin"}))
+;; defaults
+(defonce alfresco (atom {:scheme         "http"
+                         :host           "localhost"
+                         :port           8080
+                         :core-path      "alfresco/api/-default-/public/alfresco/versions/1"
+                         :search-path    "alfresco/api/-default-/public/search/versions/1"
+                         :auth-path      "alfresco/api/-default-/public/authentication/versions/1"
+                         :discovery-path "alfresco/api/discovery"}))
 
+;; shorthand used in tests
 (def user "admin")
 (def password "admin")
 
-(defn configure [& [m]]
-  (swap! config merge m)
-  (alter-var-root #'user (constantly (:user @config)))
-  (alter-var-root #'password (constantly (:password @config))))
+(defn configure
+  ""
+  [& [m]]
+  ;; configure alfresco
+  (swap! alfresco merge m)
+  (if-not (nil? (:user m)) (alter-var-root #'user (constantly (:user @alfresco))))
+  (if-not (nil? (:password m)) (alter-var-root #'password (constantly (:password @alfresco)))))
 
-(defn set-log-level
-  [level]
-  (t/set-min-level! level))
+;; configure telemere
+(defn configure-logging
+  ""
+  [& [m]]
+  (t/set-kind-filter! (:kind-filter m))
+  (t/set-ns-filter! (:ns-filter m)))
 
-(defn get-url [path]
+;; load global config map
+(defn load-config
+  ""
+  [m]
+  (configure (:alfresco m))
+  (configure-logging (:telemere m)))
+
+(defn get-url
+  ""
+  [path]
   (let [path (keyword (str path "-path"))]
-    (format "%s://%s:%s/%s" (:scheme @config) (:host @config) (:port @config) (path @config))))
+    (format "%s://%s:%s/%s" (:scheme @alfresco) (:host @alfresco) (:port @alfresco) (path @alfresco))))

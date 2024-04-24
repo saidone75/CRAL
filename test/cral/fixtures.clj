@@ -21,13 +21,12 @@
             [immuconf.config :as immu]
             [taoensso.telemere :as t]))
 
-(def config-file "config.edn")
+(def config-file "resources/config.edn")
 
 (defn setup [f]
   (if (.exists (io/file config-file))
     ;; load configuration
-    (c/configure (immu/load config-file))
+    (let [config (immu/load config-file)]
+      (c/load-config config))
     (t/log! :warn (format "unable to find %s, using defaults" config-file)))
-  (t/set-kind-filter! {:deny :trace})
-  (t/set-ns-filter! {:deny "cral.utils.utils"})
   (f))
