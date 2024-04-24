@@ -425,6 +425,11 @@
 (defrecord DeleteSiteQueryParams
   [^Boolean permanent])
 
+(defrecord ListSiteContainersQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
