@@ -25,7 +25,7 @@
                          :auth-path      "alfresco/api/-default-/public/authentication/versions/1"
                          :discovery-path "alfresco/api/discovery"}))
 
-;; shorthand used in tests
+;; shorthands used in tests
 (def user "admin")
 (def password "admin")
 

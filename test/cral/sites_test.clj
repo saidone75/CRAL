@@ -312,3 +312,29 @@
     (is (= (:status (sites/get-site-container ticket site-id (get-in (rand-nth containers) [:entry :folder-id]))) 200))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest get-site-membership-requests-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a moderated site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
+               (sites/create-site ticket))
+        ;; create user if not exist
+        _ (->> (model/map->CreatePersonBody {:id         saidone
+                                             :first-name saidone
+                                             :email      "saidone@saidone.org"
+                                             :password   saidone})
+               (people/create-person ticket))
+        ;; create a personal ticket
+        saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
+        ;; create a membership request
+        _ (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
+                                                                   :id      site-id
+                                                                   :title   (format "Request for %s site" site-id)})]
+               (sites/create-person-site-membership-requests saidone-ticket "-me-"))
+        ;; get site membership requests
+        get-site-membership-requests-response (sites/get-site-membership-request ticket)]
+    (is (= (:status get-site-membership-requests-response) 200))
+    (is (some #(= (get-in % [:entry :person :id]) saidone) (get-in get-site-membership-requests-response [:body :list :entries])))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
