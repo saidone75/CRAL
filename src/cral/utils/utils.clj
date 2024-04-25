@@ -68,7 +68,7 @@
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
 (defn join-vector-vals
-  "Recursively transforms all map vector values to comma separated string."
+  "Recursively transforms all map vector values to comma separated strings."
   [m]
   (let [f (fn [[k v]] [k (if (vector? v) (str/join "," v) v)])]
     ;; only apply to maps
