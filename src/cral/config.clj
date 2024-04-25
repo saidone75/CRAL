@@ -14,8 +14,7 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.config
-  (:require [taoensso.telemere :as t]))
+(ns cral.config)
 
 ;; defaults
 (defonce alfresco (atom {:scheme         "http"
@@ -38,19 +37,11 @@
   (if-not (nil? (:user m)) (alter-var-root #'user (constantly (:user @alfresco))))
   (if-not (nil? (:password m)) (alter-var-root #'password (constantly (:password @alfresco)))))
 
-;; configure telemere
-(defn configure-logging
-  ""
-  [& [m]]
-  (t/set-kind-filter! (:kind-filter m))
-  (t/set-ns-filter! (:ns-filter m)))
-
 ;; load global config map
 (defn load-config
   ""
   [m]
-  (configure (:alfresco m))
-  (configure-logging (:telemere m)))
+  (configure (:alfresco m)))
 
 (defn get-url
   ""

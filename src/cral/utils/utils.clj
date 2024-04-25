@@ -77,7 +77,6 @@
 (defn ok-response
   "Build a successful response."
   [r return-headers]
-  (t/trace! r)
   (let [response {:status (:status r)
                   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
                             (kebab-keywordize-keys (json/read-str (:body r)))
@@ -89,7 +88,7 @@
 (defn ex-response
   "Build a response from a client exception."
   [^Exception e]
-  (t/error! e)
+  (t/log! :debug e)
   (if (instance? SSLException e)
     {:status  500
      :message (.getMessage e)}
@@ -114,6 +113,8 @@
   ([method ^String url ^Ticket ticket ^PersistentHashMap req ^PersistentHashMap opts]
    (try
      (let [req (assoc req :query-params (join-vector-vals (camel-case-stringify-keys (into {} (remove #(nil? (val %)) (:query-params req))))))
-           response (method url (add-auth ticket req))]
+           _ (t/log! :trace req)
+           response (method url (add-auth ticket req))
+           _ (t/log! :trace response)]
        (ok-response response (:return-headers opts)))
      (catch Exception e (ex-response e)))))

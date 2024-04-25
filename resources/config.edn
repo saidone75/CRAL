@@ -6,6 +6,4 @@
             :auth-path      "alfresco/api/-default-/public/authentication/versions/1"
             :discovery-path "alfresco/api/discovery"
             :user           "admin"
-            :password       "admin"}
- :telemere {:kind-filter {:deny [:trace]}
-            :ns-filter   {:deny ["cral.utils.utils"]}}}
+            :password       "admin"}}
