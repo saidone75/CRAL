@@ -36,6 +36,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -60,6 +61,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -81,6 +83,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -107,6 +110,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -134,6 +138,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -160,6 +165,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -186,6 +192,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -210,6 +217,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -322,6 +330,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -348,6 +357,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -371,6 +381,7 @@
         ;; create user if not exist
         _ (->> (model/map->CreatePersonBody {:id         saidone
                                              :first-name saidone
+                                             :last-name  saidone
                                              :email      "saidone@saidone.org"
                                              :password   saidone})
                (people/create-person ticket))
@@ -382,5 +393,32 @@
                                                                    :title   (format "Request for %s site" site-id)})]
                (sites/create-person-site-membership-requests saidone-ticket "-me-"))]
     (is (= (:status (sites/reject-site-membership-request ticket site-id saidone (model/map->RejectSiteMembershipBody {:comment "Rejected"}))) 200))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest list-site-memberships-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a public site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "PUBLIC"})
+               (sites/create-site ticket))
+        ;; create user if not exist
+        _ (->> (model/map->CreatePersonBody {:id         saidone
+                                             :first-name saidone
+                                             :last-name  saidone
+                                             :email      "saidone@saidone.org"
+                                             :password   saidone})
+               (people/create-person ticket))
+        ;; create a personal ticket
+        saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
+        ;; create a membership request
+        _ (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
+                                                                   :id      site-id
+                                                                   :title   (format "Request for %s site" site-id)})]
+               (sites/create-person-site-membership-requests saidone-ticket "-me-"))
+        list-site-memberships-response (sites/list-site-memberships ticket site-id)]
+    (println list-site-memberships-response)
+    (is (= (:status list-site-memberships-response) 200))
+    (is (some #(= (get-in % [:entry :id]) saidone) (get-in list-site-memberships-response [:body :list :entries])))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
