@@ -62,6 +62,7 @@
         new-description (.toString (UUID/randomUUID))
         ;; update person
         update-person-response (->> (model/map->UpdatePersonBody {:first-name                  saidone
+                                                                  :last-name                   saidone
                                                                   :email                       "saidone@saidone.org"
                                                                   :old-password                saidone
                                                                   :password                    saidone
