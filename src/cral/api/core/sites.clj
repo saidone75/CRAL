@@ -22,7 +22,8 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
-           (cral.model.core CreateSiteBody
+           (cral.model.core ApproveSiteMembershipBody
+                            CreateSiteBody
                             CreatePersonSiteMembershipRequestQueryParams
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
@@ -42,7 +43,7 @@
 (defn list-person-site-membership-requests
   "Gets a list of the current site membership requests for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMembershipRequestsForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/listSiteMembershipRequestsForPerson)."
   ([^Ticket ticket ^String person-id]
    (list-person-site-membership-requests ticket person-id nil))
   ([^Ticket ticket ^String person-id ^ListPersonSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
@@ -59,7 +60,7 @@
   - For a **moderated** site, your request is added to the site membership request list. The request waits for approval from the Site Manager.
   - You cannot request membership of a private site. Members are invited by the site administrator.\n\n
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSiteMembershipRequestForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/createSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^PersistentVector body]
    (create-person-site-membership-requests ticket person-id body nil))
   ([^Ticket ticket ^String person-id ^PersistentVector body ^CreatePersonSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
@@ -75,7 +76,7 @@
 (defn get-person-site-membership-request
   "Gets the site membership request for site `site-id` for person `person-id`, if one exists.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipRequestForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/getSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^String site-id]
    (get-person-site-membership-request ticket person-id site-id nil))
   ([^Ticket ticket ^String person-id ^String site-id ^GetPersonSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
@@ -89,7 +90,7 @@
 (defn update-person-site-membership-request
   "Updates the message for the site membership request to site `site-id` for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSiteMembershipRequestForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/updateSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^String site-id ^UpdatePersonSiteMembershipRequestBody body]
    (update-person-site-membership-request ticket person-id site-id body nil))
   ([^Ticket ticket ^String person-id ^String site-id ^UpdatePersonSiteMembershipRequestBody body ^UpdatePersonSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
@@ -105,7 +106,7 @@
 (defn delete-person-site-membership-request
   "Deletes the site membership request to site `site-id` for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipRequestForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/deleteSiteMembershipRequestForPerson)."
   ([^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
    (utils/call-rest
      client/delete
@@ -133,7 +134,7 @@
   - id
   - title
   - role\n\n
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMembershipsForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/listSiteMembershipsForPerson)."
   ([^Ticket ticket ^String person-id]
    (list-person-site-memberships ticket person-id nil))
   ([^Ticket ticket ^String person-id ^ListPersonSiteMembershipsQueryParams query-params & [^PersistentHashMap opts]]
@@ -147,7 +148,7 @@
 (defn get-person-site-membership
   "Gets site membership information for person `person-id` on site `site-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/getSiteMembershipForPerson)."
   [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
@@ -159,7 +160,7 @@
 (defn delete-person-site-membership
   "Deletes person `person-id` as a member of site `site-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipForPerson)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/deleteSiteMembershipForPerson)."
   [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/delete
@@ -171,7 +172,7 @@
 (defn list-sites
   "Gets a list of sites in this repository.
   You can use the **where** parameter in `query-params` to filter the returned sites by visibility or site preset.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSites)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/listSites)."
   ([^Ticket ticket]
    (list-sites ticket nil))
   ([^Ticket ticket ^ListSitesQueryParams query-params & [^PersistentHashMap opts]]
@@ -186,7 +187,7 @@
   "Creates a default site with the given details. Unless explicitly specified, the site id will be generated from the site title.
   The site id must be unique and only contain alphanumeric and/or dash characters.\\
   **Note:** the id of a site cannot be updated once the site has been created.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSite)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/createSite)."
   ([^Ticket ticket ^CreateSiteBody body]
    (create-site ticket body nil))
   ([^Ticket ticket ^CreateSiteBody body ^CreateSiteQueryParams query-params & [^PersistentHashMap opts]]
@@ -205,7 +206,7 @@
   The entity types in Alfresco are organized in a tree structure.
   The **sites** entity has two children, **containers** and **members**.
   The following relations parameter returns all the container and member objects related to the site `site-id`: `containers,members`\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSite)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/getSite)."
   ([^Ticket ticket ^String site-id]
    (get-site ticket site-id nil))
   ([^Ticket ticket ^String site-id ^GetSiteQueryParams query-params & [^PersistentHashMap opts]]
@@ -219,7 +220,7 @@
 (defn update-site
   "Update the details for the given site `site-id`. Site Manager or otherwise a (site) admin can update title, description or visibility.\\
   **Note:** the id of a site cannot be updated once the site has been created.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSite)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/updateSite)."
   ([^Ticket ticket ^String site-id ^UpdateSiteBody body]
    (update-site ticket site-id body nil))
   ([^Ticket ticket ^String site-id ^UpdateSiteBody body ^UpdateSiteQueryParams query-params & [^PersistentHashMap opts]]
@@ -234,7 +235,7 @@
 
 (defn delete-site
   "Deletes the site with `site-id`.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSite)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/deleteSite)."
   ([^Ticket ticket ^String site-id]
    (delete-site ticket site-id nil))
   ([^Ticket ticket ^String site-id ^DeleteSiteQueryParams query-params & [^PersistentHashMap opts]]
@@ -247,7 +248,7 @@
 
 (defn list-site-containers
   "Gets a list of containers for site `site-id`.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteContainers)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/listSiteContainers)."
   ([^Ticket ticket ^String site-id]
    (list-site-containers ticket site-id nil))
   ([^Ticket ticket ^String site-id ^ListSiteContainersQueryParams query-params & [^PersistentHashMap opts]]
@@ -260,7 +261,7 @@
 
 (defn get-site-container
   "Gets information on the container `container-id` in site `site-id`.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteContainer)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/getSiteContainer)."
   ([^Ticket ticket ^String site-id ^String container-id]
    (get-site-container ticket site-id container-id nil))
   ([^Ticket ticket ^String site-id ^String container-id ^GetSiteContainerQueryParams query-params & [^PersistentHashMap opts]]
@@ -285,7 +286,7 @@
   ```clojure
   where=(siteId=mySite AND personId=person)
   ```
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembershipRequests)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/getSiteMembershipRequests)."
   ([^Ticket ticket]
    (get-site-membership-request ticket nil))
   ([^Ticket ticket ^GetSiteMembershipRequestsQueryParams query-params & [^PersistentHashMap opts]]
@@ -294,4 +295,18 @@
      (format "%s/site-membership-requests" (config/get-url 'core))
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn approve-site-membership-request
+  "Approve a site membership request.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/approveSiteMembershipRequest)."
+  ([^Ticket ticket ^String site-id ^String invitee-id ^ApproveSiteMembershipBody body]
+   (approve-site-membership-request ticket site-id invitee-id body))
+  ([^Ticket ticket ^String site-id ^String invitee-id ^PersistentVector body & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/sites/%s/site-membership-requests/%s/approve" (config/get-url 'core) site-id invitee-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :content-type :json}
      opts)))
