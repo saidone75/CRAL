@@ -1,5 +1,5 @@
 ;  CRAL
-;  Copyright (C) 2023-2024 Saidone
+;  Copyright (C) 2023-2024 user
 ;
 ;  This program is free software: you can redistribute it and/or modify
 ;  it under the terms of the GNU General Public License as published by
@@ -17,8 +17,18 @@
 (ns cral.test-utils
   (:require [clojure.test :refer :all]
             [cral.api.core.nodes :as nodes]
+            [cral.api.core.people :as people]
             [cral.model.core :as model]))
 
 (defn get-guest-home
   [ticket]
   (get-in (nodes/get-node ticket "-root-" (model/map->GetNodeQueryParams {:relative-path "/Guest Home"})) [:body :entry :id]))
+
+(defn create-test-user
+  [^String ticket ^String user]
+  (->> (model/map->CreatePersonBody {:id         user
+                                     :first-name user
+                                     :last-name  user
+                                     :email      (format "%s@saidone.org" user)
+                                     :password   user})
+       (people/create-person ticket)))
