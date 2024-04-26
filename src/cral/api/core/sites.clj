@@ -300,8 +300,6 @@
 (defn approve-site-membership-request
   "Approve a site membership request.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/approveSiteMembershipRequest)."
-  ([^Ticket ticket ^String site-id ^String invitee-id ^ApproveSiteMembershipBody body]
-   (approve-site-membership-request ticket site-id invitee-id body))
   ([^Ticket ticket ^String site-id ^String invitee-id ^PersistentVector body & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
