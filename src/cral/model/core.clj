@@ -439,6 +439,9 @@
    ^String where
    ^PersistentVector fields])
 
+(defrecord ApproveSiteMembershipBody
+  [^String role])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
