@@ -34,6 +34,7 @@
                             ListPersonSiteMembershipRequestsQueryParams
                             ListPersonSiteMembershipsQueryParams
                             ListSiteContainersQueryParams
+                            ListSiteMembershipsQueryParams
                             ListSitesQueryParams
                             RejectSiteMembershipBody
                             UpdateSiteBody
@@ -320,4 +321,17 @@
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :content-type :json}
+     opts)))
+
+(defn list-site-memberships
+  "Gets a list of site memberships for site `site-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteMemberships)."
+  ([^Ticket ticket ^String site-id]
+   (list-site-memberships ticket site-id nil))
+  ([^Ticket ticket ^String site-id ^ListSiteMembershipsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s/members" (config/get-url 'core) site-id)
+     ticket
+     {:query-params query-params}
      opts)))

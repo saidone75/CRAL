@@ -20,7 +20,8 @@
             [cral.api.core.people :as people]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
-            [cral.model.core :as model])
+            [cral.model.core :as model]
+            [cral.test-utils :as tu])
   (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
@@ -30,6 +31,7 @@
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         create-person-response (->> (model/map->CreatePersonBody {:id         saidone
                                                                   :first-name saidone
+                                                                  :last-name  saidone
                                                                   :email      "saidone@saidone.org"
                                                                   :password   saidone})
                                     (people/create-person ticket))]
@@ -47,11 +49,7 @@
 (deftest get-person-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create user if not exist
-        _ (->> (model/map->CreatePersonBody {:id         saidone
-                                             :first-name saidone
-                                             :email      "saidone@saidone.org"
-                                             :password   saidone})
-               (people/create-person ticket))
+        _ (tu/create-test-user ticket saidone)
         ;; get person
         get-person-response (people/get-person ticket saidone)]
     (is (= (:status get-person-response) 200))
@@ -60,14 +58,11 @@
 (deftest update-person-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create user if not exist
-        _ (->> (model/map->CreatePersonBody {:id         saidone
-                                             :first-name saidone
-                                             :email      "saidone@saidone.org"
-                                             :password   saidone})
-               (people/create-person ticket))
+        _ (tu/create-test-user ticket saidone)
         new-description (.toString (UUID/randomUUID))
         ;; update person
         update-person-response (->> (model/map->UpdatePersonBody {:first-name                  saidone
+                                                                  :last-name                   saidone
                                                                   :email                       "saidone@saidone.org"
                                                                   :old-password                saidone
                                                                   :password                    saidone
