@@ -445,6 +445,12 @@
 (defrecord RejectSiteMembershipBody
   [^String comment])
 
+(defrecord ListSiteMembershipsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields
+   ^String where])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
