@@ -442,6 +442,9 @@
 (defrecord ApproveSiteMembershipBody
   [^String role])
 
+(defrecord RejectSiteMembershipBody
+  [^String comment])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count

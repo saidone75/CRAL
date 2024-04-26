@@ -35,6 +35,7 @@
                             ListPersonSiteMembershipsQueryParams
                             ListSiteContainersQueryParams
                             ListSitesQueryParams
+                            RejectSiteMembershipBody
                             UpdateSiteBody
                             UpdatePersonSiteMembershipRequestBody
                             UpdatePersonSiteMembershipRequestQueryParams
@@ -300,10 +301,22 @@
 (defn approve-site-membership-request
   "Approve a site membership request.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/approveSiteMembershipRequest)."
-  ([^Ticket ticket ^String site-id ^String invitee-id ^PersistentVector body & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^String site-id ^String invitee-id ^ApproveSiteMembershipBody body & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
      (format "%s/sites/%s/site-membership-requests/%s/approve" (config/get-url 'core) site-id invitee-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :content-type :json}
+     opts)))
+
+(defn reject-site-membership-request
+  "Reject a site membership request.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/#/sites/rejectSiteMembershipRequest)."
+  ([^Ticket ticket ^String site-id ^String invitee-id ^RejectSiteMembershipBody body & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/sites/%s/site-membership-requests/%s/reject" (config/get-url 'core) site-id invitee-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :content-type :json}
