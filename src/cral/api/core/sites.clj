@@ -42,6 +42,8 @@
                             UpdateSiteBody
                             UpdatePersonSiteMembershipRequestBody
                             UpdatePersonSiteMembershipRequestQueryParams
+                            UpdateSiteMembershipBody
+                            UpdateSiteMembershipQueryParams
                             UpdateSiteQueryParams)))
 
 (defn list-person-site-membership-requests
@@ -370,4 +372,25 @@
      (format "%s/sites/%s/members/%s" (config/get-url 'core) site-id person-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn update-site-membership
+  "Update the membership of person `person-id` in site `site-id`.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  You can set the **role** to one of four types:
+  - SiteConsumer
+  - SiteCollaborator
+  - SiteContributor
+  - SiteManager\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSiteMembership)."
+  ([^Ticket ticket ^String site-id ^String person-id ^UpdateSiteMembershipBody body]
+   (update-site-membership ticket site-id person-id body nil))
+  ([^Ticket ticket ^String site-id ^String person-id ^UpdateSiteMembershipBody body ^UpdateSiteMembershipQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/put
+     (format "%s/sites/%s/members/%s" (config/get-url 'core) site-id person-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
