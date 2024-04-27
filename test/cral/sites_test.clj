@@ -395,7 +395,7 @@
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
-(deftest update-site-membership-request-test
+(deftest update-site-membership-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         site-id (.toString (UUID/randomUUID))
         ;; create a moderated site
