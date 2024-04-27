@@ -25,6 +25,7 @@
            (cral.model.core ApproveSiteMembershipBody
                             CreateSiteBody
                             CreatePersonSiteMembershipRequestQueryParams
+                            CreateSiteMembershipQueryParams
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
                             GetPersonSiteMembershipRequestsQueryParams
@@ -334,4 +335,24 @@
      (format "%s/sites/%s/members" (config/get-url 'core) site-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn create-site-membership
+  "Creates a site membership for person `person-id` on site `site-id`.
+  You can set the **role** to one of four types:
+  - SiteConsumer
+  - SiteCollaborator
+  - SiteContributor
+  - SiteManager\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSiteMembership)."
+  ([^Ticket ticket ^String site-id ^PersistentVector body]
+   (create-site-membership ticket site-id body nil))
+  ([^Ticket ticket ^String site-id ^PersistentVector body ^CreateSiteMembershipQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/sites/%s/members" (config/get-url 'core) site-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
