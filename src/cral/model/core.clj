@@ -451,6 +451,13 @@
    ^PersistentVector fields
    ^String where])
 
+(defrecord CreateSiteMembershipBody
+  [^String role
+   ^String id])
+
+(defrecord CreateSiteMembershipQueryParams
+  [^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
