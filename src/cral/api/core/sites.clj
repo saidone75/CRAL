@@ -46,6 +46,11 @@
                             UpdateSiteMembershipQueryParams
                             UpdateSiteQueryParams)))
 
+(def consumer "SiteConsumer")
+(def collaborator "SiteCollaborator")
+(def contributor "SiteContributor")
+(def manager "SiteManager")
+
 (defn list-person-site-membership-requests
   "Gets a list of the current site membership requests for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\

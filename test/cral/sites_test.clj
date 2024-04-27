@@ -318,7 +318,7 @@
                                                                    :id      site-id
                                                                    :title   (format "Request for %s site" site-id)})]
                (sites/create-person-site-membership-requests saidone-ticket "-me-"))]
-    (is (= (:status (sites/approve-site-membership-request ticket site-id saidone (model/map->ApproveSiteMembershipBody {:role "SiteContributor"}))) 200))
+    (is (= (:status (sites/approve-site-membership-request ticket site-id saidone (model/map->ApproveSiteMembershipBody {:role sites/contributor}))) 200))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
@@ -371,7 +371,7 @@
         ;; create user if not exist
         _ (tu/create-test-user ticket saidone)
         ;; create site membership
-        create-site-membership-response (->> (model/map->CreateSiteMembershipBody {:role "SiteContributor" :id saidone})
+        create-site-membership-response (->> (model/map->CreateSiteMembershipBody {:role sites/contributor :id saidone})
                                              (sites/create-site-membership ticket site-id))]
     (is (= (:status create-site-membership-response) 201))
     (is (some #(= (get-in % [:entry :id]) saidone) (get-in (sites/list-site-memberships ticket site-id) [:body :list :entries])))
@@ -387,10 +387,28 @@
         ;; create user if not exist
         _ (tu/create-test-user ticket saidone)
         ;; create site membership
-        _ (->> (model/map->CreateSiteMembershipBody {:role "SiteContributor" :id saidone})
+        _ (->> (model/map->CreateSiteMembershipBody {:role sites/contributor :id saidone})
                (sites/create-site-membership ticket site-id))
         get-site-membership-response (sites/get-site-membership ticket site-id saidone)]
     (is (= (:status get-site-membership-response) 200))
     (is (= (get-in get-site-membership-response [:body :entry :person :id]) saidone))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest update-site-membership-request-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a moderated site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
+               (sites/create-site ticket))
+        ;; create user if not exist
+        _ (tu/create-test-user ticket saidone)
+        ;; create site membership
+        _ (->> (model/map->CreateSiteMembershipBody {:role sites/collaborator :id saidone})
+               (sites/create-site-membership ticket site-id))
+        update-site-membership-response (->> (model/map->UpdateSiteMembershipBody {:role sites/consumer})
+                                             (sites/update-site-membership ticket site-id saidone))]
+    (is (= (:status update-site-membership-response) 200))
+    (is (= (get-in update-site-membership-response [:body :entry :role]) sites/consumer))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
