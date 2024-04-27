@@ -377,3 +377,20 @@
     (is (some #(= (get-in % [:entry :id]) saidone) (get-in (sites/list-site-memberships ticket site-id) [:body :list :entries])))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest get-site-membership-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a moderated site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
+               (sites/create-site ticket))
+        ;; create user if not exist
+        _ (tu/create-test-user ticket saidone)
+        ;; create site membership
+        _ (->> (model/map->CreateSiteMembershipBody {:role "SiteContributor" :id saidone})
+               (sites/create-site-membership ticket site-id))
+        get-site-membership-response (sites/get-site-membership ticket site-id saidone)]
+    (is (= (:status get-site-membership-response) 200))
+    (is (= (get-in get-site-membership-response [:body :entry :person :id]) saidone))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
