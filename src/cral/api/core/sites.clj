@@ -31,6 +31,7 @@
                             GetPersonSiteMembershipRequestsQueryParams
                             GetSiteContainerQueryParams
                             GetSiteMembershipRequestsQueryParams
+                            GetSiteMembershipsQueryParams
                             GetSiteQueryParams
                             ListPersonSiteMembershipRequestsQueryParams
                             ListPersonSiteMembershipsQueryParams
@@ -355,4 +356,18 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn get-site-membership
+  "Gets site membership information for person `person-id` on site `site-id.
+  You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteMembership)."
+  ([^Ticket ticket ^String site-id ^String person-id]
+   (get-site-membership ticket site-id person-id nil))
+  ([^Ticket ticket ^String site-id ^String person-id ^GetSiteMembershipsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s/members/%s" (config/get-url 'core) site-id person-id)
+     ticket
+     {:query-params query-params}
      opts)))

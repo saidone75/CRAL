@@ -458,6 +458,9 @@
 (defrecord CreateSiteMembershipQueryParams
   [^PersistentVector fields])
 
+(defrecord GetSiteMembershipsQueryParams
+  [^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
