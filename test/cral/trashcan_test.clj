@@ -41,7 +41,7 @@
         ;; list deleted nodes
         list-deleted-nodes-response (trashcan/list-deleted-nodes ticket)]
     (is (= (:status list-deleted-nodes-response) 200))
-    (is (some #(is (= (get-in % [:entry :id]) created-node-id)) (get-in list-deleted-nodes-response [:body :list :entries])))
+    (is (some #(= (get-in % [:entry :id]) created-node-id) (get-in list-deleted-nodes-response [:body :list :entries])))
     ;; clean up
     (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
 

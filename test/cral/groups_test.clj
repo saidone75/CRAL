@@ -93,10 +93,9 @@
                          (groups/create-group-membership ticket parent-group-id))) 201))
     ;; ensure that the group membership has been created
     (loop [list-group-membership-response (groups/list-group-memberships ticket parent-group-id)]
-      (if-not (= true
-                 (->> (get-in list-group-membership-response [:body :list :entries])
-                      (map #(get-in % [:entry :display-name]))
-                      (some #(= group-id %))))
+      (if-not (->> (get-in list-group-membership-response [:body :list :entries])
+                   (map #(get-in % [:entry :display-name]))
+                   (some #(= group-id %)))
         (do
           (Thread/sleep 100)
           (recur (groups/list-group-memberships ticket parent-group-id)))))

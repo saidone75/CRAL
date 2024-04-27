@@ -67,8 +67,8 @@
         company-home-id (get-in (nodes/get-node ticket "-root-") [:body :entry :id])
         list-node-children-response (nodes/list-node-children ticket company-home-id)]
     (is (= (:status list-node-children-response) 200))
-    (is (not (nil? (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
-    (is (not (nil? (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))))
+    (is (some #(= "Data Dictionary" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))
+    (is (some #(= "Sites" (:name %)) (map :entry (get-in list-node-children-response [:body :list :entries]))))))
 
 (deftest create-node-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
