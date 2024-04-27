@@ -407,7 +407,7 @@
   ([^Ticket ticket ^String site-id ^String person-id & [^PersistentHashMap opts]]
    (utils/call-rest
      client/delete
-     (format "%s/sites/%s/members/%s" (config/get-url 'core) person-id site-id)
+     (format "%s/sites/%s/members/%s" (config/get-url 'core) site-id person-id)
      ticket
      nil
      opts)))

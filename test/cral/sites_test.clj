@@ -412,3 +412,19 @@
     (is (= (get-in update-site-membership-response [:body :entry :role]) sites/consumer))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest delete-site-membership-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a moderated site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
+               (sites/create-site ticket))
+        ;; create user if not exist
+        _ (tu/create-test-user ticket saidone)
+        ;; create site membership
+        _ (->> (model/map->CreateSiteMembershipBody {:role sites/collaborator :id saidone})
+               (sites/create-site-membership ticket site-id))]
+    (is (= (:status (sites/delete-site-membership ticket site-id saidone)) 204))
+    (is (not-any? #(= (get-in % [:entry :id]) saidone) (get-in (sites/list-site-memberships ticket site-id) [:body :list :entries])))
+    ;; clean up
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
