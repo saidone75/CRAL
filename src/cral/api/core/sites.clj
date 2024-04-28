@@ -33,6 +33,7 @@
                             GetSiteMembershipRequestsQueryParams
                             GetSiteMembershipsQueryParams
                             GetSiteQueryParams
+                            ListGroupSiteMembershipsQueryParams
                             ListPersonSiteMembershipRequestsQueryParams
                             ListPersonSiteMembershipsQueryParams
                             ListSiteContainersQueryParams
@@ -410,4 +411,17 @@
      (format "%s/sites/%s/members/%s" (config/get-url 'core) site-id person-id)
      ticket
      nil
+     opts)))
+
+(defn list-group-site-membership
+  "Gets a list of group membership for site `site-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/listSiteGroups)."
+  ([^Ticket ticket ^String site-id]
+   (list-group-site-membership ticket site-id nil))
+  ([^Ticket ticket ^String site-id ^ListGroupSiteMembershipsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s/group-members" (config/get-url 'core) site-id)
+     ticket
+     {:query-params query-params}
      opts)))
