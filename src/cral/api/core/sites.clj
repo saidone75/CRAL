@@ -29,6 +29,7 @@
                             CreateSiteMembershipQueryParams
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
+                            GetGroupSiteMembershipQueryParams
                             GetPersonSiteMembershipRequestsQueryParams
                             GetSiteContainerQueryParams
                             GetSiteMembershipRequestsQueryParams
@@ -445,4 +446,17 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn get-group-site-membership
+  "Gets site membership information for group `group-id` on site `site-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteGroupMembership)."
+  ([^Ticket ticket ^String site-id ^String group-id]
+   (get-group-site-membership ticket site-id group-id nil))
+  ([^Ticket ticket ^String site-id ^String group-id ^GetGroupSiteMembershipQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s/group-members/%s" (config/get-url 'core) site-id group-id)
+     ticket
+     {:query-params query-params}
      opts)))

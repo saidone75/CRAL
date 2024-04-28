@@ -479,6 +479,9 @@
 (defrecord CreateGroupSiteMembershipQueryParams
   [^PersistentVector fields])
 
+(defrecord GetGroupSiteMembershipQueryParams
+  [^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
