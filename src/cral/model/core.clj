@@ -482,6 +482,12 @@
 (defrecord GetGroupSiteMembershipQueryParams
   [^PersistentVector fields])
 
+(defrecord UpdateGroupSiteMembershipRequestBody
+  [^String role])
+
+(defrecord UpdateGroupSiteMembershipRequestQueryParams
+  [^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
