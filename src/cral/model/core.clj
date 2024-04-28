@@ -467,6 +467,11 @@
 (defrecord UpdateSiteMembershipQueryParams
   [^PersistentVector fields])
 
+(defrecord ListGroupSiteMembershipsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count
