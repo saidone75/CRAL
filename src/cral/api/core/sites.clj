@@ -23,6 +23,7 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core ApproveSiteMembershipBody
+                            CreateGroupSiteMembershipQueryParams
                             CreateSiteBody
                             CreatePersonSiteMembershipRequestQueryParams
                             CreateSiteMembershipQueryParams
@@ -424,4 +425,24 @@
      (format "%s/sites/%s/group-members" (config/get-url 'core) site-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn create-group-site-membership
+  "Creates a site membership for group `group-id` on site `site-id`.
+  You can set the **role** to one of four types:
+  - SiteConsumer
+  - SiteCollaborator
+  - SiteContributor
+  - SiteManager\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/createSiteGroupMembership)."
+  ([^Ticket ticket ^String site-id ^PersistentVector body]
+   (create-group-site-membership ticket site-id body nil))
+  ([^Ticket ticket ^String site-id ^PersistentVector body ^CreateGroupSiteMembershipQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/sites/%s/group-members" (config/get-url 'core) site-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))

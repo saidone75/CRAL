@@ -472,6 +472,13 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord CreateGroupSiteMembershipBody
+  [^String role
+   ^String id])
+
+(defrecord CreateGroupSiteMembershipQueryParams
+  [^PersistentVector fields])
+
 ;; tags
 (defrecord ListNodeTagsQueryParams
   [^Integer skip-count

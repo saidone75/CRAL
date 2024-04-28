@@ -41,8 +41,8 @@
 
 (deftest create-group-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
-        group-id (.toString (UUID/randomUUID))
         ;; create group
+        group-id (.toString (UUID/randomUUID))
         create-group-response (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                                    (groups/create-group ticket))]
     (is (= (:status create-group-response) 201))
@@ -59,8 +59,8 @@
 
 (deftest update-group-details-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
-        group-id (.toString (UUID/randomUUID))
         ;; create group
+        group-id (.toString (UUID/randomUUID))
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))
         new-display-name (.toString (UUID/randomUUID))
@@ -74,8 +74,8 @@
 
 (deftest delete-group-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
-        group-id (.toString (UUID/randomUUID))
         ;; create group
+        group-id (.toString (UUID/randomUUID))
         create-group-response (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                                    (groups/create-group ticket))]
     ;; delete group
@@ -84,8 +84,8 @@
 (deftest create-group-membership-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
-        group-id (.toString (UUID/randomUUID))
         ;; create group
+        group-id (.toString (UUID/randomUUID))
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))]
     ;; create group membership
@@ -113,8 +113,8 @@
 (deftest delete-group-membership-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-group-id "GROUP_ALFRESCO_ADMINISTRATORS"
-        group-id (.toString (UUID/randomUUID))
         ;; create group
+        group-id (.toString (UUID/randomUUID))
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))]
     ;; create group membership
