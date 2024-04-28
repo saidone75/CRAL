@@ -29,6 +29,7 @@
                             CreateSiteMembershipQueryParams
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
+                            GetGroupSiteMembershipQueryParams
                             GetPersonSiteMembershipRequestsQueryParams
                             GetSiteContainerQueryParams
                             GetSiteMembershipRequestsQueryParams
@@ -41,6 +42,8 @@
                             ListSiteMembershipsQueryParams
                             ListSitesQueryParams
                             RejectSiteMembershipBody
+                            UpdateGroupSiteMembershipRequestBody
+                            UpdateGroupSiteMembershipRequestQueryParams
                             UpdateSiteBody
                             UpdatePersonSiteMembershipRequestBody
                             UpdatePersonSiteMembershipRequestQueryParams
@@ -441,6 +444,39 @@
    (utils/call-rest
      client/post
      (format "%s/sites/%s/group-members" (config/get-url 'core) site-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
+     opts)))
+
+(defn get-group-site-membership
+  "Gets site membership information for group `group-id` on site `site-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/getSiteGroupMembership)."
+  ([^Ticket ticket ^String site-id ^String group-id]
+   (get-group-site-membership ticket site-id group-id nil))
+  ([^Ticket ticket ^String site-id ^String group-id ^GetGroupSiteMembershipQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/sites/%s/group-members/%s" (config/get-url 'core) site-id group-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn update-group-site-membership
+  "Update the membership of person `group-id` in site `site-id`.
+  You can set the **role** to one of four types:
+  - SiteConsumer
+  - SiteCollaborator
+  - SiteContributor
+  - SiteManager\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSiteGroupMembership)."
+  ([^Ticket ticket ^String site-id ^String group-id ^UpdateGroupSiteMembershipRequestBody body]
+   (update-group-site-membership ticket site-id group-id body nil))
+  ([^Ticket ticket ^String person-id ^String site-id ^UpdateGroupSiteMembershipRequestBody body ^UpdateGroupSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/put
+     (format "%s/sites/%s/group-members/%s" (config/get-url 'core) person-id site-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params

@@ -468,3 +468,24 @@
     ;; clean up
     (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
+
+(deftest get-group-site-membership-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        site-id (.toString (UUID/randomUUID))
+        ;; create a moderated site
+        _ (->> (model/map->CreateSiteBody {:title site-id :id site-id :visibility "MODERATED"})
+               (sites/create-site ticket))
+        ;; create group
+        group-id (.toString (UUID/randomUUID))
+        _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
+               (groups/create-group ticket))
+        ;; create group site membership
+        _ (->> (model/map->CreateGroupSiteMembershipBody {:role sites/contributor :id (str "GROUP_" group-id)})
+               (sites/create-group-site-membership ticket site-id))
+        ;; get group site membership
+        get-group-site-membership-response (sites/get-group-site-membership ticket site-id (str "GROUP_" group-id))]
+    (is (= (:status get-group-site-membership-response) 200))
+    (is (= (get-in get-group-site-membership-response [:body :entry :id]) (str "GROUP_" group-id)))
+    ;; clean up
+    (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))
+    (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
