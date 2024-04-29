@@ -16,11 +16,11 @@
 
 (ns cral.api.core.ratings
   (:require [clj-http.lite.client :as client]
-            [cral.config :as config]
-            [cral.utils.utils :as utils]
             [clj-http.lite.client :as client]
             [cral.config :as config]
+            [cral.config :as config]
             [cral.model.core]
+            [cral.utils.utils :as utils]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
