@@ -198,6 +198,16 @@
       (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
       (io/delete-file file-to-be-uploaded))))
 
+(deftest request-direct-access-url-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))]
+    (is (= (:status (nodes/request-direct-access-url ticket created-node-id)) 501))
+    ;;clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
 (deftest create-secondary-child-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
