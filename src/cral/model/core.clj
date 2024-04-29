@@ -155,6 +155,9 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord RequestDirectAccessUrlBody
+  [^Boolean attachment])
+
 (defrecord CreateSecondaryChildBody
   [^String child-id
    ^String assoc-type])

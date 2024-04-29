@@ -42,6 +42,7 @@
                             LockNodeQueryParams
                             MoveNodeBody
                             MoveNodeQueryParams
+                            RequestDirectAccessUrlBody
                             UnLockNodeQueryParams
                             UpdateNodeBody
                             UpdateNodeContentQueryParams
@@ -214,6 +215,20 @@
      ticket
      {:body         content
       :query-params query-params}
+     opts)))
+
+(defn request-direct-access-url
+  "Generate a direct access content url for the given `node-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes)."
+  ([^Ticket ticket ^String node-id]
+   (request-direct-access-url ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^RequestDirectAccessUrlBody body & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/request-direct-access-url" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :content-type :json}
      opts)))
 
 (defn create-secondary-child
