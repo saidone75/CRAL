@@ -123,13 +123,13 @@
   "Deletes the site membership request to site `site-id` for person `person-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembershipRequestForPerson)."
-  ([^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
-   (utils/call-rest
-     client/delete
-     (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
-     ticket
-     nil
-     opts)))
+  [^Ticket ticket ^String person-id ^String site-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/people/%s/site-membership-requests/%s" (config/get-url 'core) person-id site-id)
+    ticket
+    nil
+    opts))
 
 (defn list-person-site-memberships
   "Gets a list of site membership information for person `person-id`.
@@ -409,13 +409,13 @@
   "Deletes person `person-id` as a member of site `site-id`.
   You can use the **-me-** string in place of `person-id` to specify the currently authenticated user.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteMembership)."
-  ([^Ticket ticket ^String site-id ^String person-id & [^PersistentHashMap opts]]
-   (utils/call-rest
-     client/delete
-     (format "%s/sites/%s/members/%s" (config/get-url 'core) site-id person-id)
-     ticket
-     nil
-     opts)))
+  [^Ticket ticket ^String site-id ^String person-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/sites/%s/members/%s" (config/get-url 'core) site-id person-id)
+    ticket
+    nil
+    opts))
 
 (defn list-group-site-membership
   "Gets a list of group membership for site `site-id`.\\
@@ -482,3 +482,14 @@
       :query-params query-params
       :content-type :json}
      opts)))
+
+(defn delete-group-site-membership
+  "Deletes group `group-id` as a member of site `site-id`.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/deleteSiteGroupMembership)."
+  [^Ticket ticket ^String site-id ^String group-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/sites/%s/group-members/%s" (config/get-url 'core) site-id group-id)
+    ticket
+    nil
+    opts))
