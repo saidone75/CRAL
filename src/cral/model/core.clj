@@ -334,6 +334,12 @@
 (defrecord GetPreferenceQueryParams
   [^PersistentVector fields])
 
+;; ratings
+(defrecord ListRatingsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
 ;; shared-links
 (defrecord CreateSharedLinkBody
   [^String node-id
