@@ -482,10 +482,10 @@
 (defrecord GetGroupSiteMembershipQueryParams
   [^PersistentVector fields])
 
-(defrecord UpdateGroupSiteMembershipRequestBody
+(defrecord UpdateGroupSiteMembershipBody
   [^String role])
 
-(defrecord UpdateGroupSiteMembershipRequestQueryParams
+(defrecord UpdateGroupSiteMembershipQueryParams
   [^PersistentVector fields])
 
 ;; tags
