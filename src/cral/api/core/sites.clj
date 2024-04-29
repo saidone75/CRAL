@@ -24,8 +24,8 @@
            (cral.model.auth Ticket)
            (cral.model.core ApproveSiteMembershipBody
                             CreateGroupSiteMembershipQueryParams
-                            CreateSiteBody
                             CreatePersonSiteMembershipRequestQueryParams
+                            CreateSiteBody
                             CreateSiteMembershipQueryParams
                             CreateSiteQueryParams
                             DeleteSiteQueryParams
@@ -42,11 +42,11 @@
                             ListSiteMembershipsQueryParams
                             ListSitesQueryParams
                             RejectSiteMembershipBody
-                            UpdateGroupSiteMembershipRequestBody
-                            UpdateGroupSiteMembershipRequestQueryParams
-                            UpdateSiteBody
+                            UpdateGroupSiteMembershipBody
+                            UpdateGroupSiteMembershipQueryParams
                             UpdatePersonSiteMembershipRequestBody
                             UpdatePersonSiteMembershipRequestQueryParams
+                            UpdateSiteBody
                             UpdateSiteMembershipBody
                             UpdateSiteMembershipQueryParams
                             UpdateSiteQueryParams)))
@@ -471,9 +471,9 @@
   - SiteContributor
   - SiteManager\n\n
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/sites/updateSiteGroupMembership)."
-  ([^Ticket ticket ^String site-id ^String group-id ^UpdateGroupSiteMembershipRequestBody body]
+  ([^Ticket ticket ^String site-id ^String group-id ^UpdateGroupSiteMembershipBody body]
    (update-group-site-membership ticket site-id group-id body nil))
-  ([^Ticket ticket ^String person-id ^String site-id ^UpdateGroupSiteMembershipRequestBody body ^UpdateGroupSiteMembershipRequestQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^String person-id ^String site-id ^UpdateGroupSiteMembershipBody body ^UpdateGroupSiteMembershipQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/put
      (format "%s/sites/%s/group-members/%s" (config/get-url 'core) person-id site-id)
