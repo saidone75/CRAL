@@ -21,6 +21,7 @@
             [cral.api.core.sites :as sites]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
+            [cral.model.alfresco.roles :as roles]
             [cral.model.core :as model]
             [cral.test-utils :as tu])
   (:import (java.util UUID)))
@@ -319,7 +320,7 @@
                                                                    :id      site-id
                                                                    :title   (format "Request for %s site" site-id)})]
                (sites/create-person-site-membership-requests saidone-ticket "-me-"))]
-    (is (= (:status (sites/approve-site-membership-request ticket site-id saidone (model/map->ApproveSiteMembershipBody {:role sites/contributor}))) 200))
+    (is (= (:status (sites/approve-site-membership-request ticket site-id saidone (model/map->ApproveSiteMembershipBody {:role roles/site-contributor}))) 200))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
@@ -372,7 +373,7 @@
         ;; create user if not exist
         _ (tu/create-test-user ticket saidone)
         ;; create site membership
-        create-site-membership-response (->> (model/map->CreateSiteMembershipBody {:role sites/contributor :id saidone})
+        create-site-membership-response (->> (model/map->CreateSiteMembershipBody {:role roles/site-contributor :id saidone})
                                              (sites/create-site-membership ticket site-id))]
     (is (= (:status create-site-membership-response) 201))
     (is (some #(= (get-in % [:entry :id]) saidone) (get-in (sites/list-site-memberships ticket site-id) [:body :list :entries])))
@@ -388,7 +389,7 @@
         ;; create user if not exist
         _ (tu/create-test-user ticket saidone)
         ;; create site membership
-        _ (->> (model/map->CreateSiteMembershipBody {:role sites/contributor :id saidone})
+        _ (->> (model/map->CreateSiteMembershipBody {:role roles/site-contributor :id saidone})
                (sites/create-site-membership ticket site-id))
         get-site-membership-response (sites/get-site-membership ticket site-id saidone)]
     (is (= (:status get-site-membership-response) 200))
@@ -405,12 +406,12 @@
         ;; create user if not exist
         _ (tu/create-test-user ticket saidone)
         ;; create site membership
-        _ (->> (model/map->CreateSiteMembershipBody {:role sites/collaborator :id saidone})
+        _ (->> (model/map->CreateSiteMembershipBody {:role roles/site-collaborator :id saidone})
                (sites/create-site-membership ticket site-id))
-        update-site-membership-response (->> (model/map->UpdateSiteMembershipBody {:role sites/consumer})
+        update-site-membership-response (->> (model/map->UpdateSiteMembershipBody {:role roles/site-consumer})
                                              (sites/update-site-membership ticket site-id saidone))]
     (is (= (:status update-site-membership-response) 200))
-    (is (= (get-in update-site-membership-response [:body :entry :role]) sites/consumer))
+    (is (= (get-in update-site-membership-response [:body :entry :role]) roles/site-consumer))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
@@ -423,7 +424,7 @@
         ;; create user if not exist
         _ (tu/create-test-user ticket saidone)
         ;; create site membership
-        _ (->> (model/map->CreateSiteMembershipBody {:role sites/collaborator :id saidone})
+        _ (->> (model/map->CreateSiteMembershipBody {:role roles/site-collaborator :id saidone})
                (sites/create-site-membership ticket site-id))]
     (is (= (:status (sites/delete-site-membership ticket site-id saidone)) 204))
     (is (not-any? #(= (get-in % [:entry :id]) saidone) (get-in (sites/list-site-memberships ticket site-id) [:body :list :entries])))
@@ -441,7 +442,7 @@
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))
         ;; create group site membership
-        _ (->> (model/map->CreateGroupSiteMembershipBody {:role sites/contributor :id (str "GROUP_" group-id)})
+        _ (->> (model/map->CreateGroupSiteMembershipBody {:role roles/site-contributor :id (str "GROUP_" group-id)})
                (sites/create-group-site-membership ticket site-id))
         list-group-site-membership-response (sites/list-group-site-membership ticket site-id)]
     (is (= (:status list-group-site-membership-response) 200))
@@ -461,7 +462,7 @@
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))
         ;; create group site membership
-        create-group-site-membership-response (->> (model/map->CreateGroupSiteMembershipBody {:role sites/contributor :id (str "GROUP_" group-id)})
+        create-group-site-membership-response (->> (model/map->CreateGroupSiteMembershipBody {:role roles/site-contributor :id (str "GROUP_" group-id)})
                                                    (sites/create-group-site-membership ticket site-id))]
     (is (= (:status create-group-site-membership-response) 201))
     (is (= (get-in create-group-site-membership-response [:body :entry :id] (str "GROUP_" group-id))))
@@ -480,7 +481,7 @@
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))
         ;; create group site membership
-        _ (->> (model/map->CreateGroupSiteMembershipBody {:role sites/contributor :id (str "GROUP_" group-id)})
+        _ (->> (model/map->CreateGroupSiteMembershipBody {:role roles/site-contributor :id (str "GROUP_" group-id)})
                (sites/create-group-site-membership ticket site-id))
         ;; get group site membership
         get-group-site-membership-response (sites/get-group-site-membership ticket site-id (str "GROUP_" group-id))]
@@ -501,13 +502,13 @@
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))
         ;; create group site membership
-        _ (->> (model/map->CreateGroupSiteMembershipBody {:role sites/contributor :id (str "GROUP_" group-id)})
+        _ (->> (model/map->CreateGroupSiteMembershipBody {:role roles/site-contributor :id (str "GROUP_" group-id)})
                (sites/create-group-site-membership ticket site-id))
         ;; update group site membership
-        update-group-site-membership-response (->> (model/map->UpdateGroupSiteMembershipBody {:role sites/collaborator})
+        update-group-site-membership-response (->> (model/map->UpdateGroupSiteMembershipBody {:role roles/site-collaborator})
                                                    (sites/update-group-site-membership ticket site-id (str "GROUP_" group-id)))]
     (is (= (:status update-group-site-membership-response) 200))
-    (is (= (get-in update-group-site-membership-response [:body :entry :role]) sites/collaborator))
+    (is (= (get-in update-group-site-membership-response [:body :entry :role]) roles/site-collaborator))
     ;; clean up
     (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
@@ -523,7 +524,7 @@
         _ (->> (model/map->CreateGroupBody {:id group-id :display-name group-id})
                (groups/create-group ticket))
         ;; create group site membership
-        _ (->> (model/map->CreateGroupSiteMembershipBody {:role sites/contributor :id (str "GROUP_" group-id)})
+        _ (->> (model/map->CreateGroupSiteMembershipBody {:role roles/site-contributor :id (str "GROUP_" group-id)})
                (sites/create-group-site-membership ticket site-id))]
     (is (= (:status (sites/delete-group-site-membership ticket site-id (str "GROUP_" group-id))) 204))
     (is (not-any? #(= (get-in % [:entry :id]) (str "GROUP_" group-id)) (get-in (sites/list-group-site-membership ticket site-id) [:body :list :entries])))
