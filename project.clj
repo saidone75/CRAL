@@ -23,5 +23,5 @@
                  [org.clojure/data.json "2.5.0"]
                  [org.clj-commons/clj-http-lite "1.0.13"]
                  [levand/immuconf "0.1.0"]
-                 [com.taoensso.debug/telemere "1.0.0-beta1-f01"]]
+                 [com.taoensso/telemere "1.0.0-beta5"]]
   :repl-options {:init-ns cral.alfresco})
