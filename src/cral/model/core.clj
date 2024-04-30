@@ -342,7 +342,7 @@
 
 (defrecord CreateRatingBody
   [^String id
-   ^String my-rating])
+   ^Object my-rating])
 
 (defrecord CreateRatingQueryParams
   [^PersistentVector fields])
