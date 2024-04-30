@@ -88,15 +88,9 @@
 (defn ex-response
   "Build a response from a client exception."
   [^Exception e]
-  (t/log! :debug e)
-  (if (instance? SSLException e)
-    {:status  500
-     :message (.getMessage e)}
-    (let [ex-data (ex-data e)
-          body (kebab-keywordize-keys (json/read-str (:body ex-data)))]
-      {:status  (:status ex-data)
-       :message (get-in body [:error :brief-summary])
-       :body    body})))
+  (t/log! :error (.getMessage e))
+  {:status  500
+   :message (.getMessage e)})
 
 (defn- add-auth
   "Add authorization header from ticket."
