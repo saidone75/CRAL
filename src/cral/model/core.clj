@@ -347,6 +347,9 @@
 (defrecord CreateRatingQueryParams
   [^PersistentVector fields])
 
+(defrecord GetRatingQueryParams
+  [^PersistentVector fields])
+
 ;; shared-links
 (defrecord CreateSharedLinkBody
   [^String node-id

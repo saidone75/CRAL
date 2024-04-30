@@ -27,6 +27,7 @@
            (cral.model.auth Ticket)
            (cral.model.core CreateRatingBody
                             CreateRatingQueryParams
+                            GetRatingQueryParams
                             ListRatingsQueryParams)))
 
 (defn list-ratings
@@ -55,4 +56,17 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn get-rating
+  "Get the specific rating `rating-id` on node `node-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/ratings/getRating)."
+  ([^Ticket ticket ^String node-id ^String rating-id]
+   (get-rating ticket node-id rating-id nil))
+  ([^Ticket ticket ^String node-id ^String rating-id ^GetRatingQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/ratings/%s" (config/get-url 'core) node-id rating-id)
+     ticket
+     {:query-params query-params}
      opts)))
