@@ -51,3 +51,25 @@
     (is (some #(= (get-in % [:entry :id]) rm/likes) (get-in list-ratings-response [:body :list :entries])))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
+(deftest create-rating-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create user if not exist
+        _ (tu/create-test-user ticket saidone)
+        ;; create a personal ticket
+        saidone-ticket (get-in (auth/create-ticket saidone saidone) [:body :entry])
+        ;; rate the node
+        create-like-rating-response (->> (model/map->CreateRatingBody {:id rm/likes :my-rating true})
+                                         (ratings/create-rating ticket created-node-id))
+        create-five-star-rating-response (->> (model/map->CreateRatingBody {:id rm/five-star :my-rating 5})
+                                              (ratings/create-rating saidone-ticket created-node-id))]
+    (is (= (:status create-like-rating-response) 201))
+    (is (= (get-in create-like-rating-response [:body :entry :id]) rm/likes))
+    (is (= (:status create-five-star-rating-response) 201))
+    (is (= (get-in create-five-star-rating-response [:body :entry :id]) rm/five-star))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
