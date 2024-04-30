@@ -340,6 +340,13 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord CreateRatingBody
+  [^String id
+   ^String my-rating])
+
+(defrecord CreateRatingQueryParams
+  [^PersistentVector fields])
+
 ;; shared-links
 (defrecord CreateSharedLinkBody
   [^String node-id
