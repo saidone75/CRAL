@@ -62,7 +62,7 @@
   "Get the specific rating `rating-id` on node `node-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/ratings/getRating)."
   ([^Ticket ticket ^String node-id ^String rating-id]
-   (list-ratings ticket node-id rating-id nil))
+   (get-rating ticket node-id rating-id nil))
   ([^Ticket ticket ^String node-id ^String rating-id ^GetRatingQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
