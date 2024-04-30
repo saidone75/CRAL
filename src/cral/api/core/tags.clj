@@ -90,7 +90,7 @@
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags)."
   ([^Ticket ticket ^CreateTagBody body]
    (create-tag ticket body nil))
-  ([^Ticket ticket ^UpdateTagBody body ^CreateTagQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^CreateTagBody body ^CreateTagQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
      (format "%s/tags" (config/get-url 'core))
