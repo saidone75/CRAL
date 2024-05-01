@@ -109,7 +109,7 @@
                                          (ratings/create-rating ticket created-node-id))
         _ (->> (model/map->CreateRatingBody {:id rm/five-star :my-rating 5})
                                               (ratings/create-rating saidone-ticket created-node-id))]
-    (is (= (:status (ratings/delete-rating ticket created-node-id "mona")) 204))
+    (is (= (:status (ratings/delete-rating ticket created-node-id rm/likes)) 204))
     (is (= (:status (ratings/delete-rating ticket created-node-id rm/five-star)) 204))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))

@@ -22,8 +22,7 @@
             [taoensso.telemere :as t])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (java.util Base64)
-           (javax.net.ssl SSLException)))
+           (java.util Base64)))
 
 (defn kebab-case
   "Turn a camelCase string into kebab-case."
@@ -88,9 +87,17 @@
 (defn ex-response
   "Build a response from a client exception."
   [^Exception e]
-  (t/log! :error (.getMessage e))
-  {:status  500
-   :message (.getMessage e)})
+  (t/trace! e)
+  (let [ex-data (ex-data e)]
+    (if-not (nil? ex-data)
+      (let [message (get-in (kebab-keywordize-keys (json/read-str (:body ex-data))) [:error :error-key])]
+        (t/log! :debug message)
+        {:status  (:status ex-data)
+         :message message})
+      (do
+        (t/log! :debug (.getMessage e))
+        {:status  500
+         :message (.getMessage e)}))))
 
 (defn- add-auth
   "Add authorization header from ticket."
