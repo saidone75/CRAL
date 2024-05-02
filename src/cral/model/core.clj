@@ -19,6 +19,12 @@
 
 ;; keep same order as fn, bodies first then params
 
+;; audit
+(defrecord ListAuditApplicationsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
