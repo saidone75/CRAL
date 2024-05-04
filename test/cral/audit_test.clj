@@ -23,7 +23,7 @@
 
 (use-fixtures :once fixtures/setup)
 
-(deftest list-activities-test
+(deftest list-audit-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
     ;; list audit applications
     (is (= (:status (audit/list-audit-applications ticket)) 200))))

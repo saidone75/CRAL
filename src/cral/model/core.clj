@@ -25,6 +25,10 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord GetAuditApplicationInfoQueryParams
+  [^PersistentVector fields
+   ^PersistentVector include])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
