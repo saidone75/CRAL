@@ -21,7 +21,8 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.core ListAuditApplicationsQueryParams)))
+           (cral.model.core GetAuditApplicationInfoQueryParams
+                            ListAuditApplicationsQueryParams)))
 
 (defn list-audit-applications
   "Gets a list of audit applications in this repository.
@@ -37,6 +38,21 @@
    (utils/call-rest
      client/get
      (format "%s/audit-applications" (config/get-url 'core))
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn get-audit-application-info
+  "Get status of an audit application `audit-application-id`.
+  You must have admin rights to retrieve audit information.
+  You can use the include parameter to return the minimum and/or maximum audit record id for the application.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/getAuditApp1)."
+  ([^Ticket ticket ^String audit-application-id]
+   (list-audit-applications ticket audit-application-id))
+  ([^Ticket ticket ^String audit-application-id ^GetAuditApplicationInfoQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/audit-applications/%s" (config/get-url 'core) audit-application-id)
      ticket
      {:query-params query-params}
      opts)))
