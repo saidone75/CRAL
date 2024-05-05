@@ -27,3 +27,10 @@
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
     ;; list audit applications
     (is (= (:status (audit/list-audit-applications ticket)) 200))))
+
+(deftest get-audit-application-info-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; get an audit application id
+        audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])
+        get-audit-application-info-response (audit/get-audit-application-info ticket audit-application-id)]
+    (is (= (:status get-audit-application-info-response) 200))))
