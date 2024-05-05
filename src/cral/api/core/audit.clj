@@ -46,9 +46,9 @@
   "Get status of an audit application `audit-application-id`.
   You must have admin rights to retrieve audit information.
   You can use the include parameter to return the minimum and/or maximum audit record id for the application.\\
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/getAuditApp1)."
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/getAuditApp)."
   ([^Ticket ticket ^String audit-application-id]
-   (list-audit-applications ticket audit-application-id))
+   (get-audit-application-info ticket audit-application-id nil))
   ([^Ticket ticket ^String audit-application-id ^GetAuditApplicationInfoQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
