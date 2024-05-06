@@ -29,6 +29,12 @@
   [^PersistentVector fields
    ^PersistentVector include])
 
+(defrecord UpdateAuditApplicationInfoBody
+  [^Boolean is-enabled])
+
+(defrecord UpdateAuditApplicationInfoQueryParams
+  [^PersistentVector fields])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count

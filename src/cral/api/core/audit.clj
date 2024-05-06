@@ -16,13 +16,16 @@
 
 (ns cral.api.core.audit
   (:require [clj-http.lite.client :as client]
+            [clojure.data.json :as json]
             [cral.config :as config]
             [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
            (cral.model.core GetAuditApplicationInfoQueryParams
-                            ListAuditApplicationsQueryParams)))
+                            ListAuditApplicationsQueryParams
+                            UpdateAuditApplicationInfoBody
+                            UpdateAuditApplicationInfoQueryParams)))
 
 (defn list-audit-applications
   "Gets a list of audit applications in this repository.
@@ -55,4 +58,22 @@
      (format "%s/audit-applications/%s" (config/get-url 'core) audit-application-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn update-audit-application-info
+  "Disable or re-enable the audit application `audit-application-id`.
+  New audit entries will not be created for a disabled audit application until it is re-enabled (and system-wide auditing is also enabled).
+  Note, it is still possible to query &/or delete any existing audit entries even if auditing is disabled for the audit application.
+  You must have admin rights to update audit application.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/updateAuditApp)."
+  ([^Ticket ticket ^String audit-application-id ^UpdateAuditApplicationInfoBody body]
+   (update-audit-application-info ticket audit-application-id body nil))
+  ([^Ticket ticket ^String audit-application-id ^UpdateAuditApplicationInfoBody body ^UpdateAuditApplicationInfoQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/put
+     (format "%s/audit-applications/%s" (config/get-url 'core) audit-application-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
      opts)))
