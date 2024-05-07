@@ -19,7 +19,8 @@
             [cral.api.auth :as auth]
             [cral.api.core.audit :as audit]
             [cral.fixtures :as fixtures]
-            [cral.config :as c]))
+            [cral.config :as c]
+            [cral.model.core :as model]))
 
 (use-fixtures :once fixtures/setup)
 
@@ -34,3 +35,17 @@
         audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])
         get-audit-application-info-response (audit/get-audit-application-info ticket audit-application-id)]
     (is (= (:status get-audit-application-info-response) 200))))
+
+(deftest update-audit-application-info-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; get an audit application id
+        audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
+    (is (= (get-in (audit/get-audit-application-info ticket audit-application-id) [:body :entry :is-enabled]) true))
+    ;; disable audit application
+    (is (= (:status (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled false})
+                         (audit/update-audit-application-info ticket audit-application-id)) 200)))
+    ;; check if application has been disabled
+    (is (= (get-in (audit/get-audit-application-info ticket audit-application-id) [:body :entry :is-enabled]) false))
+    ;; re-enable audit application
+    (is (= (:status (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled true})
+                         (audit/update-audit-application-info ticket audit-application-id)) 200)))))
