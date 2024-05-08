@@ -35,6 +35,15 @@
 (defrecord UpdateAuditApplicationInfoQueryParams
   [^PersistentVector fields])
 
+(defrecord ListAuditApplicationEntriesQueryParams
+  [^Integer skip-count
+   ^Boolean omit-total-items
+   ^PersistentVector order-by
+   ^Integer max-items
+   ^String where
+   ^PersistentVector include
+   ^PersistentVector fields])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count

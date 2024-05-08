@@ -23,6 +23,7 @@
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
            (cral.model.core GetAuditApplicationInfoQueryParams
+                            ListAuditApplicationEntriesQueryParams
                             ListAuditApplicationsQueryParams
                             UpdateAuditApplicationInfoBody
                             UpdateAuditApplicationInfoQueryParams)))
@@ -76,4 +77,28 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn list-audit-application-entries
+  "Gets a list of audit entries for audit application `auditApplication-id`.
+  You can use the include parameter in `query-params` to return additional values information.
+  The list can be filtered by one or more of:
+  - **created-by-user** person id
+  - **created-at** inclusive time period
+  - **id** inclusive range of ids
+  - **values-key** audit entry values contains the exact matching key
+  - **values-value** audit entry values contains the exact matching value
+  - SiteContributor\n\n
+  The default sort order is **created-at** ascending, but you can use an optional **ASC** or **DESC** modifier to specify an ascending or descending sort order.
+  For example, specifying `order-by=created-at DESC` returns audit entries in descending **created-at** order.
+  You must have admin rights to retrieve audit information.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/listAuditEntriesForAuditApp)."
+  ([^Ticket ticket ^String audit-application-id]
+   (list-audit-application-entries ticket audit-application-id nil))
+  ([^Ticket ticket ^String audit-application-id ^ListAuditApplicationEntriesQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/audit-applications/%s/audit-entries" (config/get-url 'core) audit-application-id)
+     ticket
+     {:query-params query-params}
      opts)))
