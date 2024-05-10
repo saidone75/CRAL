@@ -49,3 +49,9 @@
     ;; re-enable audit application
     (is (= (:status (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled true})
                          (audit/update-audit-application-info ticket audit-application-id)) 200)))))
+
+(deftest list-audit-application-entries-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; get an audit application id
+        audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
+    (is (= (:status (audit/list-audit-application-entries ticket audit-application-id)) 200))))
