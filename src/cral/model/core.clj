@@ -44,6 +44,9 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord DeleteAuditApplicationEntriesQueryParams
+  [^String where])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
