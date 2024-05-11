@@ -55,3 +55,11 @@
         ;; get an audit application id
         audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
     (is (= (:status (audit/list-audit-application-entries ticket audit-application-id)) 200))))
+
+(deftest delete-audit-application-entries-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; get an audit application id
+        audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
+    (is (= (:status (->> (model/map->DeleteAuditApplicationEntriesQueryParams
+                           {:where "(createdAt BETWEEN ('2024-01-01T00:00:00', '2024-02-01T00:00:00'))"})
+                         (audit/delete-audit-application-entries ticket audit-application-id)) 204)))))
