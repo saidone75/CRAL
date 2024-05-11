@@ -108,7 +108,7 @@
   "Permanently delete audit entries for an audit application `auditApplication-id`.
   The `where` clause must be specified, either with an inclusive time period or for an inclusive range of ids. The delete is within the context of the given audit application.
   For example:
-  - ```where=(createdAt BETWEEN ('2017-06-02T12:13:51.593+01:00' , '2017-06-04T10:05:16.536+01:00'))```
+  - ```where=(createdAt BETWEEN ('2024-01-01T00:00:00' , '2024-02-01T00:00:00'))```
   - ```where=(id BETWEEN ('1234', '4321'))```\n\n
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/deleteAuditEntriesForAuditApp)."
   ([^Ticket ticket ^String ^String audit-application-it ^DeleteAuditApplicationEntriesQueryParams query-params & [^PersistentHashMap opts]]
