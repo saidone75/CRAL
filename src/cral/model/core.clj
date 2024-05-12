@@ -47,6 +47,9 @@
 (defrecord DeleteAuditApplicationEntriesQueryParams
   [^String where])
 
+(defrecord GetAuditEntryQueryParams
+  [^PersistentVector fields])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
