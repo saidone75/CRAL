@@ -24,6 +24,7 @@
            (cral.model.auth Ticket)
            (cral.model.core DeleteAuditApplicationEntriesQueryParams
                             GetAuditApplicationInfoQueryParams
+                            GetAuditEntryQueryParams
                             ListAuditApplicationEntriesQueryParams
                             ListAuditApplicationsQueryParams
                             UpdateAuditApplicationInfoBody
@@ -118,3 +119,18 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn get-audit-entry
+  "Gets audit entry `audit-entry-id`.
+  You must have admin rights to retrieve audit information.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/getAuditEntry)."
+  ([^Ticket ticket ^String audit-application-id ^String audit-entry-id]
+   (get-audit-entry ticket audit-application-id audit-entry-id nil))
+  ([^Ticket ticket ^String audit-application-id ^String audit-entry-id ^GetAuditEntryQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/audit-applications/%s/audit-entries/%s" (config/get-url 'core) audit-application-id audit-entry-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
