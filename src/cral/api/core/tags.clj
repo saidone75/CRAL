@@ -132,10 +132,10 @@
   "Deletes the tag with `tag-id`. This will cause the tag to be removed from all nodes.
   You must have admin rights to delete a tag.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/tags)."
-  ([^Ticket ticket ^String ^String tag-id]
+  ([^Ticket ticket ^String ^String tag-id & [^PersistentHashMap opts]]
    (utils/call-rest
      client/delete
      (format "%s/tags/%s" (config/get-url 'core) tag-id)
      ticket
      {}
-     nil)))
+     opts)))

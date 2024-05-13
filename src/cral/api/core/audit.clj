@@ -112,7 +112,7 @@
   - ```where=(createdAt BETWEEN ('2024-01-01T00:00:00' , '2024-02-01T00:00:00'))```
   - ```where=(id BETWEEN ('1234', '4321'))```\n\n
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/deleteAuditEntriesForAuditApp)."
-  ([^Ticket ticket ^String ^String audit-application-it ^DeleteAuditApplicationEntriesQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^String audit-application-it ^DeleteAuditApplicationEntriesQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/delete
      (format "%s/audit-applications/%s/audit-entries" (config/get-url 'core) audit-application-it)
@@ -132,5 +132,17 @@
      (format "%s/audit-applications/%s/audit-entries/%s" (config/get-url 'core) audit-application-id audit-entry-id)
      ticket
      {:query-params query-params}
+     opts)))
+
+(defn delete-audit-entry
+  "Permanently delete a single audit entry `audit-entry-id`.
+  You must have admin rights to retrieve audit information.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/deleteAuditEntry)."
+  ([^Ticket ticket ^String audit-application-it ^String audit-entry-id & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/delete
+     (format "%s/audit-applications/%s/audit-entries/%s" (config/get-url 'core) audit-application-it audit-entry-id)
+     ticket
+     {}
      opts)))
 

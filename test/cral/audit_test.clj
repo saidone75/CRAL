@@ -23,6 +23,7 @@
             [cral.model.core :as model]))
 
 (use-fixtures :once fixtures/setup)
+(def alfresco-access "alfresco-access")
 
 (deftest list-audit-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
@@ -63,3 +64,11 @@
     (is (= (:status (->> (model/map->DeleteAuditApplicationEntriesQueryParams
                            {:where "(createdAt BETWEEN ('2024-01-01T00:00:00', '2024-02-01T00:00:00'))"})
                          (audit/delete-audit-application-entries ticket audit-application-id)) 204)))))
+
+(deftest get-audit-entry-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; get an audit application id
+        list-audit-application-entries-response (audit/list-audit-application-entries ticket alfresco-access)
+        entry (rand-nth (get-in list-audit-application-entries-response [:body :list :entries]))
+        get-audit-entry-response (audit/get-audit-entry ticket alfresco-access (get-in entry [:entry :id]))]
+    (is (= (:status get-audit-entry-response) 200))))
