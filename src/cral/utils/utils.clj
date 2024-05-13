@@ -114,9 +114,10 @@
   ([method ^String url ^Ticket ticket ^PersistentHashMap req ^PersistentHashMap opts]
    (try
      (let [req (assoc req :query-params (join-vector-vals (camel-case-stringify-keys (into {} (remove #(nil? (val %)) (:query-params req))))))
-           _ (t/trace! url)
-           _ (t/trace! req)
+           _ (t/log! :trace (format "method => %s" method))
+           _ (t/log! :trace (format "url => %s" url))
+           _ (t/log! :trace (format "req => %s" req))
            res (method url (add-auth ticket req))
-           _ (t/trace! res)]
+           _ (t/log! :trace (format "res => %s" res))]
        (ok-response res (:return-headers opts)))
      (catch Exception e (ex-response e)))))
