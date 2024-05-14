@@ -4,9 +4,10 @@
 [![Clojars Version](https://img.shields.io/clojars/v/org.saidone/cral)](https://clojars.org/org.saidone/cral)
 [![cljdoc badge](https://cljdoc.org/badge/org.saidone/cral)](https://cljdoc.org/d/org.saidone/cral)
 
-CRAL is a pure Clojure library for consuming Alfresco Content Services public REST API in an idiomatic way.
+CRAL is a Clojure library for consuming Alfresco Content Services public REST API in an idiomatic way.
 ## Outline
 - Lean and readable code
+- 100% pure Clojure
 - 100% test coverage
 - Tuned for GraalVM, can be compiled to native binary
 ## Usage
@@ -66,7 +67,7 @@ Results are returned as maps that can be easily handled in Clojure, please note 
                                   :created-at "2023-05-21T16:46:55.651+0000",
                                   :location "nodes"}}]}}}
 ```
-Post bodies and request parameters with well known keys are modeled as records:
+POST/PUT bodies and request parameters with well known keys are modeled as records:
 ```clojure
 (model/map->GetNodeQueryParams {:include ["path" "permissions"]})
 =>
