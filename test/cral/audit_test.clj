@@ -72,3 +72,10 @@
         entry (rand-nth (get-in list-audit-application-entries-response [:body :list :entries]))
         get-audit-entry-response (audit/get-audit-entry ticket alfresco-access (get-in entry [:entry :id]))]
     (is (= (:status get-audit-entry-response) 200))))
+
+(deftest delete-audit-entry-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; get an audit application id
+        list-audit-application-entries-response (audit/list-audit-application-entries ticket alfresco-access)
+        entry (rand-nth (get-in list-audit-application-entries-response [:body :list :entries]))]
+    (is (= (:status (audit/delete-audit-entry ticket alfresco-access (get-in entry [:entry :id]))) 204))))
