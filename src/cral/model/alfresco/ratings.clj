@@ -16,5 +16,5 @@
 
 (ns cral.model.alfresco.ratings)
 
-(def likes "likes")
-(def five-star "fiveStar")
+(def ^:const likes "likes")
+(def ^:const five-star "fiveStar")
