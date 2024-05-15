@@ -20,6 +20,7 @@
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
+            [cral.model.alfresco.permissions :as permissions]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
             [cral.model.alfresco.cm :as cm]
@@ -53,7 +54,7 @@
     ;; update node with new permissions
     (->> (model/map->UpdateNodeBody {:permissions (model/map->Permissions {:is-inheritance-enabled false
                                                                            :locally-set            [{:authority-id  "guest"
-                                                                                                     :name          "Write"
+                                                                                                     :name          permissions/editor
                                                                                                      :access-status "ALLOWED"}]})})
          (nodes/update-node ticket created-node-id))
     ; check if new permissions have been applied
