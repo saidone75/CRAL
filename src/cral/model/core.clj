@@ -17,6 +17,16 @@
 (ns cral.model.core
   (:import (clojure.lang PersistentHashMap PersistentVector)))
 
+;; permissions
+(defrecord LocallySet
+  [^String authority-id
+   ^String name
+   ^String access-status])
+
+(defrecord Permissions
+  [^Boolean is-inheritance-enabled
+   ^PersistentVector locally-set])
+
 ;; keep same order as fn, bodies first then params
 
 ;; audit
@@ -116,7 +126,8 @@
   [^String name
    ^String node-type
    ^PersistentVector aspect-names
-   ^PersistentHashMap properties])
+   ^PersistentHashMap properties
+   ^Permissions permissions])
 
 (defrecord UpdateNodeQueryParams
   [^PersistentVector include
@@ -604,13 +615,3 @@
 
 (defrecord GetVersionContentQueryParams
   [^Boolean attachment])
-
-;; permissions
-(defrecord LocallySet
-  [^String authority-id
-   ^String name
-   ^String access-status])
-
-(defrecord Permissions
-  [^Boolean is-inheritance-enabled
-   ^PersistentVector locally-set])
