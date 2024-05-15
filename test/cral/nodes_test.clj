@@ -21,6 +21,7 @@
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
             [cral.model.alfresco.permissions :as permissions]
+            [cral.model.alfresco.access-status :as status]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
             [cral.model.alfresco.cm :as cm]
@@ -55,7 +56,7 @@
     (->> (model/map->UpdateNodeBody {:permissions (model/map->Permissions {:is-inheritance-enabled false
                                                                            :locally-set            [{:authority-id  "guest"
                                                                                                      :name          permissions/editor
-                                                                                                     :access-status "ALLOWED"}]})})
+                                                                                                     :access-status status/allowed}]})})
          (nodes/update-node ticket created-node-id))
     ; check if new permissions have been applied
     (let [permissions (get-in (nodes/get-node ticket created-node-id (model/map->GetNodeQueryParams {:include "permissions"})) [:body :entry :permissions])]
