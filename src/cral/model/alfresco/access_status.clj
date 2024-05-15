@@ -14,7 +14,8 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.model.alfresco.ratings)
+(ns cral.model.alfresco.access-status)
 
-(def ^:const likes "likes")
-(def ^:const five-star "fiveStar")
+(def ^:const allowed "ALLOWED")
+(def ^:const denied "DENIED")
+(def ^:const undetermined "UNDETERMINED")

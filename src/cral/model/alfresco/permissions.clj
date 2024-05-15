@@ -14,7 +14,11 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.model.alfresco.ratings)
+(ns cral.model.alfresco.permissions)
 
-(def ^:const likes "likes")
-(def ^:const five-star "fiveStar")
+(def ^:const coordinator "Coordinator")
+(def ^:const collaborator "Collaborator")
+(def ^:const contributor "Contributor")
+(def ^:const editor "Editor")
+(def ^:const consumer "Consumer")
+(def ^:const record-administrator "RecordAdministrator")
