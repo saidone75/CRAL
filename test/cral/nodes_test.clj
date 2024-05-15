@@ -58,7 +58,6 @@
          (nodes/update-node ticket created-node-id))
     ; check if new permissions have been applied
     (let [permissions (get-in (nodes/get-node ticket created-node-id (model/map->GetNodeQueryParams {:include "permissions"})) [:body :entry :permissions])]
-      (println permissions)
       (is (= (:is-inheritance-enabled permissions) false))
       (is (some #(= (:authority-id %) "guest") (:locally-set permissions))))
     ;; clean up

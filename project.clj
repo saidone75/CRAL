@@ -14,7 +14,7 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(defproject org.saidone/cral "0.3.1"
+(defproject org.saidone/cral "0.3.2-SNAPSHOT"
   :description "A library for consuming Alfresco Content Services public REST API"
   :url "https://saidone.org"
   :license {:name "GNU General Public License v3.0"
