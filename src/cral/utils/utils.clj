@@ -24,6 +24,10 @@
            (cral.model.auth Ticket)
            (java.util Base64)))
 
+(defn- clean
+  [s]
+  (str/replace s #"^:+" ""))
+
 (defn kebab-case
   "Turn a camelCase string into kebab-case."
   [s]
@@ -45,7 +49,7 @@
 
 (defn- *-keywordize-keys
   [m *-case]
-  (let [f (fn [[k v]] [(keyword (*-case k)) v])]
+  (let [f (fn [[k v]] [(keyword (*-case (clean k))) v])]
     ;; only apply to maps
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
