@@ -27,6 +27,7 @@
                             GetAuditEntryQueryParams
                             ListAuditApplicationEntriesQueryParams
                             ListAuditApplicationsQueryParams
+                            ListNodeAuditEntryQueryParams
                             UpdateAuditApplicationInfoBody
                             UpdateAuditApplicationInfoQueryParams)))
 
@@ -81,22 +82,22 @@
       :content-type :json}
      opts)))
 
-(defn list-audit-application-entries
-  "Gets a list of audit entries for audit application `auditApplication-id`.
+(defn list-application-audit-entries
+  "Gets a list of audit entries for audit application `audit-application-id`.
   You can use the include parameter in `query-params` to return additional values information.
   The list can be filtered by one or more of:
-  - **created-by-user** person id
-  - **created-at** inclusive time period
+  - **createdByUser** person id
+  - **createdAt** inclusive time period
   - **id** inclusive range of ids
-  - **values-key** audit entry values contains the exact matching key
-  - **values-value** audit entry values contains the exact matching value
+  - **valuesKey** audit entry values contains the exact matching key
+  - **valuesValue** audit entry values contains the exact matching value
   - SiteContributor\n\n
-  The default sort order is **created-at** ascending, but you can use an optional **ASC** or **DESC** modifier to specify an ascending or descending sort order.
-  For example, specifying `order-by=created-at DESC` returns audit entries in descending **created-at** order.
+  The default sort order is **createdAt** ascending, but you can use an optional **ASC** or **DESC** modifier to specify an ascending or descending sort order.
+  For example, specifying `order-by=createdAt DESC` returns audit entries in descending **createdAt** order.
   You must have admin rights to retrieve audit information.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/listAuditEntriesForAuditApp)."
   ([^Ticket ticket ^String audit-application-id]
-   (list-audit-application-entries ticket audit-application-id nil))
+   (list-application-audit-entries ticket audit-application-id nil))
   ([^Ticket ticket ^String audit-application-id ^ListAuditApplicationEntriesQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
@@ -105,9 +106,10 @@
      {:query-params query-params}
      opts)))
 
-(defn delete-audit-application-entries
-  "Permanently delete audit entries for an audit application `auditApplication-id`.
-  The `where` clause must be specified, either with an inclusive time period or for an inclusive range of ids. The delete is within the context of the given audit application.
+(defn delete-application-audit-entries
+  "Permanently delete audit entries for an audit application `audit-application-id`.
+  The `where` clause must be specified, either with an inclusive time period or for an inclusive range of ids.
+  The delete is within the context of the given audit application.
   For example:
   - ```where=(createdAt BETWEEN ('2024-01-01T00:00:00' , '2024-02-01T00:00:00'))```
   - ```where=(id BETWEEN ('1234', '4321'))```\n\n
@@ -144,5 +146,22 @@
      (format "%s/audit-applications/%s/audit-entries/%s" (config/get-url 'core) audit-application-it audit-entry-id)
      ticket
      {}
+     opts)))
+
+(defn list-node-audit-entry
+  "Gets a list of audit entries for node `node-id`.
+  The list can be filtered by **createdByUser** and for a given inclusive time period.
+  The default sort order is **createdAt** ascending, but you can use an optional **ASC** or **DESC** modifier to specify an ascending or descending sort order.
+  For example, specifying `order-by=createdAt DESC` returns audit entries in descending **createdAt** order.
+  This relies on the pre-configured 'alfresco-access' audit application.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/listAuditEntriesForNode)."
+  ([^Ticket ticket ^String node-id]
+   (list-node-audit-entry ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListNodeAuditEntryQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/audit-entries" (config/get-url 'core) node-id)
+     ticket
+     {:query-params query-params}
      opts)))
 

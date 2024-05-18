@@ -60,6 +60,14 @@
 (defrecord GetAuditEntryQueryParams
   [^PersistentVector fields])
 
+(defrecord ListNodeAuditEntryQueryParams
+  [^Integer skip-count
+   ^PersistentVector order-by
+   ^Integer max-items
+   ^String where
+   ^PersistentVector include
+   ^PersistentVector fields])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
