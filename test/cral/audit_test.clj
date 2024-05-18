@@ -18,9 +18,13 @@
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.audit :as audit]
-            [cral.fixtures :as fixtures]
+            [cral.api.core.nodes :as nodes]
             [cral.config :as c]
-            [cral.model.core :as model]))
+            [cral.fixtures :as fixtures]
+            [cral.model.alfresco.cm :as cm]
+            [cral.model.core :as model]
+            [cral.test-utils :as tu])
+  (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
 (def alfresco-access "alfresco-access")
@@ -79,3 +83,17 @@
         list-audit-application-entries-response (audit/list-application-audit-entries ticket alfresco-access)
         entry (rand-nth (get-in list-audit-application-entries-response [:body :list :entries]))]
     (is (= (:status (audit/delete-audit-entry ticket alfresco-access (get-in entry [:entry :id]))) 204))))
+
+(deftest list-node-audit-entries-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        parent-id (tu/get-guest-home ticket)
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket parent-id)
+                             (#(get-in % [:body :entry :id])))
+        list-audit-application-entries-response (audit/list-node-audit-entries ticket created-node-id)]
+    (is (= (:status list-audit-application-entries-response) 200))
+    (is (not (nil? (get-in list-audit-application-entries-response [:body :list :entries]))))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))

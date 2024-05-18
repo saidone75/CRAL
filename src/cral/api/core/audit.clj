@@ -27,7 +27,7 @@
                             GetAuditEntryQueryParams
                             ListAuditApplicationEntriesQueryParams
                             ListAuditApplicationsQueryParams
-                            ListNodeAuditEntryQueryParams
+                            ListNodeAuditEntriesQueryParams
                             UpdateAuditApplicationInfoBody
                             UpdateAuditApplicationInfoQueryParams)))
 
@@ -148,7 +148,7 @@
      {}
      opts)))
 
-(defn list-node-audit-entry
+(defn list-node-audit-entries
   "Gets a list of audit entries for node `node-id`.
   The list can be filtered by **createdByUser** and for a given inclusive time period.
   The default sort order is **createdAt** ascending, but you can use an optional **ASC** or **DESC** modifier to specify an ascending or descending sort order.
@@ -156,8 +156,8 @@
   This relies on the pre-configured 'alfresco-access' audit application.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/audit/listAuditEntriesForNode)."
   ([^Ticket ticket ^String node-id]
-   (list-node-audit-entry ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^ListNodeAuditEntryQueryParams query-params & [^PersistentHashMap opts]]
+   (list-node-audit-entries ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListNodeAuditEntriesQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/audit-entries" (config/get-url 'core) node-id)
