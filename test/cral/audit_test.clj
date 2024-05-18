@@ -55,7 +55,7 @@
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; get an audit application id
         audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
-    (is (= (:status (audit/list-audit-application-entries ticket audit-application-id)) 200))))
+    (is (= (:status (audit/list-application-audit-entries ticket audit-application-id)) 200))))
 
 (deftest delete-audit-application-entries-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
@@ -63,12 +63,12 @@
         audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
     (is (= (:status (->> (model/map->DeleteAuditApplicationEntriesQueryParams
                            {:where "(createdAt BETWEEN ('2024-01-01T00:00:00', '2024-02-01T00:00:00'))"})
-                         (audit/delete-audit-application-entries ticket audit-application-id)) 204)))))
+                         (audit/delete-application-audit-entries ticket audit-application-id)) 204)))))
 
 (deftest get-audit-entry-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; get an audit application id
-        list-audit-application-entries-response (audit/list-audit-application-entries ticket alfresco-access)
+        list-audit-application-entries-response (audit/list-application-audit-entries ticket alfresco-access)
         entry (rand-nth (get-in list-audit-application-entries-response [:body :list :entries]))
         get-audit-entry-response (audit/get-audit-entry ticket alfresco-access (get-in entry [:entry :id]))]
     (is (= (:status get-audit-entry-response) 200))))
@@ -76,6 +76,6 @@
 (deftest delete-audit-entry-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; get an audit application id
-        list-audit-application-entries-response (audit/list-audit-application-entries ticket alfresco-access)
+        list-audit-application-entries-response (audit/list-application-audit-entries ticket alfresco-access)
         entry (rand-nth (get-in list-audit-application-entries-response [:body :list :entries]))]
     (is (= (:status (audit/delete-audit-entry ticket alfresco-access (get-in entry [:entry :id]))) 204))))
