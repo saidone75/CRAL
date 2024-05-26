@@ -22,6 +22,5 @@
   :dependencies [[org.clojure/clojure "1.11.3"]
                  [org.clojure/data.json "2.5.0"]
                  [org.clj-commons/clj-http-lite "1.0.13"]
-                 [levand/immuconf "0.1.0"]
                  [com.taoensso/telemere "1.0.0-beta12"]]
   :repl-options {:init-ns cral.alfresco})

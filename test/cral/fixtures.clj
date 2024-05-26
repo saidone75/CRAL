@@ -18,7 +18,7 @@
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
             [cral.config :as c]
-            [immuconf.config :as immu]
+            [clojure.edn :as edn]
             [taoensso.telemere :as t]))
 
 (def config-file "resources/config.edn")
@@ -26,7 +26,7 @@
 (defn setup [f]
   (if (.exists (io/file config-file))
     ;; load configuration
-    (let [config (immu/load config-file)]
+    (let [config (edn/read-string (slurp config-file))]
       (c/load-config config))
     (t/log! :warn (format "unable to find %s, using defaults" config-file)))
   (f))
