@@ -29,7 +29,7 @@
 (use-fixtures :once fixtures/setup)
 (def alfresco-access "alfresco-access")
 
-(deftest list-audit-test
+(deftest list-audit-applications1-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
     ;; list audit applications
     (is (= (:status (audit/list-audit-applications ticket)) 200))))
