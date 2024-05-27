@@ -17,10 +17,10 @@
 (ns cral.api.core.queries
   (:require [clj-http.lite.client :as client]
             [cral.config :as config]
+            [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.model.auth Ticket)
-           (cral.model.core FindNodesQueryParams)))
+           (cral.model.auth Ticket)))
 
 (defn find-nodes
   "Gets a list of nodes that match the given search criteria.
@@ -37,7 +37,7 @@
   - modifiedAt
   - createdAt\n\n
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/queries/findNodes)."
-  [^Ticket ticket ^FindNodesQueryParams query-params & [^PersistentHashMap opts]]
+  [^Ticket ticket ^PersistentHashMap query-params & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
     (format "%s/queries/nodes" (config/get-url 'core))
