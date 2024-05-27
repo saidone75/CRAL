@@ -384,6 +384,17 @@
 (defrecord GetPreferenceQueryParams
   [^PersistentVector fields])
 
+;; queries
+(defrecord FindNodesQueryParams
+  [^String term
+   ^String root-node-id
+   ^Integer skip-count
+   ^Integer max-items
+   ^String node-type
+   ^PersistentVector include
+   ^PersistentVector order-by
+   ^PersistentVector fields])
+
 ;; ratings
 (defrecord ListRatingsQueryParams
   [^Integer skip-count
