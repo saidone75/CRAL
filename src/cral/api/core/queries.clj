@@ -37,10 +37,10 @@
   - modifiedAt
   - createdAt\n\n
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/queries/findNodes)."
-  ([^Ticket ticket ^FindNodesQueryParams query-params & [^PersistentHashMap opts]]
-   (utils/call-rest
-     client/get
-     (format "%s/queries/nodes" (config/get-url 'core))
-     ticket
-     {:query-params query-params}
-     opts)))
+  [^Ticket ticket ^FindNodesQueryParams query-params & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/queries/nodes" (config/get-url 'core))
+    ticket
+    {:query-params query-params}
+    opts))
