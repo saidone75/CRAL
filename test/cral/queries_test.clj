@@ -14,13 +14,17 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(defproject org.saidone/cral "0.3.3-SNAPSHOT"
-  :description "A library for consuming Alfresco Content Services public REST API"
-  :url "https://saidone.org"
-  :license {:name "GNU General Public License v3.0"
-            :url  "https://www.gnu.org/licenses/gpl-3.0.txt"}
-  :dependencies [[org.clojure/clojure "1.11.3"]
-                 [org.clojure/data.json "2.5.0"]
-                 [org.clj-commons/clj-http-lite "1.0.13"]
-                 [com.taoensso/telemere "1.0.0-beta14"]]
-  :repl-options {:init-ns cral.alfresco})
+(ns cral.queries-test
+  (:require [clojure.test :refer :all]
+            [cral.api.auth :as auth]
+            [cral.api.core.queries :as queries]
+            [cral.config :as c]
+            [cral.fixtures :as fixtures]
+            [cral.model.core :as model]))
+
+(use-fixtures :once fixtures/setup)
+
+(deftest find-nodes-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
+    (println (->> (model/map->FindNodesQueryParams {:term "readme"})
+                  (queries/find-nodes ticket)))))
