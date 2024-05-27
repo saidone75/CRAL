@@ -25,6 +25,7 @@
 (use-fixtures :once fixtures/setup)
 
 (deftest find-nodes-test
-  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
-    (println (->> (model/map->FindNodesQueryParams {:term "readme"})
-                  (queries/find-nodes ticket)))))
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        find-nodes-response (->> (model/map->FindNodesQueryParams {:term "readme"})
+                                 (queries/find-nodes ticket))]
+    (is (= (:status find-nodes-response) 200))))
