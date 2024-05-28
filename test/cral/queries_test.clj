@@ -29,3 +29,9 @@
         find-nodes-response (->> (model/map->FindNodesQueryParams {:term "readme"})
                                  (queries/find-nodes ticket))]
     (is (= (:status find-nodes-response) 200))))
+
+(deftest find-sites-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        find-sites-response (->> (model/map->FindSitesQueryParams {:term "sws"})
+                                 (queries/find-sites ticket))]
+    (is (= (:status find-sites-response) 200))))
