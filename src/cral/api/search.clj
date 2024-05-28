@@ -22,11 +22,11 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.search SearchBody)))
+           (cral.model.search QueryBody)))
 
 (defn search
   "Searches Alfresco"
-  [^Ticket ticket ^SearchBody search-request & [^PersistentHashMap opts]]
+  [^Ticket ticket ^QueryBody search-request & [^PersistentHashMap opts]]
   (utils/call-rest
     client/post
     (format "%s/search" (config/get-url 'search))

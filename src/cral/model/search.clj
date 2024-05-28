@@ -14,8 +14,26 @@
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns cral.model.search)
+(ns cral.model.search
+  (:import (clojure.lang PersistentVector)))
 
-(defrecord RequestQuery [^String language ^String user-query ^String query])
-(defrecord Paging [^Integer max-items ^Integer skip-count])
-(defrecord SearchBody [^RequestQuery query ^Paging paging])
+(defrecord RequestQuery
+  [^String language
+   ^String user-query
+   ^String query])
+
+(defrecord Paging
+  [^Integer max-items
+   ^Integer skip-count])
+
+(defrecord Sort
+  [^String type
+   ^String field
+   ^Boolean ascending])
+
+(defrecord QueryBody
+  [^RequestQuery query
+   ^Paging paging
+   ^PersistentVector include
+   ^PersistentVector fields
+   ^PersistentVector sort])
