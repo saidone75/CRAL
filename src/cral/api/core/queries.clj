@@ -20,7 +20,9 @@
             [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
-           (cral.model.auth Ticket)))
+           (cral.model.auth Ticket)
+           (cral.model.core FindNodesQueryParams
+                            FindSitesQueryParams)))
 
 (defn find-nodes
   "Gets a list of nodes that match the given search criteria.
@@ -37,10 +39,30 @@
   - modifiedAt
   - createdAt\n\n
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/queries/findNodes)."
-  [^Ticket ticket ^PersistentHashMap query-params & [^PersistentHashMap opts]]
+  [^Ticket ticket ^FindNodesQueryParams query-params & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
     (format "%s/queries/nodes" (config/get-url 'core))
+    ticket
+    {:query-params query-params}
+    opts))
+
+(defn find-sites
+  "Gets a list of sites that match the given search criteria.
+  The search term is used to look for sites that match against site id, title or description.
+  The search term:
+  - must contain a minimum of 2 alphanumeric characters
+  - can optionally use '*' for wildcard matching within the term\n\n
+  The default sort order for the returned list is for sites to be sorted by ascending id.
+  You can override the default by using the **order-by** parameter. You can specify one or more of the following fields in the **order-by** parameter:
+  - id
+  - title
+  - description\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/queries/findSites)."
+  [^Ticket ticket ^FindSitesQueryParams query-params & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/queries/sites" (config/get-url 'core))
     ticket
     {:query-params query-params}
     opts))

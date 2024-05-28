@@ -395,6 +395,13 @@
    ^PersistentVector order-by
    ^PersistentVector fields])
 
+(defrecord FindSitesQueryParams
+  [^String term
+   ^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector fields])
+
 ;; ratings
 (defrecord ListRatingsQueryParams
   [^Integer skip-count
