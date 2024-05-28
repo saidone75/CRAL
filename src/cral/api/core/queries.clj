@@ -22,6 +22,7 @@
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
            (cral.model.core FindNodesQueryParams
+                            FindPeopleQueryParams
                             FindSitesQueryParams)))
 
 (defn find-nodes
@@ -63,6 +64,25 @@
   (utils/call-rest
     client/get
     (format "%s/queries/sites" (config/get-url 'core))
+    ticket
+    {:query-params query-params}
+    opts))
+
+(defn find-people
+  "Gets a list of people that match the given search criteria.
+  The search term is used to look for matches against person id, firstname and lastname.
+  The search term:
+  - must contain a minimum of 2 alphanumeric characters
+  - can optionally use '*' for wildcard matching within the term\n\n
+  You can sort the result list using the **order-by** parameter. You can specify one or more of the following fields in the **order-by** parameter:
+  - id
+  - firstName
+  - lastName\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/queries/findPeople)."
+  [^Ticket ticket ^FindPeopleQueryParams query-params & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/queries/people" (config/get-url 'core))
     ticket
     {:query-params query-params}
     opts))

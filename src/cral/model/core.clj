@@ -402,6 +402,13 @@
    ^PersistentVector order-by
    ^PersistentVector fields])
 
+(defrecord FindPeopleQueryParams
+  [^String term
+   ^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields
+   ^PersistentVector order-by])
+
 ;; ratings
 (defrecord ListRatingsQueryParams
   [^Integer skip-count
