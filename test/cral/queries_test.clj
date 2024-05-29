@@ -35,3 +35,10 @@
         find-sites-response (->> (model/map->FindSitesQueryParams {:term "sws"})
                                  (queries/find-sites ticket))]
     (is (= (:status find-sites-response) 200))))
+
+(deftest find-people-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        find-people-response (->> (model/map->FindPeopleQueryParams {:term "ad*"})
+                                  (queries/find-people ticket))]
+    (is (not (empty? (get-in find-people-response [:body :list :entries]))))
+    (is (= (:status find-people-response) 200))))
