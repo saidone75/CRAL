@@ -24,11 +24,17 @@
 
 (use-fixtures :once fixtures/setup)
 
-(deftest search
+(deftest search-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         response
         (->> (search-model/map->RequestQuery {:query "PATH:'app:company_home'"})
              (#(search-model/map->QueryBody {:query %}))
              (#(search/search ticket %)))]
+    (is (= (:status response) 200))
+    (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :name]) "Company Home"))))
+
+(deftest search-simple-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        response (search/search ticket (search-model/make-query-body "PATH:'app:company_home'"))]
     (is (= (:status response) 200))
     (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :name]) "Company Home"))))

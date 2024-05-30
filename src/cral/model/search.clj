@@ -39,8 +39,8 @@
    ^Sort sort])
 
 (defn make-query-body
-  ""
+  "Constructor for a simple AFTS query body that takes only a `query` string with optional `paging` and `sort`."
   [^String query & [^Paging paging ^Sort sort]]
-  (map->QueryBody {:query (map->RequestQuery {:query query})
+  (map->QueryBody {:query  (map->RequestQuery {:query query})
                    :paging paging
-                   :sort sort}))
+                   :sort   sort}))
