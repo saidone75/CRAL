@@ -36,4 +36,11 @@
    ^Paging paging
    ^PersistentVector include
    ^PersistentVector fields
-   ^PersistentVector sort])
+   ^Sort sort])
+
+(defn make-query-body
+  ""
+  [^String query & [^Paging paging ^Sort sort]]
+  (map->QueryBody {:query (map->RequestQuery {:query query})
+                   :paging paging
+                   :sort sort}))
