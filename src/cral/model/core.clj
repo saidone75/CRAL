@@ -68,6 +68,13 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+;; actions
+(defrecord RetrieveNodeActionsQueryParams
+  [^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector order-by
+   ^PersistentVector fields])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
