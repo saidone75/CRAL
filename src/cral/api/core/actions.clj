@@ -24,6 +24,13 @@
            (cral.model.core RetrieveNodeActionsQueryParams)))
 
 (defn retrieve-node-actions
+  "Retrieve the list of actions that may be executed against the given `node-id`.
+  The default sort order for the returned list is for actions to be sorted by ascending name.
+  You can override the default by using the **order-by parameter in `query-params`.
+  You can use any of the following fields to order the results:
+  - name
+  - title\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions/nodeActions)."
   ([^Ticket ticket ^String node-id]
    (retrieve-node-actions ticket node-id nil))
   ([^Ticket ticket ^String node-id ^RetrieveNodeActionsQueryParams query-params & [^PersistentHashMap opts]]
