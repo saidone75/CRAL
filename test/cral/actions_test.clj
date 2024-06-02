@@ -28,14 +28,14 @@
 
 (use-fixtures :once fixtures/setup)
 
-(deftest retrieve-node-actions-test
+(deftest list-node-actions-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         parent-id (tu/get-guest-home ticket)
         ;; create a node
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket parent-id)
                              (#(get-in % [:body :entry :id])))
-        retrieve-node-actions-response (actions/retrieve-node-actions ticket created-node-id)]
+        retrieve-node-actions-response (actions/list-node-actions ticket created-node-id)]
     (is (= (:status retrieve-node-actions-response) 200))
     (is (not (empty? (get-in retrieve-node-actions-response [:body :list :entries]))))
     ;; clean up

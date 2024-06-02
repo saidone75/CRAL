@@ -21,15 +21,41 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.core RetrieveNodeActionsQueryParams)))
+           (cral.model.core ListAvailableActionsQueryParams
+                            ListNodeActionsQueryParams)))
 
-(defn retrieve-node-actions
+(defn list-node-actions
+  "Retrieve the list of actions that may be executed against the given `node-id`.
+  The default sort order for the returned list is for actions to be sorted by ascending name.
+  You can override the default by using the **order-by** parameter in `query-params`.
+  You can use any of the following fields to order the results:
+  - name
+  - title\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions/nodeActions)."
   ([^Ticket ticket ^String node-id]
-   (retrieve-node-actions ticket node-id nil))
-  ([^Ticket ticket ^String node-id ^RetrieveNodeActionsQueryParams query-params & [^PersistentHashMap opts]]
+   (list-node-actions ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListNodeActionsQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/action-definitions" (config/get-url 'core) node-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn list-available-actions
+  "Gets a list of all available actions.
+  The default sort order for the returned list is for actions to be sorted by ascending name.
+  You can override the default by using the **order-by** parameter in `query-params`.
+  You can use any of the following fields to order the results:
+  - name
+  - title\n\n
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions/listActions)."
+  ([^Ticket ticket]
+   (list-available-actions ticket nil))
+  ([^Ticket ticket ^ListAvailableActionsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/action-definitions" (config/get-url 'core))
      ticket
      {:query-params query-params}
      opts)))
