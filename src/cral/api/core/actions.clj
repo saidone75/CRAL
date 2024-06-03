@@ -55,7 +55,7 @@
   ([^Ticket ticket ^ListAvailableActionsQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
-     (format "%s/nodes/%s/action-definitions" (config/get-url 'core))
+     (format "%s/action-definitions" (config/get-url 'core))
      ticket
      {:query-params query-params}
      opts)))
