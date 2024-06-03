@@ -35,8 +35,14 @@
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket parent-id)
                              (#(get-in % [:body :entry :id])))
-        retrieve-node-actions-response (actions/list-node-actions ticket created-node-id)]
-    (is (= (:status retrieve-node-actions-response) 200))
-    (is (not (empty? (get-in retrieve-node-actions-response [:body :list :entries]))))
+        list-node-actions-response (actions/list-node-actions ticket created-node-id)]
+    (is (= (:status list-node-actions-response) 200))
+    (is (not (empty? (get-in list-node-actions-response [:body :list :entries]))))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
+(deftest list-available-actions-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        list-available-actions-response (actions/list-available-actions ticket)]
+    (is (= (:status list-available-actions-response) 200))
+    (is (not (empty? (get-in list-available-actions-response [:body :list :entries]))))))
