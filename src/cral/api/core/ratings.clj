@@ -79,5 +79,5 @@
     client/delete
     (format "%s/nodes/%s/ratings/%s" (config/get-url 'core) node-id rating-id)
     ticket
-    {}
+    nil
     nil))

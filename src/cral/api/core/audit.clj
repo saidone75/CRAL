@@ -145,7 +145,7 @@
      client/delete
      (format "%s/audit-applications/%s/audit-entries/%s" (config/get-url 'core) audit-application-it audit-entry-id)
      ticket
-     {}
+     nil
      opts)))
 
 (defn list-node-audit-entries

@@ -68,6 +68,6 @@
     client/get
     (format "%s/action-definitions/%s" (config/get-url 'core) action-definition-id)
     ticket
-    {}
+    nil
     opts))
 

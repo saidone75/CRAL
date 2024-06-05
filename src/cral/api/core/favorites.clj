@@ -77,5 +77,5 @@
     client/delete
     (format "%s/people/%s/favorites/%s" (config/get-url 'core) person-id favorite-id)
     ticket
-    {}
+    nil
     opts))

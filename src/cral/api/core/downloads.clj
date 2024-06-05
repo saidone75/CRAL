@@ -69,5 +69,5 @@
     client/delete
     (format "%s/downloads/%s" (config/get-url 'core) download-id)
     ticket
-    {}
+    nil
     opts))

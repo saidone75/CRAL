@@ -61,7 +61,7 @@
     client/delete
     (format "%s/nodes/%s/versions/%s" (config/get-url 'core) node-id version-id)
     ticket
-    {}
+    nil
     opts))
 
 (defn get-version-content

@@ -81,5 +81,5 @@
     client/delete
     (format "%s/nodes/%s/comments/%s" (config/get-url 'core) node-id comment-id)
     ticket
-    {}
+    nil
     opts))
