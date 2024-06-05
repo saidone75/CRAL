@@ -65,7 +65,7 @@
     client/delete
     (format "%s/deleted-nodes/%s" (config/get-url 'core) node-id)
     ticket
-    {}
+    nil
     opts))
 
 (defn get-deleted-node-content

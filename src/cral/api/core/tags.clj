@@ -68,7 +68,7 @@
      client/delete
      (format "%s/nodes/%s/tags/%s" (config/get-url 'core) node-id tag-id)
      ticket
-     {}
+     nil
      opts)))
 
 (defn list-tags
@@ -137,5 +137,5 @@
      client/delete
      (format "%s/tags/%s" (config/get-url 'core) tag-id)
      ticket
-     {}
+     nil
      opts)))

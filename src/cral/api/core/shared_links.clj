@@ -77,7 +77,7 @@
     client/delete
     (format "%s/shared-links/%s" (config/get-url 'core) shared-id)
     ticket
-    {}
+    nil
     opts))
 
 (defn get-shared-link-content
