@@ -59,3 +59,15 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn get-action-definition-details
+  "Retrieve the details of the action denoted by `action-definition-id`.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions/actionDetails)."
+  [^Ticket ticket ^String action-definition-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/action-definitions/%s" (config/get-url 'core) action-definition-id)
+    ticket
+    {}
+    opts))
+
