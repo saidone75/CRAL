@@ -46,3 +46,12 @@
         list-available-actions-response (actions/list-available-actions ticket)]
     (is (= (:status list-available-actions-response) 200))
     (is (not (empty? (get-in list-available-actions-response [:body :list :entries]))))))
+
+(deftest get-action-definition-details-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        action-definition-id (-> (actions/list-available-actions ticket)
+                                 (get-in [:body :list :entries])
+                                 (rand-nth)
+                                 (get-in [:entry :id]))
+        get-action-definition-details-response (actions/get-action-definition-details ticket action-definition-id)]
+    (is (= (:status get-action-definition-details-response) 200))))

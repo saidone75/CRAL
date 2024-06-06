@@ -81,6 +81,11 @@
    ^PersistentVector order-by
    ^PersistentVector fields])
 
+(defrecord ExecuteActionBody
+  [^String action-definition-id
+   ^String target-id
+   ^PersistentHashMap params])
+
 ;; activities
 (defrecord ListActivitiesQueryParams
   [^Integer skip-count
