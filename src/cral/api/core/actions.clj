@@ -16,12 +16,14 @@
 
 (ns cral.api.core.actions
   (:require [clj-http.lite.client :as client]
+            [clojure.data.json :as json]
             [cral.config :as config]
             [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.core ListAvailableActionsQueryParams
+           (cral.model.core ExecuteActionBody
+                            ListAvailableActionsQueryParams
                             ListNodeActionsQueryParams)))
 
 (defn list-node-actions
@@ -61,7 +63,7 @@
      opts)))
 
 (defn get-action-definition-details
-  "Retrieve the details of the action denoted by `action-definition-id`.
+  "Retrieve the details of the action denoted by `action-definition-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions/actionDetails)."
   [^Ticket ticket ^String action-definition-id & [^PersistentHashMap opts]]
   (utils/call-rest
@@ -69,5 +71,30 @@
     (format "%s/action-definitions/%s" (config/get-url 'core) action-definition-id)
     ticket
     nil
+    opts))
+
+(defn execute-action
+  "Executes an action.
+  An action may be executed against a node specified by **target-id**. For example:
+  ```json
+  {
+    \"action-definition-id\": \"copy\",
+    \"target-id\": \"4c4b3c43-f18b-43ff-af84-751f16f1ddfd\",
+    \"params\": {
+      \"destination-folder\": \"34219f79-66fa-4ebf-b371-118598af898c\"
+    }
+  }
+  ```
+  Performing a POST with the request body shown above will result in the node identified by **target-id** being copied
+  to the destination folder specified in the **params** object by the key **destination-folder**.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions/actionExec)."
+  [^Ticket ticket ^String node-id ^ExecuteActionBody body & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/post
+    (format "%s/action-executions" (config/get-url 'core) node-id)
+    ticket
+    {:body         (json/write-str (utils/camel-case-stringify-keys body))
+     :query-params nil
+     :content-type :json}
     opts))
 
