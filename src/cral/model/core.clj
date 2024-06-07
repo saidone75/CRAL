@@ -443,6 +443,10 @@
 (defrecord GetRatingQueryParams
   [^PersistentVector fields])
 
+;; renditions
+(defrecord CreateRenditionBody
+  [^String id])
+
 ;; shared-links
 (defrecord CreateSharedLinkBody
   [^String node-id
