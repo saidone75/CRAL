@@ -55,3 +55,25 @@
                                  (get-in [:entry :id]))
         get-action-definition-details-response (actions/get-action-definition-details ticket action-definition-id)]
     (is (= (:status get-action-definition-details-response) 200))))
+
+(deftest execute-action-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ws #(format "workspace://SpacesStore/%s" %)
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a new folder
+        new-parent-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})
+                           (nodes/create-node ticket (tu/get-guest-home ticket))
+                           (#(get-in % [:body :entry :id])))
+        execute-action-response (->> (model/map->ExecuteActionBody {:action-definition-id "move"
+                                                                    :target-id            created-node-id
+                                                                    :params               {:destination-folder (ws new-parent-id)}})
+                                     (actions/execute-action ticket))]
+    (is (= (:status execute-action-response) 202))
+    (loop [entries []]
+      (when-not (some #(= created-node-id %) entries)
+        (Thread/sleep 1000)
+        (recur (map #(get-in % [:entry :id]) (get-in (nodes/list-node-children ticket new-parent-id) [:body :list :entries])))))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket new-parent-id {:permanent true})) 204))))
