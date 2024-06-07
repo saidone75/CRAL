@@ -66,11 +66,13 @@
         new-parent-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})
                            (nodes/create-node ticket (tu/get-guest-home ticket))
                            (#(get-in % [:body :entry :id])))
+        ;; call move action
         execute-action-response (->> (model/map->ExecuteActionBody {:action-definition-id "move"
                                                                     :target-id            created-node-id
                                                                     :params               {:destination-folder (ws new-parent-id)}})
                                      (actions/execute-action ticket))]
     (is (= (:status execute-action-response) 202))
+    ;; check if node has been moved
     (loop [entries []]
       (when-not (some #(= created-node-id %) entries)
         (Thread/sleep 1000)
