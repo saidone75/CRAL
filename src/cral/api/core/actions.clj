@@ -93,7 +93,7 @@
     client/post
     (format "%s/action-executions" (config/get-url 'core))
     ticket
-    {:body         (json/write-str (utils/camel-case-stringify-keys body #{"destination-folder"}))
+    {:body         (json/write-str (utils/camel-case-stringify-keys body #{:destination-folder}))
      :query-params nil
      :content-type :json}
     opts))

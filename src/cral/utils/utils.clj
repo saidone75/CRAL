@@ -68,7 +68,7 @@
   ([m]
    (camel-case-stringify-keys m #{}))
   ([m exclude]
-   (let [f (fn [[k v]] [(if-not (contains? exclude k) (camel-case (if (keyword? k) (subs (str k) 1) k)) k) v])]
+   (let [f (fn [[k v]] [(if-not (contains? exclude k) (camel-case (if (keyword? k) (subs (str k) 1) k)) (name k)) v])]
      ;; only apply to maps
      (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m))))
 
