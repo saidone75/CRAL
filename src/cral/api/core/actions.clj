@@ -88,13 +88,12 @@
   Performing a POST with the request body shown above will result in the node identified by **target-id** being copied
   to the destination folder specified in the **params** object by the key **destination-folder**.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions/actionExec)."
-  [^Ticket ticket ^String node-id ^ExecuteActionBody body & [^PersistentHashMap opts]]
+  [^Ticket ticket ^ExecuteActionBody body & [^PersistentHashMap opts]]
   (utils/call-rest
     client/post
-    (format "%s/action-executions" (config/get-url 'core) node-id)
+    (format "%s/action-executions" (config/get-url 'core))
     ticket
-    {:body         (json/write-str (utils/camel-case-stringify-keys body))
+    {:body         (json/write-str (utils/camel-case-stringify-keys body #{"destination-folder"}))
      :query-params nil
      :content-type :json}
     opts))
-

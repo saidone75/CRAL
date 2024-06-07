@@ -65,10 +65,12 @@
 
 (defn camel-case-stringify-keys
   "Recursively transforms all map keys from kebab-case to camelCase and stringify them."
-  [m]
-  (let [f (fn [[k v]] [(camel-case (if (keyword? k) (subs (str k) 1) k)) v])]
-    ;; only apply to maps
-    (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
+  ([m]
+   (camel-case-stringify-keys m #{}))
+  ([m exclude]
+   (let [f (fn [[k v]] [(if-not (contains? exclude k) (camel-case (if (keyword? k) (subs (str k) 1) k)) k) v])]
+     ;; only apply to maps
+     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m))))
 
 (defn join-vector-vals
   "Recursively transforms all map vector values to comma separated strings."

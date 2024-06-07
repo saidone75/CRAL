@@ -55,3 +55,20 @@
                                  (get-in [:entry :id]))
         get-action-definition-details-response (actions/get-action-definition-details ticket action-definition-id)]
     (is (= (:status get-action-definition-details-response) 200))))
+
+(deftest execute-action-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; create a new folder
+        new-parent-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-folder})
+                           (nodes/create-node ticket (tu/get-guest-home ticket))
+                           (#(get-in % [:body :entry :id])))
+        execute-action-response (->> (model/map->ExecuteActionBody {:action-definition-id "copy"
+                                                                    :target-id created-node-id
+                                                                    :params {:destination-folder new-parent-id}})
+                                     (actions/execute-action ticket))]
+    (println execute-action-response)
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket new-parent-id {:permanent true})) 204))))
