@@ -64,7 +64,8 @@
   (*-keywordize-keys m camel-case))
 
 (defn camel-case-stringify-keys
-  "Recursively transforms all map keys from kebab-case to camelCase and stringify them."
+  "Recursively transforms all map keys from kebab-case to camelCase and stringify them eventually excluding keys in
+  `exclude`."
   ([m]
    (camel-case-stringify-keys m #{}))
   ([m exclude]
