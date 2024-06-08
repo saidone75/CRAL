@@ -50,6 +50,26 @@ services:
       - "8080:8080"
     volumes:
       - cral-acs-volume:/usr/local/tomcat/alf_data
+  transform-core-aio:
+    image: ${TRANSFORM_CORE_AIO_IMAGE}:${TRANSFORM_CORE_AIO_VERSION}
+    restart: on-failure
+    mem_limit: 2048m
+    environment:
+      JAVA_OPTS: "
+                -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=80
+                -Dserver.tomcat.threads.max=12
+                -Dserver.tomcat.threads.min=4
+                -Dlogging.level.org.alfresco.transform.common.TransformerDebug=ERROR
+                -Dlogging.level.org.alfresco.transform=ERROR
+                -Dlogging.level.org.apache.fontbox.ttf=ERROR
+                -Dlogging.level.org.apache.pdfbox.cos.COSDocument=ERROR
+                -Dlogging.level.org.apache.pdfbox.pdfparser=ERROR
+                -Dlogging.level.org.apache.pdfbox.filter.FlateFilter=ERROR
+                -Dlogging.level.org.apache.pdfbox.pdmodel.font=ERROR
+                -Dlogging.level.org.apache.pdfbox.pdmodel.font.PDSimpleFont=FATAL
+                -Dlogging.level.org.apache.pdfbox.pdmodel.font.PDFont=FATAL
+                -Dlogging.level.org.apache.pdfbox.pdmodel.font.PDCIDFont=FATAL
+              "
   share:
     image: ${SHARE_IMAGE}:${SHARE_VERSION}
     mem_limit: 512m
