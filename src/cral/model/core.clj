@@ -447,6 +447,9 @@
 (defrecord CreateRenditionBody
   [^String id])
 
+(defrecord ListRenditionsQueryParams
+  [^String where])
+
 ;; shared-links
 (defrecord CreateSharedLinkBody
   [^String node-id
