@@ -450,6 +450,10 @@
 (defrecord ListRenditionsQueryParams
   [^String where])
 
+(defrecord GetRenditionContentQueryParams
+  [^Boolean attachment
+   ^Boolean placeholder])
+
 ;; shared-links
 (defrecord CreateSharedLinkBody
   [^String node-id
