@@ -22,7 +22,8 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
-           (cral.model.core ListRenditionsQueryParams)))
+           (cral.model.core GetRenditionContentQueryParams
+                            ListRenditionsQueryParams)))
 
 (defn create-rendition
   "An asynchronous request to create a rendition for file `node-id`.
@@ -84,3 +85,17 @@
      ticket
      {:query-params nil}
      opts)))
+
+(defn get-rendition-content
+  "Gets the rendition content for `rendition-id` of file `node-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/renditions/getRenditionContent)."
+  ([^Ticket ticket ^String node-id ^String rendition-id]
+   (get-rendition-content ticket node-id rendition-id nil))
+  ([^Ticket ticket ^String node-id ^String rendition-id ^GetRenditionContentQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/renditions/%s/content" (config/get-url 'core) node-id rendition-id)
+     ticket
+     {:as           :byte-array
+      :query-params query-params}
+     (merge {:return-headers true} opts))))
