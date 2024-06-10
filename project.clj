@@ -23,4 +23,5 @@
                  [org.clojure/data.json "2.5.0"]
                  [org.clj-commons/clj-http-lite "1.0.13"]
                  [com.taoensso/telemere "1.0.0-beta14"]]
+  :profiles {:dev {:resource-paths ["test-resources"]}}
   :repl-options {:init-ns cral.alfresco})
