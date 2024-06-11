@@ -18,19 +18,21 @@
   (:require [clj-http.lite.client :as client]
             [clojure.data.json :as json]
             [cral.config :as config]
-            [cral.model.core]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap)
+  (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
-           (cral.model.core CreateSharedLinkBody CreateSharedLinkQueryParams EmailSharedLinkBody GetSharedLinkContentQueryParams ListSharedLinksQueryParams)))
+           (cral.model.core CreateSharedLinkQueryParams
+                            EmailSharedLinkBody
+                            GetSharedLinkContentQueryParams
+                            ListSharedLinksQueryParams)))
 
 (defn create-shared-link
   "Create a shared link to the file **node-id** in the request `body`. Also, an optional expiry date could be set,
   so the shared link would become invalid when the expiry date is reached.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/createSharedLink)."
-  ([^Ticket ticket ^CreateSharedLinkBody body]
+  ([^Ticket ticket ^PersistentVector body]
    (create-shared-link ticket body nil))
-  ([^Ticket ticket ^CreateSharedLinkBody body ^CreateSharedLinkQueryParams query-params & [^PersistentHashMap opts]]
+  ([^Ticket ticket ^PersistentVector body ^CreateSharedLinkQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/post
      (format "%s/shared-links" (config/get-url 'core))
