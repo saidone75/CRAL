@@ -102,6 +102,7 @@
           (recur (renditions/get-rendition-info ticket created-node-id "doclib")))))
     (let [get-rendition-content-response (renditions/get-rendition-content ticket created-node-id "doclib")]
       (is (= (:status get-rendition-content-response) 200))
-      (is (bytes? (:body get-rendition-content-response))))
+      (is (bytes? (:body get-rendition-content-response)))
+      (is (> (alength (:body get-rendition-content-response)) 0)))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
