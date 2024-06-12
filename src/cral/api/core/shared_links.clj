@@ -27,8 +27,8 @@
                             ListSharedLinksQueryParams)))
 
 (defn create-shared-link
-  "Create a shared link to the file **node-id** in the request `body`. Also, an optional expiry date could be set,
-  so the shared link would become invalid when the expiry date is reached.\\
+  "Create a shared link to the file **node-id** in the request `body`. Also, an optional expiry date could be set, so
+  the shared link would become invalid when the expiry date is reached.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/createSharedLink)."
   ([^Ticket ticket ^PersistentVector body]
    (create-shared-link ticket body nil))
@@ -95,6 +95,20 @@
      nil
      {:query-params query-params :as :byte-array}
      opts)))
+
+(defn list-shared-link-renditions
+  "Gets a list of the rendition information for the file with shared link identifier `shared-id`.
+  This API method returns rendition information, including the rendition id, for each rendition where the rendition
+  status is CREATED, which means the rendition is available to view/download.\\
+  **Note**: No authentication is required to call this endpoint.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/listSharedLinkRenditions)."
+  [^String shared-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/shared-links/%s/renditions" (config/get-url 'core) shared-id)
+    nil
+    {:query-params nil}
+    opts))
 
 (defn email-shared-link
   "Sends email with app-specific url including identifier `shared-id`.
