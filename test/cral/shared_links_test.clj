@@ -20,6 +20,7 @@
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
+            [cral.api.core.renditions :as renditions]
             [cral.api.core.shared-links :as shared-links]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
@@ -31,6 +32,8 @@
            (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
+
+(def ^:const content-file "Elkjaer_Briegel.jpg")
 
 (deftest create-shared-link-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
@@ -128,6 +131,30 @@
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
     (io/delete-file file-to-be-uploaded)))
+
+(deftest list-shared-link-renditions-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; update the node content
+        _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+        ;; ask for rendition creation
+        _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])
+        ;; create a shared link
+        created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
+                                    (shared-links/create-shared-link ticket)
+                                    (#(get-in % [:body :entry :id])))]
+    (loop [list-shared-link-renditions-response nil]
+      (if (empty? (get-in list-shared-link-renditions-response [:body :list :entries]))
+        (do
+          (Thread/sleep 1000)
+          (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
+        (is (some true? (map #(= (get-in % [:entry :id]) "doclib") (get-in list-shared-link-renditions-response [:body :list :entries]))))))
+    ;; clean up
+    (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
 (deftest email-shared-link-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
