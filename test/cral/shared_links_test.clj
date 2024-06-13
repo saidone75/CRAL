@@ -1,16 +1,16 @@
 ;  CRAL
 ;  Copyright (C) 2023-2024 Saidone
-;  
+;
 ;  This program is free software: you can redistribute it and/or modify
 ;  it under the terms of the GNU General Public License as published by
 ;  the Free Software Foundation, either version 3 of the License, or
 ;  (at your option) any later version.
-;  
+;
 ;  This program is distributed in the hope that it will be useful,
 ;  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;  GNU General Public License for more details.
-;  
+;
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -152,6 +152,33 @@
           (Thread/sleep 1000)
           (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
         (is (some true? (map #(= (get-in % [:entry :id]) "doclib") (get-in list-shared-link-renditions-response [:body :list :entries]))))))
+    ;; clean up
+    (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
+(deftest get-shared-link-rendition-info-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; update the node content
+        _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+        ;; ask for rendition creation
+        _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])
+        ;; create a shared link
+        created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
+                                    (shared-links/create-shared-link ticket)
+                                    (#(get-in % [:body :entry :id])))]
+    (loop [list-shared-link-renditions-response nil]
+      (if (empty? (get-in list-shared-link-renditions-response [:body :list :entries]))
+        (do
+          (Thread/sleep 1000)
+          (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
+        ;; when we have at least one rendition with status CREATED
+        (when (some true? (map #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries])))
+          (let [created-rendition-id (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries]))) [:entry :id])]
+            (is (= (:status (shared-links/get-shared-link-rendition-info created-shared-link-id created-rendition-id) 200)))))))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
