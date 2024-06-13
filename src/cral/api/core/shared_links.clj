@@ -110,6 +110,20 @@
     {:query-params nil}
     opts))
 
+(defn get-shared-link-rendition-info
+  "Gets rendition information for the file with shared link identifier `shared-id`.
+  This API method returns rendition information where the rendition status is CREATED, which means the rendition is
+  available to view/download.\\
+  **Note**: No authentication is required to call this endpoint.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/getSharedLinkRendition)."
+  [^String shared-id ^String rendition-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/shared-links/%s/renditions/%s" (config/get-url 'core) shared-id rendition-id)
+    nil
+    {:query-params nil}
+    opts))
+
 (defn email-shared-link
   "Sends email with app-specific url including identifier `shared-id`.
   The client and recipient-emails properties are mandatory in the request body.\\
