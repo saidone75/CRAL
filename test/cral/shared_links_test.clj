@@ -183,6 +183,33 @@
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
+(deftest get-shared-link-rendition-content-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".txt") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; update the node content
+        _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+        ;; ask for rendition creation
+        _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])
+        ;; create a shared link
+        created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
+                                    (shared-links/create-shared-link ticket)
+                                    (#(get-in % [:body :entry :id])))]
+    (loop [list-shared-link-renditions-response nil]
+      (if (empty? (get-in list-shared-link-renditions-response [:body :list :entries]))
+        (do
+          (Thread/sleep 1000)
+          (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
+        ;; when we have at least one rendition with status CREATED
+        (when (some true? (map #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries])))
+          (let [created-rendition-id (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries]))) [:entry :id])]
+            (println (shared-links/get-shared-link-rendition-content created-shared-link-id created-rendition-id))))))
+    ;; clean up
+    (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
 (deftest email-shared-link-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
