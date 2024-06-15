@@ -25,6 +25,7 @@
            (cral.model.auth Ticket)
            (cral.model.core GetDeletedNodeContentQueryParams
                             GetDeletedNodeQueryParams
+                            ListDeletedNodeRenditionsQueryParams
                             ListDeletedNodesQueryParams
                             RestoreDeletedNodeBody
                             RestoreDeletedNodeQueryParams)))
@@ -94,4 +95,24 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
       :content-type :json}
+     opts)))
+
+(defn list-deleted-node-renditions
+  "Gets a list of the rendition information for each rendition of the file `node-id`, including the rendition id.
+  Each rendition returned has a status: CREATED means it is available to view or download, NOT_CREATED means the
+  rendition can be requested.
+  You can use the **where** parameter parameter in `query-params` to filter the returned renditions by status.
+  For example, the following **where** clause will return just the CREATED renditions:
+  ```
+  (status='CREATED')
+  ```
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/trashcan/listDeletedNodeRenditions)."
+  ([^Ticket ticket ^String node-id]
+   (list-deleted-node-renditions ticket node-id nil))
+  ([^Ticket ticket ^String node-id ^ListDeletedNodeRenditionsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/deleted-nodes/%s/renditions" (config/get-url 'core) node-id)
+     ticket
+     {:query-params query-params}
      opts)))

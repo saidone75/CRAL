@@ -668,6 +668,9 @@
 (defrecord RestoreDeletedNodeQueryParams
   [^PersistentVector fields])
 
+(defrecord ListDeletedNodeRenditionsQueryParams
+  [^String where])
+
 ;; versions
 (defrecord ListVersionHistoryQueryParams
   [^PersistentVector include
