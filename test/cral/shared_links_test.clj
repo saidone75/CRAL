@@ -203,9 +203,11 @@
           (Thread/sleep 1000)
           (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
         ;; when we have at least one rendition with status CREATED
-        (when (some true? (map #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries])))
-          (let [created-rendition-id (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries]))) [:entry :id])]
-            (println (shared-links/get-shared-link-rendition-content created-shared-link-id created-rendition-id))))))
+        (when-let [created-rendition-id (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries]))) [:entry :id])]
+          (let [get-shared-link-rendition-content-response (shared-links/get-shared-link-rendition-content created-shared-link-id created-rendition-id)]
+            (is (= (:status get-shared-link-rendition-content-response) 200))
+            (is (bytes? (:body get-shared-link-rendition-content-response)))
+            (is (> (alength (:body get-shared-link-rendition-content-response)) 0))))))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
