@@ -30,6 +30,8 @@
 
 (use-fixtures :once fixtures/setup)
 
+(def ^:const content-file "Elkjaer_Briegel.jpg")
+
 (deftest list-deleted-nodes-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
@@ -115,3 +117,19 @@
     ;; clean up
     (is (= (:status (->> (model/->DeleteNodeQueryParams true)
                          (nodes/delete-node ticket created-node-id))) 204))))
+
+(deftest list-deleted-node-renditions-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; update the node content
+        _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)
+        list-deleted-node-renditions-response (trashcan/list-deleted-node-renditions ticket created-node-id)]
+    (is (= (:status list-deleted-node-renditions-response) 200))
+    (is (not-empty (get-in list-deleted-node-renditions-response [:body :list :entries])))
+    ;; clean up
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
