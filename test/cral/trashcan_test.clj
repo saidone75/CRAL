@@ -19,6 +19,7 @@
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
+            [cral.api.core.renditions :as renditions]
             [cral.api.core.trashcan :as trashcan]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
@@ -131,5 +132,21 @@
         list-deleted-node-renditions-response (trashcan/list-deleted-node-renditions ticket created-node-id)]
     (is (= (:status list-deleted-node-renditions-response) 200))
     (is (not-empty (get-in list-deleted-node-renditions-response [:body :list :entries])))
+    ;; clean up
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
+
+(deftest get-deleted-node-rendition-info-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; update the node content
+        _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+        ;; ask for rendition creation
+        _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])
+        ;; delete node
+        _ (nodes/delete-node ticket created-node-id)]
+    (is (= (:status (trashcan/get-deleted-node-rendition-info ticket created-node-id "doclib")) 200))
     ;; clean up
     (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
