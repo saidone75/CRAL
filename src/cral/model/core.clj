@@ -671,6 +671,10 @@
 (defrecord ListDeletedNodeRenditionsQueryParams
   [^String where])
 
+(defrecord GetDeletedNodeRenditionContentQueryParams
+  [^Boolean attachment
+   ^Boolean placeholder])
+
 ;; versions
 (defrecord ListVersionHistoryQueryParams
   [^PersistentVector include
