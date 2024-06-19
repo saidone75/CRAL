@@ -24,6 +24,7 @@
            (cral.model.core CreateSharedLinkQueryParams
                             EmailSharedLinkBody
                             GetSharedLinkContentQueryParams
+                            GetSharedLinkRenditionContentQueryParams
                             ListSharedLinksQueryParams)))
 
 (defn create-shared-link
@@ -128,14 +129,16 @@
   "Gets the rendition content for file with shared link identifier `shared-id`.
   **Note**: No authentication is required to call this endpoint.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/shared-links/getSharedLinkRenditionContent)."
-  [^String shared-id ^String rendition-id & [^PersistentHashMap opts]]
-  (utils/call-rest
-    client/get
-    (format "%s/shared-links/%s/renditions/%s/content" (config/get-url 'core) shared-id rendition-id)
-    nil
-    {:as           :byte-array
-     :query-params nil}
-    (merge {:return-headers true} opts)))
+  ([^String shared-id ^String rendition-id]
+   (get-shared-link-rendition-content shared-id rendition-id nil))
+  ([^String shared-id ^String rendition-id ^GetSharedLinkRenditionContentQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/shared-links/%s/renditions/%s/content" (config/get-url 'core) shared-id rendition-id)
+     nil
+     {:as           :byte-array
+      :query-params query-params}
+     (merge {:return-headers true} opts))))
 
 (defn email-shared-link
   "Sends email with app-specific url including identifier `shared-id`.
