@@ -476,6 +476,9 @@
 (defrecord GetSharedLinkContentQueryParams
   [^Boolean attachment])
 
+(defrecord GetSharedLinkRenditionContentQueryParams
+  [^Boolean attachment])
+
 (defrecord EmailSharedLinkBody
   [^String client
    ^String message
@@ -670,6 +673,10 @@
 
 (defrecord ListDeletedNodeRenditionsQueryParams
   [^String where])
+
+(defrecord GetDeletedNodeRenditionContentQueryParams
+  [^Boolean attachment
+   ^Boolean placeholder])
 
 ;; versions
 (defrecord ListVersionHistoryQueryParams
