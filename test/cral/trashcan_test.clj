@@ -150,3 +150,27 @@
     (is (= (:status (trashcan/get-deleted-node-rendition-info ticket created-node-id "doclib")) 200))
     ;; clean up
     (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
+
+(deftest get-deleted-node-rendition-content-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; update the node content
+        _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+        ;; ask for rendition creation
+        _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])]
+    (loop [list-renditions-response nil]
+      (when (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-renditions-response [:body :list :entries])))
+        (Thread/sleep 1000)
+        (recur (renditions/list-renditions ticket created-node-id))))
+    ;; delete node
+    (nodes/delete-node ticket created-node-id)
+    (let [get-deleted-node-rendition-content-response (->> (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in (trashcan/list-deleted-node-renditions ticket created-node-id) [:body :list :entries]))) [:entry :id])
+                                                           (trashcan/get-deleted-node-rendition-content ticket created-node-id))]
+      (is (= (:status get-deleted-node-rendition-content-response) 200))
+      (is (bytes? (:body get-deleted-node-rendition-content-response)))
+      (is (> (alength (:body get-deleted-node-rendition-content-response)) 0)))
+    ;; clean up
+    (is (= (:status (trashcan/delete-deleted-node ticket created-node-id)) 204))))
