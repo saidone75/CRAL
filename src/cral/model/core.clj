@@ -687,3 +687,10 @@
 
 (defrecord GetVersionContentQueryParams
   [^Boolean attachment])
+
+(defrecord RevertVersionBody
+  [^Boolean major-version
+   ^String comment])
+
+(defrecord RevertVersionQueryParams
+  [^PersistentVector fields])
