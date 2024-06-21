@@ -23,7 +23,7 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.core GenerateDirectAccessContentUrl GenerateDirectAccessContentUrlBody GetDeletedNodeContentQueryParams
+           (cral.model.core GetDeletedNodeContentQueryParams
                             GetDeletedNodeQueryParams
                             GetDeletedNodeRenditionContentQueryParams
                             ListDeletedNodeRenditionsQueryParams
@@ -82,19 +82,6 @@
      ticket
      {:query-params query-params :as :byte-array}
      opts)))
-
-(defn generate-direct-access-content-url
-  "Generate a direct access content url for the given `node-id`.
-  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/trashcan)."
-  [^Ticket ticket ^String node-id ^GenerateDirectAccessContentUrlBody body & [^PersistentHashMap opts]]
-  (utils/call-rest
-    client/post
-    (format "%s/deleted-nodes/%s/request-direct-access-url" (config/get-url 'core) node-id)
-    ticket
-    {:body         (json/write-str (utils/camel-case-stringify-keys body))
-     :query-params nil
-     :content-type :json}
-    opts))
 
 (defn restore-deleted-node
   "Attempts to restore the deleted node `node-id` to its original location or to a new location.\\
