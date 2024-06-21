@@ -664,6 +664,9 @@
 (defrecord GetDeletedNodeContentQueryParams
   [^Boolean attachment])
 
+(defrecord GenerateDirectAccessContentUrlBody
+  [^Boolean attachment])
+
 (defrecord RestoreDeletedNodeBody
   [^String target-parent-id
    ^String assoc-type])
