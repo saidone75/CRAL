@@ -16,13 +16,16 @@
 
 (ns cral.api.core.versions
   (:require [clj-http.lite.client :as client]
+            [clojure.data.json :as json]
             [cral.config :as config]
             [cral.model.core]
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
            (cral.model.core GetVersionContentQueryParams
-                            ListVersionHistoryQueryParams)))
+                            ListVersionHistoryQueryParams
+                            RevertVersionBody
+                            RevertVersionQueryParams)))
 
 (defn list-version-history
   "Gets the version history as an ordered list of versions for the specified `node-id`.
@@ -76,3 +79,20 @@
      ticket
      (merge {:as :byte-array} query-params)
      (merge {:return-headers true} opts))))
+
+(defn revert-version
+  "Attempts to revert the version identified by `version-id` and `node-id` to the live node.
+  If the node is successfully reverted then the content and metadata for that versioned node will be promoted to the
+  live node and a new version will appear in the version history.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/revertVersion)."
+  ([^Ticket ticket ^String node-id ^String version-id ^RevertVersionBody body]
+   (revert-version ticket node-id version-id body nil))
+  ([^Ticket ticket ^String node-id ^String version-id ^RevertVersionBody body ^RevertVersionQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/versions/%s/revert" (config/get-url 'core) node-id version-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
+     opts)))
