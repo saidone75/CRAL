@@ -98,3 +98,18 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
     (io/delete-file file-to-be-uploaded)))
+
+(deftest revert-version-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create node
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
+    ;; create 1.0 version by adding cm:versionable and set cm:autoVersionOnUpdateProps to true
+    (nodes/update-node ticket created-node-id (model/map->UpdateNodeBody {:aspect-names [cm/asp-versionable] :properties {cm/prop-auto-version-on-update-props true}}))
+    ;; create 1.1 version
+    (nodes/update-node ticket created-node-id (model/map->UpdateNodeBody {:properties {cm/prop-name (.toString (UUID/randomUUID))}}))
+    ;; revert 1.0 version as new major version
+    (let [revert-version-response (versions/revert-version ticket created-node-id "1.0" (model/map->RevertVersionBody {:major-version true}))]
+      (is (= (:status revert-version-response) 200))
+      (is (= (get-in revert-version-response [:body :entry :properties cm/prop-version-type]) "MAJOR")))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
