@@ -45,15 +45,15 @@
   ]
   ```
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/renditions/createRendition)."
-  ([^Ticket ticket ^String node-id ^PersistentVector body & [^PersistentHashMap opts]]
-   (utils/call-rest
-     client/post
-     (format "%s/nodes/%s/renditions" (config/get-url 'core) node-id)
-     ticket
-     {:body         (json/write-str (utils/camel-case-stringify-keys body))
-      :query-params nil
-      :content-type :json}
-     opts)))
+  [^Ticket ticket ^String node-id ^PersistentVector body & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/post
+    (format "%s/nodes/%s/renditions" (config/get-url 'core) node-id)
+    ticket
+    {:body         (json/write-str (utils/camel-case-stringify-keys body))
+     :query-params nil
+     :content-type :json}
+    opts))
 
 (defn list-renditions
   "Gets a list of the rendition information for each rendition of the the file `node-id`, including the rendition id.
