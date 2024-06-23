@@ -694,3 +694,6 @@
 
 (defrecord RevertVersionQueryParams
   [^PersistentVector fields])
+
+(defrecord CreateVersionRenditionBody
+  [^String id])

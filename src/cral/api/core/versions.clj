@@ -20,7 +20,7 @@
             [cral.config :as config]
             [cral.model.core]
             [cral.utils.utils :as utils])
-  (:import (clojure.lang PersistentHashMap)
+  (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core GetVersionContentQueryParams
                             ListVersionHistoryQueryParams
@@ -94,5 +94,35 @@
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params query-params
+      :content-type :json}
+     opts)))
+
+(defn create-version-rendition
+  "An asynchronous request to create a rendition for version of file `node-id~ and `version-id`.
+  The rendition is specified by name **id** in the request body:
+  ```json
+  {
+    \"id\": \"doclib\"
+  }
+  ```
+  Multiple names may be specified as a comma separated list or using a list format:
+  ```json
+  [
+    {
+      \"id\": \"doclib\"
+    },
+    {
+     \"id\": \"avatar\"
+    }
+  ]
+  ```
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/createVersionRendition)."
+  ([^Ticket ticket ^String node-id ^String version-id ^PersistentVector body & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/versions/%s/renditions" (config/get-url 'core) node-id version-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params nil
       :content-type :json}
      opts)))
