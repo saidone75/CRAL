@@ -19,7 +19,6 @@
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
-            [cral.api.core.renditions :as renditions]
             [cral.api.core.versions :as versions]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
@@ -126,12 +125,12 @@
     ;; update the node content
     (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
     ;; ask for rendition creation
-    (versions/create-version-rendition ticket created-node-id "1.0" (model/map->CreateVersionRenditionBody {:id "doclib"}))
-    ;; TODO
+    (versions/create-version-rendition ticket created-node-id "1.1" [(model/map->CreateVersionRenditionBody {:id "doclib"})])
     ;; list renditions for version
-    (loop [list-renditions-response nil]
-      (when (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-renditions-response [:body :list :entries])))
-        (Thread/sleep 1000)
-        (recur (renditions/list-renditions ticket created-node-id))))
-    ;; clean up
+    (loop [list-version-renditions-response nil]
+      (if (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-version-renditions-response [:body :list :entries])))
+        (do (Thread/sleep 1000)
+            (recur (versions/list-version-renditions ticket created-node-id "1.1")))
+        (is (= (:status list-version-renditions-response) 200))))
+    ; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
