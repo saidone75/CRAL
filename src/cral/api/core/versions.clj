@@ -148,3 +148,14 @@
      ticket
      {:query-params query-params}
      opts)))
+
+(defn get-version-rendition-info
+  "Gets the rendition information for `rendition-id` of version of file `node-id` and `version-id`\\.
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/getVersionRendition)."
+  [^Ticket ticket ^String node-id ^String version-id ^String rendition-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/nodes/%s/versions/%s/renditions/%s" (config/get-url 'core) node-id version-id rendition-id)
+    ticket
+    {:query-params nil}
+    opts))
