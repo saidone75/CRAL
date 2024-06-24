@@ -19,6 +19,7 @@
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
+            [cral.api.core.renditions :as renditions]
             [cral.api.core.versions :as versions]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
@@ -29,6 +30,8 @@
            (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
+
+(def ^:const content-file "Elkjaer_Briegel.jpg")
 
 (deftest list-version-history-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
@@ -111,5 +114,24 @@
     (let [revert-version-response (versions/revert-version ticket created-node-id "1.0" (model/map->RevertVersionBody {:major-version true}))]
       (is (= (:status revert-version-response) 200))
       (is (= (get-in revert-version-response [:body :entry :properties cm/prop-version-type]) "MAJOR")))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
+(deftest create-version-rendition-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create node
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
+    ;; add cm:versionable aspect
+    (nodes/update-node ticket created-node-id (model/map->UpdateNodeBody {:aspect-names [cm/asp-versionable]}))
+    ;; update the node content
+    (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+    ;; ask for rendition creation
+    (versions/create-version-rendition ticket created-node-id "1.0" (model/map->CreateVersionRenditionBody {:id "doclib"}))
+    ;; TODO
+    ;; list renditions for version
+    (loop [list-renditions-response nil]
+      (when (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-renditions-response [:body :list :entries])))
+        (Thread/sleep 1000)
+        (recur (renditions/list-renditions ticket created-node-id))))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))

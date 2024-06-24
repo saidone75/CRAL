@@ -697,3 +697,6 @@
 
 (defrecord CreateVersionRenditionBody
   [^String id])
+
+(defrecord ListVersionRenditionsQueryParams
+  [^String where])
