@@ -134,3 +134,20 @@
         (is (= (:status list-version-renditions-response) 200))))
     ; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
+(deftest list-version-renditions-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create node
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
+    ;; add cm:versionable aspect
+    (nodes/update-node ticket created-node-id (model/map->UpdateNodeBody {:aspect-names [cm/asp-versionable]}))
+    ;; update the node content
+    (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+    ;; ask for rendition creation
+    (versions/create-version-rendition ticket created-node-id "1.1" [(model/map->CreateVersionRenditionBody {:id "doclib"})])
+    ;; list renditions for version
+    (let [list-version-renditions-response (versions/list-version-renditions ticket created-node-id "1.1")]
+      (is (= (:status list-version-renditions-response) 200))
+      (is (not (empty? (get-in list-version-renditions-response [:body :list :entries])))))
+    ; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
