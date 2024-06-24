@@ -24,6 +24,7 @@
            (cral.model.auth Ticket)
            (cral.model.core GetVersionContentQueryParams
                             ListVersionHistoryQueryParams
+                            ListVersionRenditionsQueryParams
                             RevertVersionBody
                             RevertVersionQueryParams)))
 
@@ -125,4 +126,25 @@
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
       :query-params nil
       :content-type :json}
+     opts)))
+
+(defn list-version-renditions
+  "Gets a list of the rendition information for each rendition of the version of file `node-id` and `version-id`,
+  including the rendition id.
+  Each rendition returned has a **status**: CREATED means it is available to view or download, NOT_CREATED means the
+  rendition can be requested.
+  You can use the **where** parameter in `query-params` to filter the returned renditions by status. For example, the
+  following where clause will return just the CREATED renditions:
+  ```json
+  (status='CREATED')
+  ```
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/listVersionRenditions)."
+  ([^Ticket ticket ^String node-id ^String version-id]
+   (list-version-renditions ticket node-id version-id nil))
+  ([^Ticket ticket ^String node-id ^String version-id ^ListVersionRenditionsQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/versions/%s/renditions" (config/get-url 'core) node-id version-id)
+     ticket
+     {:query-params query-params}
      opts)))

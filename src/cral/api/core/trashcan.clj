@@ -102,7 +102,7 @@
   "Gets a list of the rendition information for each rendition of the file `node-id`, including the rendition id.
   Each rendition returned has a status: CREATED means it is available to view or download, NOT_CREATED means the
   rendition can be requested.
-  You can use the **where** parameter parameter in `query-params` to filter the returned renditions by status.
+  You can use the **where** parameter in `query-params` to filter the returned renditions by status.
   For example, the following **where** clause will return just the CREATED renditions:
   ```
   (status='CREATED')
