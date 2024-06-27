@@ -700,3 +700,7 @@
 
 (defrecord ListVersionRenditionsQueryParams
   [^String where])
+
+(defrecord GetVersionRenditionContentQueryParams
+  [^Boolean attachment
+   ^Boolean placeholder])
