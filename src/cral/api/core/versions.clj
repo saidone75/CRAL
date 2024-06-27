@@ -23,7 +23,8 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core GetVersionContentQueryParams
-                            GetVersionRenditionContentQueryParams ListVersionHistoryQueryParams
+                            GetVersionRenditionContentQueryParams
+                            ListVersionHistoryQueryParams
                             ListVersionRenditionsQueryParams
                             RevertVersionBody
                             RevertVersionQueryParams)))
