@@ -23,7 +23,7 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core GetVersionContentQueryParams
-                            ListVersionHistoryQueryParams
+                            GetVersionRenditionContentQueryParams ListVersionHistoryQueryParams
                             ListVersionRenditionsQueryParams
                             RevertVersionBody
                             RevertVersionQueryParams)))
@@ -159,3 +159,17 @@
     ticket
     {:query-params nil}
     opts))
+
+(defn get-version-rendition-content
+  "Gets the rendition content for `rendition-id` of version of file `node-id` and `version-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/getVersionRenditionContent)."
+  ([^Ticket ticket ^String node-id ^String version-id ^String rendition-id]
+   (get-version-rendition-content ticket node-id version-id rendition-id nil))
+  ([^Ticket ticket ^String node-id ^String version-id ^String rendition-id ^GetVersionRenditionContentQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/nodes/%s/versions/%s/renditions/%s/content" (config/get-url 'core) node-id version-id rendition-id)
+     ticket
+     {:as           :byte-array
+      :query-params query-params}
+     (merge {:return-headers true} opts))))
