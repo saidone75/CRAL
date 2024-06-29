@@ -44,6 +44,17 @@
      {:query-params query-params}
      opts)))
 
+(defn get-parameter-constraint
+  "Gets action parameter constraint by requested name.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/actions)."
+  [^Ticket ticket ^String parameter-constraint-name & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/get
+    (format "%s/action-parameter-constraint/%s" (config/get-url 'core) parameter-constraint-name)
+    ticket
+    {:query-params nil}
+    opts))
+
 (defn list-available-actions
   "Gets a list of all available actions.
   The default sort order for the returned list is for actions to be sorted by ascending name.
