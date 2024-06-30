@@ -41,6 +41,11 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
+(deftest  get-parameter-constraint-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        get-parameter-constraint-response (actions/get-parameter-constraint ticket "ac-scripts")]
+    (is (= (:status get-parameter-constraint-response) 200))))
+
 (deftest list-available-actions-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         list-available-actions-response (actions/list-available-actions ticket)]

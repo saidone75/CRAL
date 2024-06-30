@@ -50,7 +50,7 @@
   [^Ticket ticket ^String parameter-constraint-name & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
-    (format "%s/action-parameter-constraint/%s" (config/get-url 'core) parameter-constraint-name)
+    (format "%s/action-parameter-constraints/%s" (config/get-url 'core) parameter-constraint-name)
     ticket
     {:query-params nil}
     opts))
