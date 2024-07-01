@@ -86,6 +86,18 @@
      {:query-params nil}
      opts)))
 
+(defn delete-rendition
+  "Delete the rendition identified by `rendition-id` of `node-id`.
+  If the rendition is successfully deleted then the content for that rendition node will be cleared.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/renditions)."
+  [^Ticket ticket ^String node-id ^String rendition-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/nodes/%s/renditions/%s" (config/get-url 'core) node-id rendition-id)
+    ticket
+    nil
+    opts))
+
 (defn get-rendition-content
   "Gets the rendition content for `rendition-id` of file `node-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/renditions/getRenditionContent)."
