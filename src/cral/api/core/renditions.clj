@@ -95,7 +95,7 @@
     client/delete
     (format "%s/nodes/%s/renditions/%s" (config/get-url 'core) node-id rendition-id)
     ticket
-    nil
+    {:query-params nil}
     opts))
 
 (defn get-rendition-content

@@ -83,6 +83,29 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
+(deftest delete-rendition-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a node
+        created-node-id (->> (model/map->CreateNodeBody {:name (str (.toString (UUID/randomUUID)) ".jpg") :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        ;; update the node content
+        _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+        ;; ask for rendition creation
+        _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])]
+    ;; wait until rendition is status is "CREATED"
+    (loop [get-rendition-info-response nil]
+      (if (= (get-in get-rendition-info-response [:body :entry :status]) "CREATED")
+        (is (= (:status get-rendition-info-response) 200))
+        (do
+          (Thread/sleep 1000)
+          (recur (renditions/get-rendition-info ticket created-node-id "doclib")))))
+    ;; delete rendition
+    (is (= (:status (renditions/delete-rendition ticket created-node-id "doclib")) 204))
+    (is (= (get-in (renditions/get-rendition-info ticket created-node-id "doclib") [:body :entry :status]) "NOT_CREATED"))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
 (deftest get-rendition-content-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create a node
