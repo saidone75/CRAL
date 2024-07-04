@@ -21,7 +21,7 @@
             [cral.utils.utils :as utils])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
-           (cral.model.core ListNodeCategoriesQueryParams)))
+           (cral.model.core ListCategoriesQueryParams ListNodeCategoriesQueryParams)))
 
 (defn list-node-categories
   "Gets a list of categories for node `node-id`.\\
@@ -32,6 +32,20 @@
    (utils/call-rest
      client/get
      (format "%s/nodes/%s/category-links" (config/get-url 'core) node-id)
+     ticket
+     {:query-params query-params}
+     opts)))
+
+(defn list-categories
+  "Gets a list of subcategories within the category `category-id`.
+  The parameter `category-id` can be set to the alias -root- to obtain a list of top level categories.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API)."
+  ([^Ticket ticket ^String category-id]
+   (list-categories ticket category-id nil))
+  ([^Ticket ticket ^String category-id ^ListCategoriesQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/categories/%s/subcategories" (config/get-url 'core) category-id)
      ticket
      {:query-params query-params}
      opts)))
