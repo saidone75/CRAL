@@ -659,6 +659,12 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord ListCategoriesQueryParams
+  [^PersistentVector include
+   ^Integer skip-count
+   ^Integer max-items
+   ^PersistentVector fields])
+
 ;; trashcan
 (defrecord ListDeletedNodesQueryParams
   [^Integer skip-count
