@@ -37,3 +37,10 @@
       (is (= (:status list-node-categories-response) 200)))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
+(deftest list-categories-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
+    ;; list categories
+    (let [list-categories-response (categories/list-categories ticket "-root-")]
+      (is (= (:status list-categories-response) 200))
+      (is (not (empty? (get-in list-categories-response [:body :list :entries])))))))
