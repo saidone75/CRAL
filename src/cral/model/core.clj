@@ -665,6 +665,13 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord CreateCategoryBody
+  [^String name])
+
+(defrecord CreateCategoryQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 ;; trashcan
 (defrecord ListDeletedNodesQueryParams
   [^Integer skip-count
