@@ -44,3 +44,14 @@
     (let [list-categories-response (categories/list-categories ticket "-root-")]
       (is (= (:status list-categories-response) 200))
       (is (not (empty? (get-in list-categories-response [:body :list :entries])))))))
+
+(deftest create-category-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        category-name "test category"
+        ;; create category
+        create-category-response (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name category-name}))]
+    (is (= (:status create-category-response) 201))
+    ;; clean up
+    ;; delete-category
+    ;; (get-in (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name category-name})) [:body :entry :id])
+    ))
