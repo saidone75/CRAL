@@ -38,6 +38,14 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
+(deftest delete-category-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        category-name "new-category"
+        ;; create category
+        _ (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name category-name}))
+        delete-category-response (categories/delete-category ticket category-name)]
+    (is (= (:status delete-category-response) 204))))
+
 (deftest list-categories-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
     ;; list categories
