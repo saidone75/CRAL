@@ -39,6 +39,18 @@
      {:query-params query-params}
      opts)))
 
+(defn delete-category
+  "Deletes the category with `category-id`. This will cause everything to be removed from the category.
+  You must have admin rights to delete a category.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API)."
+  [^Ticket ticket ^String category-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/categories/%s" (config/get-url 'core) category-id)
+    ticket
+    nil
+    opts))
+
 (defn list-categories
   "Gets a list of subcategories within the category `category-id`.
   The parameter `category-id` can be set to the alias -root- to obtain a list of top level categories.\\
