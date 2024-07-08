@@ -40,10 +40,9 @@
 
 (deftest delete-category-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
-        category-name "new-category"
         ;; create category
-        _ (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name category-name}))
-        delete-category-response (categories/delete-category ticket category-name)]
+        created-category-id (get-in (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name (.toString (UUID/randomUUID))})) [:body :entry :id])
+        delete-category-response (categories/delete-category ticket created-category-id)]
     (is (= (:status delete-category-response) 204))))
 
 (deftest list-categories-test
