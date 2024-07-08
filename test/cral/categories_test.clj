@@ -59,6 +59,4 @@
         create-category-response (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name category-name}))]
     (is (= (:status create-category-response) 201))
     ;; clean up
-    ;; delete-category
-    ;; (get-in (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name category-name})) [:body :entry :id])
-    ))
+    (is (= (:status (categories/delete-category ticket (get-in create-category-response [:body :entry :id]))) 204))))
