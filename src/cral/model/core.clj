@@ -665,6 +665,9 @@
    ^Integer max-items
    ^PersistentVector fields])
 
+(defrecord AssignNodeCategoryBody
+  ^String category-id)
+
 (defrecord CreateCategoryBody
   [^String name])
 

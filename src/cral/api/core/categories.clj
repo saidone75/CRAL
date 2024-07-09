@@ -39,6 +39,37 @@
      {:query-params query-params}
      opts)))
 
+(defn assign-node-category
+  "Assign the node `node-id` to a category. You specify the category ID in a JSON body like this:
+  ```json
+  {
+    \"categoryId\": \"01234567-89ab-cdef-0123-456789abcdef\"
+  }
+  ```
+  **Note**: You can assign the node to more than one category by specifying a list of categories in the JSON body like this:
+  ```json
+  [
+    {
+      \"categoryId\": \"01234567-89ab-cdef-0123-456789abcdef\"
+    },
+    {
+      \"categoryId\": \"89abcdef-0123-4567-89ab-cdef01234567\"
+    }
+  ]
+  ```
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API)."
+  ([^Ticket ticket ^String node-id ^PersistentVector body]
+   (assign-node-category ticket node-id body nil))
+  ([^Ticket ticket ^String node-id ^PersistentVector body ^CreateCategoryQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/nodes/%s/category-links" (config/get-url 'core) node-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
+     opts)))
+
 (defn delete-category
   "Deletes the category with `category-id`. This will cause everything to be removed from the category.
   You must have admin rights to delete a category.\\
