@@ -31,10 +31,30 @@
 (deftest list-node-categories-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create node
-        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))]
     ;; list categories
     (let [list-node-categories-response (categories/list-node-categories ticket created-node-id)]
       (is (= (:status list-node-categories-response) 200)))
+    ;; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
+(deftest assign-node-category-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        rand-category-id (-> (categories/list-categories ticket "-root-")
+                             (get-in [:body :list :entries])
+                             (rand-nth)
+                             (get-in [:entry :id]))
+        ;; create node
+        created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
+                             (nodes/create-node ticket (tu/get-guest-home ticket))
+                             (#(get-in % [:body :entry :id])))
+        assign-node-category-response (categories/assign-node-category ticket created-node-id [(model/map->AssignNodeCategoryBody {:category-id rand-category-id})])]
+    (is (= (:status assign-node-category-response) 201))
+    (is (some #(= (get-in % [:entry :id]) rand-category-id)
+              (-> (categories/list-node-categories ticket created-node-id)
+                  (get-in [:body :list :entries]))))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
