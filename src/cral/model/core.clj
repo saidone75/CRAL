@@ -666,7 +666,7 @@
    ^PersistentVector fields])
 
 (defrecord AssignNodeCategoryBody
-  ^String category-id)
+  [^String category-id])
 
 (defrecord CreateCategoryBody
   [^String name])
