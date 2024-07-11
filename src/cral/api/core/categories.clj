@@ -70,6 +70,17 @@
       :content-type :json}
      opts)))
 
+(defn unassign-node-category
+  "Removes the node `node-id` from the category `category-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API)."
+  [^Ticket ticket ^String node-id ^String category-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/nodes/%s/category-links/%s" (config/get-url 'core) node-id category-id)
+    ticket
+    nil
+    opts))
+
 (defn delete-category
   "Deletes the category with `category-id`. This will cause everything to be removed from the category.
   You must have admin rights to delete a category.\\
