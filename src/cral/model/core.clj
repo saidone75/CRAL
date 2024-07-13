@@ -659,6 +659,10 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord GetCategoryQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord ListCategoriesQueryParams
   [^PersistentVector include
    ^Integer skip-count

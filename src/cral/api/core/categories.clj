@@ -23,6 +23,7 @@
   (:import (clojure.lang PersistentHashMap PersistentVector)
            (cral.model.auth Ticket)
            (cral.model.core CreateCategoryQueryParams
+                            GetCategoryQueryParams
                             ListCategoriesQueryParams
                             ListNodeCategoriesQueryParams)))
 
@@ -80,6 +81,19 @@
     ticket
     nil
     opts))
+
+(defn get-category
+  "Get a specific category with `category-id`.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API)."
+  ([^Ticket ticket ^String category-id]
+   (get-gategory ticket category-id nil))
+  ([^Ticket ticket ^String category-id ^GetCategoryQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/get
+     (format "%s/categories/%s" (config/get-url 'core) category-id)
+     ticket
+     {:query-params query-params}
+     opts)))
 
 (defn delete-category
   "Deletes the category with `category-id`. This will cause everything to be removed from the category.
