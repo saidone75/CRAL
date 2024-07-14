@@ -79,6 +79,15 @@
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
+(deftest get-category-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        rand-category-id (-> (categories/list-categories ticket "-root-")
+                             (get-in [:body :list :entries])
+                             (rand-nth)
+                             (get-in [:entry :id]))
+        get-category-response (categories/get-category ticket rand-category-id)]
+    (is (= (:status get-category-response) 200))))
+
 (deftest delete-category-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create category

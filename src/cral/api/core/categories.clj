@@ -86,7 +86,7 @@
   "Get a specific category with `category-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API)."
   ([^Ticket ticket ^String category-id]
-   (get-gategory ticket category-id nil))
+   (get-category ticket category-id nil))
   ([^Ticket ticket ^String category-id ^GetCategoryQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
