@@ -663,6 +663,13 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
+(defrecord UpdateCategoryBody
+  [^String name])
+
+(defrecord UpdateCategoryQueryParams
+  [^PersistentVector include
+   ^PersistentVector fields])
+
 (defrecord ListCategoriesQueryParams
   [^PersistentVector include
    ^Integer skip-count
