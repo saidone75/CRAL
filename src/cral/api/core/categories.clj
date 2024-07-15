@@ -25,7 +25,9 @@
            (cral.model.core CreateCategoryQueryParams
                             GetCategoryQueryParams
                             ListCategoriesQueryParams
-                            ListNodeCategoriesQueryParams)))
+                            ListNodeCategoriesQueryParams
+                            UpdateCategoryBody
+                            UpdateCategoryQueryParams)))
 
 (defn list-node-categories
   "Gets a list of categories for node `node-id`.\\
@@ -106,6 +108,22 @@
     ticket
     nil
     opts))
+
+(defn update-category
+  "Updates the category `category-id`.
+  You must have admin rights to update a category.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API)."
+  ([^Ticket ticket ^String category-id ^UpdateCategoryBody body]
+   (update-category ticket category-id body nil))
+  ([^Ticket ticket ^String category-id ^UpdateCategoryBody body ^UpdateCategoryQueryParams query-params & [^PersistentHashMap opts]]
+   (utils/call-rest
+     client/post
+     (format "%s/categories/%s" (config/get-url 'core) category-id)
+     ticket
+     {:body         (json/write-str (utils/camel-case-stringify-keys body))
+      :query-params query-params
+      :content-type :json}
+     opts)))
 
 (defn list-categories
   "Gets a list of subcategories within the category `category-id`.
