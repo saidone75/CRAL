@@ -117,7 +117,7 @@
    (update-category ticket category-id body nil))
   ([^Ticket ticket ^String category-id ^UpdateCategoryBody body ^UpdateCategoryQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
-     client/post
+     client/put
      (format "%s/categories/%s" (config/get-url 'core) category-id)
      ticket
      {:body         (json/write-str (utils/camel-case-stringify-keys body))
