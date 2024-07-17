@@ -161,6 +161,18 @@
     {:query-params nil}
     opts))
 
+(defn delete-version-rendition
+  "Delete the rendition for `rendition-id` of version `version-id` of `node-id`.
+  If the rendition is successfully deleted then the content for that rendition node will be cleared.\\
+  More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions)."
+  [^Ticket ticket ^String node-id ^String version-id ^String rendition-id & [^PersistentHashMap opts]]
+  (utils/call-rest
+    client/delete
+    (format "%s/nodes/%s/versions/%s/renditions/%s" (config/get-url 'core) node-id version-id rendition-id)
+    ticket
+    nil
+    opts))
+
 (defn get-version-rendition-content
   "Gets the rendition content for `rendition-id` of version of file `node-id` and `version-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/versions/getVersionRenditionContent)."
