@@ -88,12 +88,6 @@
         get-category-response (categories/get-category ticket rand-category-id)]
     (is (= (:status get-category-response) 200))))
 
-(deftest delete-category-test
-  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
-        ;; create category
-        created-category-id (get-in (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name (.toString (UUID/randomUUID))})) [:body :entry :id])]
-    (is (= (:status (categories/delete-category ticket created-category-id)) 204))))
-
 (deftest update-category-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create category
@@ -107,6 +101,12 @@
     (is (= (get-in updated-category-response [:body :entry :name]) new-category-name))
     ;; clean up
     (is (= (:status (categories/delete-category ticket (:id created-category-entry))) 204))))
+
+(deftest delete-category-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create category
+        created-category-id (get-in (categories/create-category ticket "-root-" (model/map->CreateCategoryBody {:name (.toString (UUID/randomUUID))})) [:body :entry :id])]
+    (is (= (:status (categories/delete-category ticket created-category-id)) 204))))
 
 (deftest list-categories-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])]
