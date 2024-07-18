@@ -169,6 +169,32 @@
     ; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
+(deftest delete-version-rendition-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create node
+        created-node-id (get-in (nodes/create-node ticket (tu/get-guest-home ticket) (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})) [:body :entry :id])]
+    ;; add cm:versionable aspect
+    (nodes/update-node ticket created-node-id (model/map->UpdateNodeBody {:aspect-names [cm/asp-versionable]}))
+    ;; update the node content
+    (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
+    ;; ask for rendition creation
+    (versions/create-version-rendition ticket created-node-id "1.1" [(model/map->CreateVersionRenditionBody {:id "doclib"})])
+    (loop [list-version-renditions-response nil]
+      (if (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-version-renditions-response [:body :list :entries])))
+        (do (Thread/sleep 1000)
+            (recur (versions/list-version-renditions ticket created-node-id "1.1")))
+        (is (= (:status list-version-renditions-response) 200))))
+    ;; delete rendition
+    (is (= (:status (versions/delete-version-rendition ticket created-node-id "1.1" "doclib")) 204))
+    (is (=
+          (->> (get-in (versions/list-version-renditions ticket created-node-id "1.1") [:body :list :entries])
+               (filter #(= "doclib" (get-in % [:entry :id])))
+               (first)
+               (#(get-in % [:entry :status])))
+          "NOT_CREATED"))
+    ; clean up
+    (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
+
 (deftest get-version-rendition-content-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; create node
