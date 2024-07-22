@@ -16,7 +16,13 @@
 
 (ns cral.model.alfresco.roles)
 
-(def ^:const site-consumer "SiteConsumer")
-(def ^:const site-collaborator "SiteCollaborator")
-(def ^:const site-contributor "SiteContributor")
+(def ^:const administrator "Administrator")
+(def ^:const coordinator "Coordinator")
+(def ^:const contributor "Contributor")
+(def ^:const editor "Editor")
+(def ^:const consumer "Consumer")
+
 (def ^:const site-manager "SiteManager")
+(def ^:const site-contributor "SiteContributor")
+(def ^:const site-collaborator "SiteCollaborator")
+(def ^:const site-consumer "SiteConsumer")
