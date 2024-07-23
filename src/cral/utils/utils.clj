@@ -29,7 +29,7 @@
   (str/replace s #"^:+" ""))
 
 (defn kebab-case
-  "Turn a camelCase string into kebab-case."
+  "Turns a camelCase string into kebab-case."
   [s]
   (->> s
        (#(str/split % #"(?<=[a-z])(?=[A-Z])"))
@@ -37,7 +37,7 @@
        (str/join "-")))
 
 (defn camel-case
-  "Turn a kebab-case string into camelCase."
+  "Turns a kebab-case string into camelCase."
   [s]
   (let [s (str/split s #"-")]
     (if (> (count s) 1)
@@ -81,7 +81,7 @@
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
 (defn ok-response
-  "Build a successful response."
+  "Builds a successful response."
   [r return-headers]
   (let [response {:status (:status r)
                   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
@@ -92,7 +92,7 @@
       response)))
 
 (defn ex-response
-  "Build a response from a client exception."
+  "Builds a response from a client exception."
   [^Exception e]
   (t/trace! e)
   (let [ex-data (ex-data e)]
@@ -107,7 +107,7 @@
          :message (.getMessage e)}))))
 
 (defn- add-auth
-  "Add authorization header from ticket."
+  "Adds authorization header from ticket."
   [ticket req]
   (if (nil? ticket)
     req

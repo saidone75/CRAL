@@ -30,21 +30,20 @@
 (def password "admin")
 
 (defn configure
-  ""
+  "Configures CRAL."
   [& [m]]
   ;; configure alfresco
   (swap! alfresco merge m)
   (if-not (nil? (:user m)) (alter-var-root #'user (constantly (:user @alfresco))))
   (if-not (nil? (:password m)) (alter-var-root #'password (constantly (:password @alfresco)))))
 
-;; load global config map
 (defn load-config
-  ""
+  "Loads global config map."
   [m]
   (configure (:alfresco m)))
 
 (defn get-url
-  ""
+  "Builds Alfresco URL for the given `path`."
   [path]
   (let [path (keyword (str path "-path"))]
     (format "%s://%s:%s/%s" (:scheme @alfresco) (:host @alfresco) (:port @alfresco) (path @alfresco))))
