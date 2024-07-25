@@ -29,7 +29,7 @@
   (str/replace s #"^:+" ""))
 
 (defn kebab-case
-  "Turns a camelCase string into kebab-case."
+  "Turns a camelCase string `s` into kebab-case."
   [s]
   (->> s
        (#(str/split % #"(?<=[a-z])(?=[A-Z])"))
@@ -37,7 +37,7 @@
        (str/join "-")))
 
 (defn camel-case
-  "Turns a kebab-case string into camelCase."
+  "Turns a kebab-case string `s` into camelCase."
   [s]
   (let [s (str/split s #"-")]
     (if (> (count s) 1)
@@ -54,17 +54,17 @@
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
 (defn kebab-keywordize-keys
-  "Recursively transforms all map keys from camelCase to kebab-case and keywordize them."
+  "Recursively transforms all `m` map keys from camelCase to kebab-case and keywordize them."
   [m]
   (*-keywordize-keys m kebab-case))
 
 (defn camel-case-keywordize-keys
-  "Recursively transforms all map keys from kebab-case to camelCase and keywordize them."
+  "Recursively transforms all `m` map keys from kebab-case to camelCase and keywordize them."
   [m]
   (*-keywordize-keys m camel-case))
 
 (defn camel-case-stringify-keys
-  "Recursively transforms all map keys from kebab-case to camelCase and stringify them eventually excluding keys in
+  "Recursively transforms all `m` map keys from kebab-case to camelCase and stringify them eventually excluding keys in
   `exclude`."
   ([m]
    (camel-case-stringify-keys m #{}))
@@ -74,14 +74,14 @@
      (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m))))
 
 (defn join-vector-vals
-  "Recursively transforms all map vector values to comma separated strings."
+  "Recursively transforms all `m` map vector values to comma separated strings."
   [m]
   (let [f (fn [[k v]] [k (if (vector? v) (str/join "," v) v)])]
     ;; only apply to maps
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
 (defn ok-response
-  "Builds a successful response."
+  "Builds a successful response from `r` and keep the headers if `return-headers` is true."
   [r return-headers]
   (let [response {:status (:status r)
                   :body   (if (and (not (nil? (:body r))) (not (empty? (:body r))) (string? (:body r)))
@@ -92,7 +92,7 @@
       response)))
 
 (defn ex-response
-  "Builds a response from a client exception."
+  "Builds a response from a client exception `e`."
   [^Exception e]
   (t/trace! e)
   (let [ex-data (ex-data e)]
@@ -107,13 +107,14 @@
          :message (.getMessage e)}))))
 
 (defn- add-auth
-  "Adds authorization header from ticket."
+  "Adds authorization header to `req` using an Alfresco `ticket`."
   [ticket req]
   (if (nil? ticket)
     req
     (assoc-in req [:headers "Authorization"] (str "Basic " (.encodeToString (Base64/getEncoder) (byte-array (map (comp byte int) (:id ticket))))))))
 
 (defn call-rest
+  "Executes a `method` REST API call on `url` endpoint with authentication `ticket`."
   ([method ^String url ^Ticket ticket]
    (call-rest method url ticket nil false))
   ([method ^String url ^Ticket ticket ^PersistentHashMap req]
