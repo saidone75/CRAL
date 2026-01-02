@@ -19,9 +19,9 @@
   :url "https://saidone.org"
   :license {:name "GNU General Public License v3.0"
             :url  "https://www.gnu.org/licenses/gpl-3.0.txt"}
-  :dependencies [[org.clojure/clojure "1.11.3"]
-                 [org.clojure/data.json "2.5.0"]
+  :dependencies [[org.clojure/clojure "1.12.4"]
+                 [org.clojure/data.json "2.5.2"]
                  [org.clj-commons/clj-http-lite "1.0.13"]
-                 [com.taoensso/telemere "1.0.0-beta14"]]
+                 [com.taoensso/telemere "1.2.1"]]
   :profiles {:dev {:resource-paths ["test-resources"]}}
   :repl-options {:init-ns cral.alfresco})
