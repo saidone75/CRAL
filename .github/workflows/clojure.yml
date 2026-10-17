@@ -21,13 +21,19 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Install Clojure tools (Leiningen)
+      - name: Install Clojure CLI
         uses: DeLaGuardo/setup-clojure@13.4
         with:
-          lein: latest
+          cli: 1.12.6.1673
 
       - name: Download deps
-        run: lein deps
+        run: clojure -P -M:test
 
-      - name: Compile
-        run: lein compile
+      - name: Download build deps
+        run: clojure -P -T:build
+
+      - name: Unit tests
+        run: clojure -M:test -n cral.utils-test
+
+      - name: Build library JAR
+        run: clojure -T:build jar

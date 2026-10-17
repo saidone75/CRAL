@@ -1,0 +1,46 @@
+(ns build
+  (:require [clojure.tools.build.api :as b]))
+
+(def lib 'org.saidone/cral)
+(def version "0.4.1-SNAPSHOT")
+(def class-dir "target/classes")
+(def jar-file (format "target/%s-%s.jar" (name lib) version))
+(def basis (delay (b/create-basis {:project "deps.edn" :user nil})))
+
+(defn clean
+  "Remove generated build artifacts."
+  [_]
+  (b/delete {:path "target"}))
+
+(defn jar
+  "Build the library source JAR and Maven POM."
+  [_]
+  (clean nil)
+  (b/write-pom {:class-dir class-dir
+                :lib lib
+                :version version
+                :basis @basis
+                :src-dirs ["src"]
+                :pom-data [[:description "A library for consuming Alfresco Content Services public REST API"]
+                           [:url "https://saidone.org"]
+                           [:licenses
+                            [:license
+                             [:name "GNU General Public License v3.0"]
+                             [:url "https://www.gnu.org/licenses/gpl-3.0.txt"]]]]})
+  (b/copy-dir {:src-dirs ["src" "resources"] :target-dir class-dir})
+  (b/jar {:class-dir class-dir :jar-file jar-file}))
+
+(defn install
+  "Build and install the library into the local Maven repository."
+  [_]
+  (jar nil)
+  (b/install {:basis @basis
+              :lib lib
+              :version version
+              :jar-file jar-file
+              :class-dir class-dir}))
+
+(defn info
+  "Print library coordinates for scripts."
+  [_]
+  (println lib version))
