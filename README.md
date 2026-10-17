@@ -90,6 +90,30 @@ but plain maps can be used as well if desired:
  :id "68d9d0e3-8830-427e-b04e-c0109b02a539",
  :parent-id "a29adc70-0639-416a-9660-4ed7f247b5a9"}
 ```
+## Development
+Requires a JDK (CI uses Java 21) and the [Clojure CLI](https://clojure.org/guides/install_clojure).
+Dependencies are declared in `deps.edn`; library coordinates and version are in `build.clj`.
+
+```sh
+clojure -M:repl                         # REPL in cral.core, with test resources
+clojure -M:test -n cral.utils-test       # unit tests without Alfresco
+clojure -M:test                         # full suite, requires Alfresco
+clojure -T:build jar                    # target/cral-0.4.1-SNAPSHOT.jar and POM
+clojure -T:build install                # build and install into ~/.m2/repository
+clojure -T:build clean                  # delete target/
+```
+
+The full test suite uses the Alfresco environment configured in `resources/config.edn`.
+Start the Docker environment with `./alfresco.sh start` (requires Docker Compose),
+and wait for Alfresco to be ready before running integration tests.
+CI runs the unit tests and builds the library JAR. Test sources and fixtures are excluded from the JAR.
+For editor REPLs, enable the `:dev` alias to include `test` and `test-resources`.
+
+To preview documentation locally, run `./cljdoc-preview.sh` (requires Docker).
+It installs the library locally, ingests it into cljdoc, and serves the preview at
+<http://localhost:9000>. Each run prints its temporary data directory, which can be
+removed after stopping the preview.
+
 ## License
 Copyright (c) 2023-2024 Saidone
 
