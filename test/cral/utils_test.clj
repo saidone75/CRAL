@@ -19,9 +19,6 @@
 
 (ns cral.utils-test
   (:require [clojure.test :refer :all]
-            [cral.api.auth :as auth]
-            [clj-http.lite.client :as client]
-            [cral.config :as config]
             [cral.utils.utils :as utils]))
 
 (deftest kebab-case
