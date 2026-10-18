@@ -10,11 +10,14 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Added
 
+- Optional streaming downloads with `{:as :stream}` for node, version, rendition,
+  shared-link and trashcan content. Byte-array downloads remain the default.
 - Interactive Bash script for Clojars deployment, with username and hidden token
   prompts.
 
 ### Fixed
 
+- Send version content query parameters as HTTP query parameters.
 - Pass response options correctly when validating or deleting authentication tickets.
 
 ## [0.3.6] - 2026-10-18
