@@ -1,6 +1,8 @@
 {:alfresco {:scheme         "http"
             :host           "localhost"
             :port           8080
+            :conn-timeout   5000
+            :socket-timeout 60000
             :core-path      "alfresco/api/-default-/public/alfresco/versions/1"
             :search-path    "alfresco/api/-default-/public/search/versions/1"
             :auth-path      "alfresco/api/-default-/public/authentication/versions/1"

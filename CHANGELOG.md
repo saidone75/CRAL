@@ -10,6 +10,9 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Added
 
+- Configurable connection and read timeouts in milliseconds, with per-call
+  overrides through `:conn-timeout` and `:socket-timeout` options. Defaults are
+  5 seconds for connections and 60 seconds for reads.
 - Optional streaming downloads with `{:as :stream}` for node, version, rendition,
   shared-link and trashcan content. Byte-array downloads remain the default.
 - Interactive Bash script for Clojars deployment, with username and hidden token
