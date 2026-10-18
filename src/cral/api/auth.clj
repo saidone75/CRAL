@@ -45,6 +45,7 @@
     method
     (format "%s/tickets/-me-" (config/get-url 'auth))
     ticket
+    nil
     opts))
 
 (defn validate-ticket

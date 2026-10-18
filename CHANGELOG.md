@@ -13,6 +13,10 @@ Dates reflect the commits referenced by the tags on GitHub.
 - Interactive Bash script for Clojars deployment, with username and hidden token
   prompts.
 
+### Fixed
+
+- Pass response options correctly when validating or deleting authentication tickets.
+
 ## [0.3.6] - 2026-10-18
 
 ### Added
