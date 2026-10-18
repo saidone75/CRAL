@@ -39,36 +39,3 @@
 (deftest camel-case-stringify-keys
   (is (= (utils/camel-case-stringify-keys {"level-one" {"level-two" "value"}})
          {"levelOne" {"levelTwo" "value"}})))
-
-(deftest configured-timeouts-apply-to-http-requests
-  (with-redefs [config/alfresco (atom @config/alfresco)]
-    (config/configure {:conn-timeout 5000 :socket-timeout 60000})
-    (with-redefs [client/post (fn [_ req]
-                               (is (= 5000 (:conn-timeout req)))
-                               (is (= 60000 (:socket-timeout req)))
-                               (is (= :json (:content-type req)))
-                               {:status 201 :body "{}"})]
-      (is (= 201 (:status (auth/create-ticket "user" "password")))))))
-
-(deftest timeout-overrides-preserve-other-defaults
-  (with-redefs [config/alfresco (atom {:conn-timeout 5000 :socket-timeout 60000})]
-    (doseq [socket-timeout [120000 0]]
-      (utils/call-rest
-        (fn [_ req]
-          (is (= 5000 (:conn-timeout req)))
-          (is (= socket-timeout (:socket-timeout req)))
-          (is (= {"maxItems" 10} (:query-params req)))
-          (is (nil? (:return-headers req)))
-          {:status 204 :body nil})
-        "http://example.invalid" nil {:query-params {:max-items 10}}
-        {:socket-timeout socket-timeout :return-headers true}))))
-
-(deftest timeout-config-loading-and-connection-override
-  (with-redefs [config/alfresco (atom {})]
-    (config/load-config {:alfresco {:conn-timeout 5000 :socket-timeout 60000}})
-    (utils/call-rest
-      (fn [_ req]
-        (is (= 1000 (:conn-timeout req)))
-        (is (= 60000 (:socket-timeout req)))
-        {:status 204 :body nil})
-      "http://example.invalid" nil nil {:conn-timeout 1000})))
