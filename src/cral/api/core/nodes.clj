@@ -1,5 +1,7 @@
+;
 ;  CRAL
-;  Copyright (C) 2023-2024 Saidone
+;  Copyright (C) 2023-2026 Saidone
+;  SPDX-License-Identifier: GPL-3.0-or-later
 ;
 ;  This program is free software: you can redistribute it and/or modify
 ;  it under the terms of the GNU General Public License as published by
@@ -13,6 +15,7 @@
 ;
 ;  You should have received a copy of the GNU General Public License
 ;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;
 
 (ns cral.api.core.nodes
   (:require [clj-http.lite.client :as client]
@@ -250,7 +253,7 @@
   "Gets a list of secondary child nodes that are associated with the current parent `node-id`, via a secondary child association.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/listSecondaryChildren)."
   ([^Ticket ticket ^String node-id]
-   (list-node-children ticket node-id nil))
+   (list-secondary-children ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListSecondaryChildrenQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get

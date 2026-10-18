@@ -114,6 +114,35 @@ It installs the library locally, ingests it into cljdoc, and serves the preview 
 <http://localhost:9000>. Each run prints its temporary data directory, which can be
 removed after stopping the preview.
 
+## Publishing
+
+The library coordinates and version are defined in `build.clj`. For a release,
+set the version without `-SNAPSHOT` (for example, `0.4.1`), run the tests, and
+commit the release changes. Push the commit and a matching Git tag such as
+`v0.4.1` before deploying, so cljdoc can access the release sources.
+
+Create a [Clojars deploy token](https://clojars.org/tokens) with permission to
+publish `org.saidone/cral`. In Bash, enter the credentials and deploy:
+
+```bash
+export CLOJARS_USERNAME="your-clojars-username"
+read -rsp "Clojars deploy token: " CLOJARS_PASSWORD
+echo
+export CLOJARS_PASSWORD
+clojure -T:build deploy
+unset CLOJARS_PASSWORD
+```
+
+`deploy` builds the JAR and POM before uploading them to Clojars. Artifact paths
+are derived from the version in `build.clj`; credentials are read from the
+environment. `clojure -T:build install` only installs locally and does not publish.
+
+The generated POM includes the Git repository URL and current commit SHA for
+cljdoc. Build from the committed release sources to keep the JAR and Git sources
+in sync. cljdoc picks up releases from Clojars; check the
+[CRAL documentation](https://cljdoc.org/d/org.saidone/cral) and request a build
+through cljdoc if needed. No separate documentation upload is required.
+
 ## License
 Copyright (c) 2023-2024 Saidone
 
