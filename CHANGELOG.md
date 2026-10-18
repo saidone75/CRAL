@@ -8,7 +8,12 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ## [Unreleased]
 
-## [0.4.0] - 2026-10-18
+### Added
+
+- Interactive Bash script for Clojars deployment, with username and hidden token
+  prompts.
+
+## [0.3.6] - 2026-10-18
 
 ### Added
 
@@ -197,8 +202,8 @@ Dates reflect the commits referenced by the tags on GitHub.
 - Docker development environment, CI workflow and tests.
 - GraalVM-oriented authentication encoding.
 
-[Unreleased]: https://github.com/saidone75/CRAL/compare/v0.4.0...HEAD
-[0.4.0]: https://github.com/saidone75/CRAL/compare/v0.3.5...v0.4.0
+[Unreleased]: https://github.com/saidone75/CRAL/compare/v0.3.6...HEAD
+[0.3.6]: https://github.com/saidone75/CRAL/compare/v0.3.5...v0.3.6
 [0.3.5]: https://github.com/saidone75/CRAL/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/saidone75/CRAL/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/saidone75/CRAL/compare/v0.3.2...v0.3.3
