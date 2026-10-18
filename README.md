@@ -33,8 +33,18 @@ Default configuration is stored in the `alfresco` atom defined in `cral.config`:
  :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
 ```
 and can be overwritten by passing a map with the new values to `config/configure`:
+
 ```clojure
 (config/configure {:scheme "https" :port 8983})
+=>
+{:scheme "https",
+ :host "localhost",
+ :port 8983
+ :conn-timeout 5000
+ :socket-timeout 60000
+ :core-path "alfresco/api/-default-/public/alfresco/versions/1",
+ :search-path "alfresco/api/-default-/public/search/versions/1",
+ :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
 ```
 
 Timeouts are in milliseconds. `:conn-timeout` limits connection establishment;
@@ -42,10 +52,6 @@ Timeouts are in milliseconds. `:conn-timeout` limits connection establishment;
 downloads. It is not a limit on the total download duration. Defaults are 5000 ms
 for connection establishment and 60000 ms for reads. Set either value to `0` to
 disable that timeout. Configure them globally:
-
-```clojure
-(config/configure {:conn-timeout 5000 :socket-timeout 60000})
-```
 
 The same keys are available under `:alfresco` in `resources/config.edn` when
 loading that file with `config/load-config`. Override either value for one call
