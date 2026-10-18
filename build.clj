@@ -21,9 +21,11 @@
   (:require [clojure.tools.build.api :as b]))
 
 (def lib 'org.saidone/cral)
-(def version "0.4.1-SNAPSHOT")
+(def version "0.3.6")
 (def class-dir "target/classes")
 (def jar-file (format "target/%s-%s.jar" (name lib) version))
+(def pom-file (format "%s/META-INF/maven/%s/%s/pom.xml" class-dir (namespace lib) (name lib)))
+(def repository-url "https://github.com/saidone75/CRAL")
 (def basis (delay (b/create-basis {:project "deps.edn" :user nil})))
 
 (defn clean
@@ -42,6 +44,10 @@
                 :src-dirs ["src"]
                 :pom-data [[:description "A library for consuming Alfresco Content Services public REST API"]
                            [:url "https://saidone.org"]
+                           [:scm
+                            [:url repository-url]
+                            [:connection (str "scm:git:" repository-url ".git")]
+                            [:tag (b/git-process {:git-args ["rev-parse" "HEAD"]})]]
                            [:licenses
                             [:license
                              [:name "GNU General Public License v3.0"]
@@ -58,6 +64,18 @@
               :version version
               :jar-file jar-file
               :class-dir class-dir}))
+
+(defn deploy
+  "Build and publish to Clojars using CLOJARS_USERNAME and CLOJARS_PASSWORD (deploy token)."
+  [_]
+  (doseq [env-var ["CLOJARS_USERNAME" "CLOJARS_PASSWORD"]]
+    (when (not (seq (System/getenv env-var)))
+      (throw (ex-info (str "Missing environment variable: " env-var) {:env-var env-var}))))
+  (jar nil)
+  ((requiring-resolve 'deps-deploy.deps-deploy/deploy)
+   {:installer :remote
+    :artifact jar-file
+    :pom-file pom-file}))
 
 (defn info
   "Print library coordinates for scripts."
