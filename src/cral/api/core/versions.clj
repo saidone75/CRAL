@@ -82,7 +82,7 @@
      client/get
      (format "%s/nodes/%s/versions/%s/content" (config/get-url 'core) node-id version-id)
      ticket
-     (merge {:as :byte-array} query-params)
+     {:as :byte-array :query-params query-params}
      (merge {:return-headers true} opts))))
 
 (defn revert-version

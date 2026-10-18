@@ -90,6 +90,22 @@ but plain maps can be used as well if desired:
  :id "68d9d0e3-8830-427e-b04e-c0109b02a539",
  :parent-id "a29adc70-0639-416a-9660-4ed7f247b5a9"}
 ```
+## Streaming downloads
+
+Content downloads return byte arrays by default. Pass `{:as :stream}` as the
+options argument to receive a `java.io.InputStream` without buffering the whole
+file in memory. Close the stream after use, preferably with `with-open`:
+
+```clojure
+(require '[clojure.java.io :as io])
+
+(let [{:keys [status body]} (nodes/get-node-content ticket node-id nil {:as :stream})]
+  (if (= 200 status)
+    (with-open [stream body]
+      (io/copy stream (io/file "document.pdf")))
+    (throw (ex-info "Download failed" {:status status :body body}))))
+```
+
 ## Development
 Requires a JDK (CI uses Java 21) and the [Clojure CLI](https://clojure.org/guides/install_clojure).
 Dependencies are declared in `deps.edn`; library coordinates and version are in `build.clj`.
