@@ -23,6 +23,7 @@
             [clojure.java.io :as io]
             [clojure.walk :as walk]
             [cral.model.auth]
+            [cral.config :as config]
             [taoensso.telemere :as t])
   (:import (clojure.lang PersistentHashMap)
            (cral.model.auth Ticket)
@@ -125,6 +126,7 @@
 (defn call-rest
   "Executes a `method` REST API call on `url` endpoint with authentication `ticket`.
   For binary downloads, `opts` may select `:as :stream` or `:as :byte-array`.
+  Connection and socket timeouts come from config and may be overridden in `opts`.
   The caller must close a successful response stream."
   ([method ^String url ^Ticket ticket]
    (call-rest method url ticket nil false))
@@ -132,7 +134,10 @@
    (call-rest method url ticket req false))
   ([method ^String url ^Ticket ticket ^PersistentHashMap req ^PersistentHashMap opts]
    (try
-     (let [req (if (and (= :byte-array (:as req)) (#{:stream :byte-array} (:as opts)))
+     (let [req (merge (select-keys @config/alfresco [:conn-timeout :socket-timeout])
+                      req
+                      (select-keys (when (map? opts) opts) [:conn-timeout :socket-timeout]))
+           req (if (and (= :byte-array (:as req)) (#{:stream :byte-array} (:as opts)))
                  (cond-> (assoc req :as (:as opts))
                    ;; clj-http-lite's deflate decoder buffers and cannot handle streams.
                    (= :stream (:as opts)) (assoc-in [:headers "Accept-Encoding"] "identity"))
