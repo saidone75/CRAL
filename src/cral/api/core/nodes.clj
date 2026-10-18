@@ -250,7 +250,7 @@
   "Gets a list of secondary child nodes that are associated with the current parent `node-id`, via a secondary child association.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/nodes/listSecondaryChildren)."
   ([^Ticket ticket ^String node-id]
-   (list-node-children ticket node-id nil))
+   (list-secondary-children ticket node-id nil))
   ([^Ticket ticket ^String node-id ^ListSecondaryChildrenQueryParams query-params & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
