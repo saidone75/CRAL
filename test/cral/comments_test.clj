@@ -63,7 +63,7 @@
       ;; update comment
       (is (= (:status (comments/update-comment ticket created-node-id created-comment-id (model/map->UpdateCommentBody {:content updated-comment-content}))) 200))
       ;; check if comment has been updated
-      (is (= updated-comment-content) (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content])))
+      (is (= updated-comment-content (get-in (first (get-in (comments/list-comments ticket created-node-id) [:body :list :entries])) [:entry :content]))))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 

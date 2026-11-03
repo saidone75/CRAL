@@ -65,7 +65,7 @@
     (is (= (:status (->> [(model/map->CreatePersonSiteMembershipRequestBody {:message "Please can you add me"
                                                                              :id      site-id
                                                                              :title   (format "Request for %s site" site-id)})]
-                         (sites/create-person-site-membership-requests saidone-ticket "-me-")) 201)))
+                         (sites/create-person-site-membership-requests saidone-ticket "-me-"))) 201))
     ;; clean up
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))
 
@@ -468,7 +468,7 @@
         create-group-site-membership-response (->> (model/map->CreateGroupSiteMembershipBody {:role roles/site-contributor :id (str "GROUP_" group-id)})
                                                    (sites/create-group-site-membership ticket site-id))]
     (is (= (:status create-group-site-membership-response) 201))
-    (is (= (get-in create-group-site-membership-response [:body :entry :id] (str "GROUP_" group-id))))
+    (is (= (get-in create-group-site-membership-response [:body :entry :id]) (str "GROUP_" group-id)))
     ;; clean up
     (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))
     (is (= (:status (sites/delete-site ticket site-id (model/map->DeleteSiteQueryParams {:permanent true}))) 204))))

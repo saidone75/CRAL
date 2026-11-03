@@ -181,7 +181,7 @@
         ;; when we have at least one rendition with status CREATED
         (when (some true? (map #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries])))
           (let [created-rendition-id (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries]))) [:entry :id])]
-            (is (= (:status (shared-links/get-shared-link-rendition-info created-shared-link-id created-rendition-id) 200)))))))
+            (is (= (:status (shared-links/get-shared-link-rendition-info created-shared-link-id created-rendition-id)) 200))))))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
@@ -230,5 +230,5 @@
                                         (shared-links/email-shared-link ticket created-shared-link-id))]
     (is (= (:status email-shared-link-response) 202))
     ;; clean up
-    (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id))) 204)
+    (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))

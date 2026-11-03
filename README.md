@@ -13,11 +13,18 @@ CRAL is a Clojure library for consuming Alfresco Content Services public REST AP
 ## Usage
 Require the relevant namespaces, e.g.:
 ```clojure
-(:require
-  [cral.api.auth :as auth]
-  [cral.api.search :as search]
-  [cral.api.core.nodes :as nodes]
-  [cral.model.core :as model])
+(require
+  '[cral.api.auth :as auth]
+  '[cral.api.search :as search]
+  '[cral.api.core.nodes :as nodes]
+  '[cral.model.core :as model]
+  '[cral.model.auth :as auth-model]
+  '[cral.model.search :as search-model]
+  '[cral.config :as config])
+
+;; Credentials for the local development environment.
+(def user "admin")
+(def pass "admin")
 ```
 Default configuration is stored in the `alfresco` atom defined in `cral.config`:
 ```clojure
@@ -30,46 +37,43 @@ Default configuration is stored in the `alfresco` atom defined in `cral.config`:
  :socket-timeout 60000,
  :core-path "alfresco/api/-default-/public/alfresco/versions/1",
  :search-path "alfresco/api/-default-/public/search/versions/1",
- :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
+ :auth-path "alfresco/api/-default-/public/authentication/versions/1",
+ :discovery-path "alfresco/api/discovery"}
 ```
-and can be overwritten by passing a map with the new values to `config/configure`:
+Update values with `config/configure` and inspect the atom:
 
 ```clojure
-(config/configure {:scheme "https" :port 8983})
+(config/configure {:conn-timeout 10000 :socket-timeout 120000})
+(select-keys @config/alfresco [:conn-timeout :socket-timeout])
 =>
-{:scheme "https",
- :host "localhost",
- :port 8983
- :conn-timeout 5000
- :socket-timeout 60000
- :core-path "alfresco/api/-default-/public/alfresco/versions/1",
- :search-path "alfresco/api/-default-/public/search/versions/1",
- :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
+{:conn-timeout 10000, :socket-timeout 120000}
 ```
 
 Timeouts are in milliseconds. `:conn-timeout` limits connection establishment;
 `:socket-timeout` limits waiting for data during a read, including streaming
 downloads. It is not a limit on the total download duration. Defaults are 5000 ms
 for connection establishment and 60000 ms for reads. Set either value to `0` to
-disable that timeout. Configure them globally:
+disable that timeout.
 
 The same keys are available under `:alfresco` in `resources/config.edn` when
 loading that file with `config/load-config`. Override either value for one call
-through the existing options argument:
+through the existing options argument (`ticket` is an authenticated ticket map
+and `node-id` identifies an existing content node):
 
 ```clojure
 (nodes/get-node-content ticket node-id nil
                         {:as :stream :socket-timeout 120000})
 ```
 
-Results are returned as maps that can be easily handled in Clojure, please note that all map keys are converted to proper kebab-case keywords and query parameters as well as POST bodies JSON keys are automatically converted to camel case before they are sent: 
+Responses use kebab-case keyword keys; request keys are converted to camelCase.
+Example IDs and timestamps vary by repository:
 ```clojure
 (auth/create-ticket "admin" "admin")
 =>
 {:status 201, :body {:entry {:id "TICKET_5905a2c41cf63c003a2044ebdae69aa48691fdc8", :user-id "admin"}}}
 
-(let [ticket (model/map->Ticket (get-in (auth/create-ticket user pass) [:body :entry]))
-      search-request (search/map->SearchRequest {:query (search/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
+(let [ticket (auth-model/map->Ticket (get-in (auth/create-ticket user pass) [:body :entry]))
+      search-request (search-model/map->QueryBody {:query (search-model/map->RequestQuery {:query "PATH:'app:company_home/app:guest_home'"})})]
   (search/search ticket search-request))
 =>
 {:status 200,
@@ -94,14 +98,17 @@ POST/PUT bodies and request parameters with well known keys are modeled as recor
 =>
 #cral.model.core.GetNodeQueryParams{:include ["path" "permissions"], :relative-path nil, :fields nil}
 
-(model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type "cm:content"})
+(select-keys
+  (model/map->CreateNodeBody {:name "example.txt" :node-type "cm:content"})
+  [:name :node-type :properties])
 =>
-#cral.model.core.CreateNodeBody{:name "cfa7c592-e357-4efc-9d91-f5dd98ab910c", :node-type "cm:content", :properties nil}
+{:name "example.txt", :node-type "cm:content", :properties nil}
 ```
 but plain maps can be used as well if desired:
 ```clojure
 (let [ticket (get-in (auth/create-ticket user pass) [:body :entry])
-      parent-id (:id (get-guest-home))]
+      parent-id (get-in (nodes/get-node ticket "-root-" {:relative-path "/Guest Home"})
+                        [:body :entry :id])]
   (select-keys
     (get-in (nodes/create-node ticket parent-id {:name "test" :node-type "cm:content"}) [:body :entry])
     [:name :node-type :id :parent-id]))
@@ -115,7 +122,7 @@ but plain maps can be used as well if desired:
 
 Content downloads return byte arrays by default. Pass `{:as :stream}` as the
 options argument to receive a `java.io.InputStream` without buffering the whole
-file in memory. Close the stream after use, preferably with `with-open`:
+file in memory. Close it with `with-open`:
 
 ```clojure
 (require '[clojure.java.io :as io])
@@ -135,7 +142,7 @@ Dependencies are declared in `deps.edn`; library coordinates and version are in 
 clojure -M:repl                         # REPL in cral.core, with test resources
 clojure -M:test -n cral.utils-test       # unit tests without Alfresco
 clojure -M:test                         # full suite, requires Alfresco
-clojure -T:build jar                    # target/cral-0.4.1-SNAPSHOT.jar and POM
+clojure -T:build jar                    # library JAR and POM under target/
 clojure -T:build install                # build and install into ~/.m2/repository
 clojure -T:build clean                  # delete target/
 ```

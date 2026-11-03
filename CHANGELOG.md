@@ -20,6 +20,7 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Fixed
 
+- Fix ineffective integration-test assertions and outdated README examples.
 - Send version content query parameters as HTTP query parameters.
 - Pass response options correctly when validating or deleting authentication tickets.
 
