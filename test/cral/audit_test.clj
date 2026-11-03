@@ -51,12 +51,12 @@
     (is (= (get-in (audit/get-audit-application-info ticket audit-application-id) [:body :entry :is-enabled]) true))
     ;; disable audit application
     (is (= (:status (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled false})
-                         (audit/update-audit-application-info ticket audit-application-id)) 200)))
+                         (audit/update-audit-application-info ticket audit-application-id))) 200))
     ;; check if application has been disabled
     (is (= (get-in (audit/get-audit-application-info ticket audit-application-id) [:body :entry :is-enabled]) false))
     ;; re-enable audit application
     (is (= (:status (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled true})
-                         (audit/update-audit-application-info ticket audit-application-id)) 200)))))
+                         (audit/update-audit-application-info ticket audit-application-id))) 200))))
 
 (deftest list-audit-application-entries-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
@@ -70,7 +70,7 @@
         audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
     (is (= (:status (->> (model/map->DeleteAuditApplicationEntriesQueryParams
                            {:where "(createdAt BETWEEN ('2024-01-01T00:00:00', '2024-02-01T00:00:00'))"})
-                         (audit/delete-application-audit-entries ticket audit-application-id)) 204)))))
+                         (audit/delete-application-audit-entries ticket audit-application-id))) 204))))
 
 (deftest get-audit-entry-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])

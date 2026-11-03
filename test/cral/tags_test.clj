@@ -110,7 +110,7 @@
         ;; get tag
         get-tag-response (tags/get-tag ticket created-tag-id)]
     (is (= (:status get-tag-response) 200))
-    (is (= (get-in get-tag-response [:body :entry :id] created-tag-id)))
+    (is (= (get-in get-tag-response [:body :entry :id]) created-tag-id))
     ;; clean up
     (is (= (:status (tags/delete-tag ticket created-tag-id)) 204))))
 

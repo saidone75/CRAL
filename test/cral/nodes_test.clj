@@ -173,7 +173,7 @@
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
     (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
     ;; update the node content
-    (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded) 200)))
+    (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded)) 200))
     (let [;; get node content
           response (nodes/get-node-content ticket created-node-id)
           ;; download content from the node
@@ -187,7 +187,7 @@
       (is (= (:status response) 200))
       ;; check if the content is the same of the uploaded file
       (is (= (apply str (map char (:body response))) (slurp (.getPath file-to-be-uploaded))))
-      (is (= (slurp (.getPath file-to-be-uploaded))) (slurp (.getPath downloaded-file)))
+      (is (= (slurp (.getPath file-to-be-uploaded)) (slurp (.getPath downloaded-file))))
       ;;clean up
       (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))
       (io/delete-file file-to-be-uploaded)
@@ -203,7 +203,7 @@
         file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
     (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
     ;; update the node content
-    (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded) 200)))
+    (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded)) 200))
     (let [;; get node content
           response (nodes/get-node-content ticket created-node-id)]
       (is (= (:status response) 200))
@@ -236,7 +236,7 @@
                             (#(get-in % [:body :entry :id])))]
     ;; create secondary child
     (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
-                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+                         (nodes/create-secondary-child ticket source-node-id))) 200))
     (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
@@ -255,7 +255,7 @@
                             (#(get-in % [:body :entry :id])))]
     ;; create secondary child
     (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
-                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+                         (nodes/create-secondary-child ticket source-node-id))) 200))
     ;; list secondary children
     (let [response (nodes/list-secondary-children ticket source-node-id)]
       (is (= (:status response) 200))
@@ -278,7 +278,7 @@
                             (#(get-in % [:body :entry :id])))]
     ;; create secondary child
     (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
-                         (nodes/create-secondary-child ticket source-node-id)) 200)))
+                         (nodes/create-secondary-child ticket source-node-id))) 200))
     ;; check for target-node-id
     (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
     ;; delete secondary child
