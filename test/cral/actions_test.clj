@@ -81,9 +81,9 @@
                                      (actions/execute-action ticket))]
     (is (= (:status execute-action-response) 202))
     ;; check if node has been moved
-    (loop [entries []]
-      (when-not (some #(= created-node-id %) entries)
-        (Thread/sleep 1000)
-        (recur (map #(get-in % [:entry :id]) (get-in (nodes/list-node-children ticket new-parent-id) [:body :list :entries])))))
+    (let [list-node-children-response (tu/poll #(nodes/list-node-children ticket new-parent-id)
+                                               #(some (fn [entry] (= created-node-id (get-in entry [:entry :id])))
+                                                      (get-in % [:body :list :entries])))]
+      (is (= (:status list-node-children-response) 200)))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket new-parent-id {:permanent true})) 204))))

@@ -130,11 +130,9 @@
     ;; ask for rendition creation
     (versions/create-version-rendition ticket created-node-id "1.1" [(model/map->CreateVersionRenditionBody {:id "doclib"})])
     ;; list renditions for version
-    (loop [list-version-renditions-response nil]
-      (if (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-version-renditions-response [:body :list :entries])))
-        (do (Thread/sleep 1000)
-            (recur (versions/list-version-renditions ticket created-node-id "1.1")))
-        (is (= (:status list-version-renditions-response) 200))))
+    (let [list-version-renditions-response (tu/poll #(versions/list-version-renditions ticket created-node-id "1.1")
+                                                    #(tu/rendition-created? % "doclib"))]
+      (is (= (:status list-version-renditions-response) 200)))
     ; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
@@ -182,11 +180,9 @@
     (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
     ;; ask for rendition creation
     (versions/create-version-rendition ticket created-node-id "1.1" [(model/map->CreateVersionRenditionBody {:id "doclib"})])
-    (loop [list-version-renditions-response nil]
-      (if (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-version-renditions-response [:body :list :entries])))
-        (do (Thread/sleep 1000)
-            (recur (versions/list-version-renditions ticket created-node-id "1.1")))
-        (is (= (:status list-version-renditions-response) 200))))
+    (let [list-version-renditions-response (tu/poll #(versions/list-version-renditions ticket created-node-id "1.1")
+                                                    #(tu/rendition-created? % "doclib"))]
+      (is (= (:status list-version-renditions-response) 200)))
     ;; delete rendition
     (is (= (:status (versions/delete-version-rendition ticket created-node-id "1.1" "doclib")) 204))
     (is (=
@@ -209,10 +205,9 @@
     ;; ask for rendition creation
     (versions/create-version-rendition ticket created-node-id "1.1" [(model/map->CreateVersionRenditionBody {:id "doclib"})])
     ;; get version rendition info
-    (loop [get-version-rendition-info-response nil]
-      (when-not (= (get-in get-version-rendition-info-response [:body :entry :status]) "CREATED")
-        (Thread/sleep 1000)
-        (recur (versions/get-version-rendition-info ticket created-node-id "1.1" "doclib"))))
+    (let [get-version-rendition-info-response (tu/poll #(versions/get-version-rendition-info ticket created-node-id "1.1" "doclib")
+                                                       #(tu/rendition-created? % "doclib"))]
+      (is (= (:status get-version-rendition-info-response) 200)))
     (let [get-version-rendition-content-response (versions/get-version-rendition-content ticket created-node-id "1.1" "doclib")]
       (is (= (:status get-version-rendition-content-response) 200))
       (is (bytes? (:body get-version-rendition-content-response)))

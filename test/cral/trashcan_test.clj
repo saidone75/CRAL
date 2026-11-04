@@ -164,10 +164,9 @@
         _ (nodes/update-node-content ticket created-node-id (io/as-file (io/resource content-file)))
         ;; ask for rendition creation
         _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])]
-    (loop [list-renditions-response nil]
-      (when (empty? (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-renditions-response [:body :list :entries])))
-        (Thread/sleep 1000)
-        (recur (renditions/list-renditions ticket created-node-id))))
+    (let [list-renditions-response (tu/poll #(renditions/list-renditions ticket created-node-id)
+                                            #(tu/rendition-created? % "doclib"))]
+      (is (= (:status list-renditions-response) 200)))
     ;; delete node
     (nodes/delete-node ticket created-node-id)
     (let [get-deleted-node-rendition-content-response (->> (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in (trashcan/list-deleted-node-renditions ticket created-node-id) [:body :list :entries]))) [:entry :id])

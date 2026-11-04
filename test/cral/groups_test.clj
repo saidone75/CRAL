@@ -23,7 +23,8 @@
             [cral.api.core.groups :as groups]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
-            [cral.model.core :as model])
+            [cral.model.core :as model]
+            [cral.test-utils :as tu])
   (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
@@ -95,13 +96,11 @@
     (is (= (:status (->> (model/map->CreateGroupMembershipBody {:id (str "GROUP_" group-id) :member-type "GROUP"})
                          (groups/create-group-membership ticket parent-group-id))) 201))
     ;; ensure that the group membership has been created
-    (loop [list-group-membership-response (groups/list-group-memberships ticket parent-group-id)]
-      (if-not (->> (get-in list-group-membership-response [:body :list :entries])
-                   (map #(get-in % [:entry :display-name]))
-                   (some #(= group-id %)))
-        (do
-          (Thread/sleep 100)
-          (recur (groups/list-group-memberships ticket parent-group-id)))))
+    (let [list-group-membership-response (tu/poll #(groups/list-group-memberships ticket parent-group-id)
+                                                  #(some (fn [entry] (= (str "GROUP_" group-id) (get-in entry [:entry :id])))
+                                                         (get-in % [:body :list :entries]))
+                                                  {:interval-ms 100})]
+      (is (= (:status list-group-membership-response) 200)))
     ;; clean up
     (is (= (:status (groups/delete-group-membership ticket parent-group-id (str "GROUP_" group-id))) 204))
     (is (= (:status (groups/delete-group ticket (str "GROUP_" group-id))) 204))))
@@ -124,14 +123,11 @@
     (is (= (:status (->> (model/map->CreateGroupMembershipBody {:id (str "GROUP_" group-id) :member-type "GROUP"})
                          (groups/create-group-membership ticket parent-group-id))) 201))
     ;; ensure that the group membership has been created
-    (loop [list-group-membership-response (groups/list-group-memberships ticket parent-group-id)]
-      (if-not (= true
-                 (->> (get-in list-group-membership-response [:body :list :entries])
-                      (map #(get-in % [:entry :display-name]))
-                      (some #(= group-id %))))
-        (do
-          (Thread/sleep 100)
-          (recur (groups/list-group-memberships ticket parent-group-id)))))
+    (let [list-group-membership-response (tu/poll #(groups/list-group-memberships ticket parent-group-id)
+                                                  #(some (fn [entry] (= (str "GROUP_" group-id) (get-in entry [:entry :id])))
+                                                         (get-in % [:body :list :entries]))
+                                                  {:interval-ms 100})]
+      (is (= (:status list-group-membership-response) 200)))
     ;; delete group membership
     (is (= (:status (groups/delete-group-membership ticket parent-group-id (str "GROUP_" group-id))) 204))
     ;; clean up
