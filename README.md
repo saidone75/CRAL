@@ -40,13 +40,19 @@ Default configuration is stored in the `alfresco` atom defined in `cral.config`:
  :auth-path "alfresco/api/-default-/public/authentication/versions/1",
  :discovery-path "alfresco/api/discovery"}
 ```
-Update values with `config/configure` and inspect the atom:
+and can be overwritten by passing a map with the new values to `config/configure`:
 
 ```clojure
-(config/configure {:conn-timeout 10000 :socket-timeout 120000})
-(select-keys @config/alfresco [:conn-timeout :socket-timeout])
+(config/configure {:scheme "https" :port 8983})
 =>
-{:conn-timeout 10000, :socket-timeout 120000}
+{:scheme "https",
+ :host "localhost",
+ :port 8983
+ :conn-timeout 5000
+ :socket-timeout 60000
+ :core-path "alfresco/api/-default-/public/alfresco/versions/1",
+ :search-path "alfresco/api/-default-/public/search/versions/1",
+ :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
 ```
 
 Timeouts are in milliseconds. `:conn-timeout` limits connection establishment;
