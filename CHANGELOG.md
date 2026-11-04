@@ -20,6 +20,9 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Fixed
 
+- Preserve HTTP errors with empty or non-JSON bodies, fall back to Alfresco's
+  `briefSummary` when `errorKey` is missing, and close error streams reliably.
+- Preserve successful text responses instead of failing JSON decoding.
 - Fix ineffective integration-test assertions and outdated README examples.
 - Send version content query parameters as HTTP query parameters.
 - Pass response options correctly when validating or deleting authentication tickets.

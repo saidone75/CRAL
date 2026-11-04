@@ -86,13 +86,35 @@
     ;; only apply to maps
     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m)))
 
+(defn- decode-body
+  "Decodes JSON strings, preserving empty or non-JSON bodies and binary responses."
+  [body]
+  (if (and (string? body) (not (str/blank? body)))
+    (try
+      (kebab-keywordize-keys (json/read-str body))
+      (catch Exception _ body))
+    body))
+
+(defn- error-body
+  "Consumes and closes error streams without masking the original HTTP error."
+  [body]
+  (try
+    (decode-body
+      (if (instance? InputStream body)
+        (with-open [reader (io/reader body)] (slurp reader))
+        body))
+    (catch Exception _ nil)))
+
+(defn- nonblank-message
+  [message]
+  (when (and (string? message) (not (str/blank? message)))
+    message))
+
 (defn ok-response
   "Builds a successful response from `r` and keep the headers if `return-headers` is true."
   [r return-headers]
   (let [response {:status (:status r)
-                  :body   (if (and (string? (:body r)) (not (empty? (:body r))))
-                            (kebab-keywordize-keys (json/read-str (:body r)))
-                            (:body r))}]
+                  :body   (decode-body (:body r))}]
     (if (true? return-headers)
       (assoc response :headers (:headers r))
       response)))
@@ -101,20 +123,16 @@
   "Builds a response from a client exception `e`."
   [^Exception e]
   (t/trace! e)
-  (let [ex-data (ex-data e)]
-    (if-not (nil? ex-data)
-      (let [body (:body ex-data)
-            body (if (instance? InputStream body)
-                   (with-open [reader (io/reader body)] (slurp reader))
-                   body)
-            message (get-in (kebab-keywordize-keys (json/read-str body)) [:error :error-key])]
-        (t/log! :debug message)
-        {:status  (:status ex-data)
-         :message message})
-      (do
-        (t/log! :debug (.getMessage e))
-        {:status  500
-         :message (.getMessage e)}))))
+  (let [data (ex-data e)
+        body (error-body (:body data))
+        http-error? (integer? (:status data))
+        message (or (when http-error?
+                      (or (nonblank-message (get-in body [:error :error-key]))
+                          (nonblank-message (get-in body [:error :brief-summary]))))
+                    (.getMessage e))]
+    (t/log! :debug message)
+    {:status  (if http-error? (:status data) 500)
+     :message message}))
 
 (defn- add-auth
   "Adds authorization header to `req` using an Alfresco `ticket`."
