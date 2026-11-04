@@ -44,13 +44,15 @@ Verifiche locali iniziali, prima delle correzioni (senza Alfresco):
   Rimossa la dichiarazione di copertura non misurata. README e CHANGELOG aggiornati
   con descrizioni sintetiche; esempi remoti da verificare contro Alfresco.
 
-- [ ] **4. Centralizzare il polling con una scadenza.** Sostituire i cicli senza
+- [x] **4. Centralizzare il polling con una scadenza.** Sostituiti i 15 cicli senza
   limite in `actions_test`, `downloads_test`, `groups_test`, `renditions_test`,
-  `shared_links_test`, `trashcan_test` e `versions_test` con un helper in
-  `test/cral/test_utils.clj`: timeout, intervallo, ultimo risultato nel messaggio
-  di errore e arresto sugli stati terminali di fallimento.
-  Nei test delle rendition condivise attendere effettivamente `CREATED` e non
-  uscire senza asserzioni quando la lista è popolata ma il lavoro è ancora in corso.
+  `shared_links_test`, `trashcan_test` e `versions_test` con `poll` in
+  `test/cral/test_utils.clj`: timeout predefinito di 60 secondi, intervallo
+  configurabile, ultimo risultato nel messaggio di errore e arresto sugli errori
+  HTTP e sugli stati terminali di fallimento dei download. I download attendono
+  `DONE` anche passando per `IN_PROGRESS`; le rendition attendono `doclib` in
+  stato `CREATED`, senza saltare le asserzioni nei test dei link condivisi.
+  Aggiunti test locali in `polling_test.clj`; integrazione da rieseguire.
 
 - [ ] **5. Garantire cleanup e ripristino dello stato.** Usare fixture o `try/finally`
   per nodi, utenti, siti, gruppi, ticket e file temporanei; ripristinare anche lo

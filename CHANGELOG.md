@@ -20,6 +20,8 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Fixed
 
+- Bound integration-test polling with a configurable timeout and report the last
+  response on failure. Wait for completed downloads and shared-link renditions.
 - Preserve HTTP errors with empty or non-JSON bodies, fall back to Alfresco's
   `briefSummary` when `errorKey` is missing, and close error streams reliably.
 - Preserve successful text responses instead of failing JSON decoding.

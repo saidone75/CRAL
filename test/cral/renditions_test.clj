@@ -46,12 +46,9 @@
         create-rendition-response (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])]
     (is (= (:status create-rendition-response) 202))
     ;; wait until rendition is status is "CREATED"
-    (loop [get-rendition-info-response nil]
-      (if (= (get-in get-rendition-info-response [:body :entry :status]) "CREATED")
-        (is (= (:status get-rendition-info-response) 200))
-        (do
-          (Thread/sleep 1000)
-          (recur (renditions/get-rendition-info ticket created-node-id "doclib")))))
+    (let [get-rendition-info-response (tu/poll #(renditions/get-rendition-info ticket created-node-id "doclib")
+                                               #(tu/rendition-created? % "doclib"))]
+      (is (= (:status get-rendition-info-response) 200)))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
 
@@ -97,12 +94,9 @@
         ;; ask for rendition creation
         _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])]
     ;; wait until rendition is status is "CREATED"
-    (loop [get-rendition-info-response nil]
-      (if (= (get-in get-rendition-info-response [:body :entry :status]) "CREATED")
-        (is (= (:status get-rendition-info-response) 200))
-        (do
-          (Thread/sleep 1000)
-          (recur (renditions/get-rendition-info ticket created-node-id "doclib")))))
+    (let [get-rendition-info-response (tu/poll #(renditions/get-rendition-info ticket created-node-id "doclib")
+                                               #(tu/rendition-created? % "doclib"))]
+      (is (= (:status get-rendition-info-response) 200)))
     ;; delete rendition
     (is (= (:status (renditions/delete-rendition ticket created-node-id "doclib")) 204))
     (is (= (get-in (renditions/get-rendition-info ticket created-node-id "doclib") [:body :entry :status]) "NOT_CREATED"))
@@ -120,12 +114,9 @@
         ;; ask for rendition creation
         _ (renditions/create-rendition ticket created-node-id [(model/map->CreateRenditionBody {:id "doclib"})])]
     ;; wait until rendition is status is "CREATED"
-    (loop [get-rendition-info-response nil]
-      (if (= (get-in get-rendition-info-response [:body :entry :status]) "CREATED")
-        (is (= (:status get-rendition-info-response) 200))
-        (do
-          (Thread/sleep 1000)
-          (recur (renditions/get-rendition-info ticket created-node-id "doclib")))))
+    (let [get-rendition-info-response (tu/poll #(renditions/get-rendition-info ticket created-node-id "doclib")
+                                               #(tu/rendition-created? % "doclib"))]
+      (is (= (:status get-rendition-info-response) 200)))
     (let [get-rendition-content-response (renditions/get-rendition-content ticket created-node-id "doclib")]
       (is (= (:status get-rendition-content-response) 200))
       (is (bytes? (:body get-rendition-content-response)))

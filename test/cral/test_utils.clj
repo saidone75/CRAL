@@ -27,6 +27,46 @@
   [ticket]
   (get-in (nodes/get-node ticket "-root-" (model/map->GetNodeQueryParams {:relative-path "/Guest Home"})) [:body :entry :id]))
 
+(defn poll
+  "Calls `f` until `done?` accepts its response, or throws with the last result.
+  HTTP errors and responses accepted by `failed?` stop polling immediately.
+  Timeout and interval are in milliseconds; each call uses its own HTTP timeout."
+  ([f done?]
+   (poll f done? {}))
+  ([f done? {:keys [timeout-ms interval-ms failed?]
+             :or   {timeout-ms 60000 interval-ms 1000 failed? (constantly false)}}]
+   {:pre [(not (neg? timeout-ms)) (pos? interval-ms)]}
+   (let [deadline (+ (System/nanoTime) (* timeout-ms 1000000))
+         timeout (fn [result]
+                   (throw (ex-info (format "Polling timed out after %s ms; last result: %s" timeout-ms (pr-str result))
+                                   {:timeout-ms timeout-ms :last-result result})))]
+     (loop [result (f)]
+       (cond
+         (or (and (integer? (:status result)) (not (<= 200 (:status result) 299)))
+             (failed? result))
+         (throw (ex-info (format "Polling failed; last result: %s" (pr-str result))
+                         {:last-result result}))
+
+         (done? result) result
+
+         (>= (System/nanoTime) deadline) (timeout result)
+
+         :else
+         (do
+           (Thread/sleep (long (min interval-ms (max 1 (quot (- deadline (System/nanoTime)) 1000000)))))
+           (if (>= (System/nanoTime) deadline)
+             (timeout result)
+             (recur (f)))))))))
+
+(defn rendition-created?
+  "Checks whether the requested rendition has reached CREATED in an entry or list response."
+  [response rendition-id]
+  (some #(and (= (get-in % [:entry :id]) rendition-id)
+              (= (get-in % [:entry :status]) "CREATED"))
+        (if (get-in response [:body :entry])
+          [(:body response)]
+          (get-in response [:body :list :entries]))))
+
 (defn create-test-user
   [^String ticket ^String user]
   (->> (model/map->CreatePersonBody {:id         user

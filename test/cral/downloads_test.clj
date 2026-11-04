@@ -50,13 +50,12 @@
           (let [create-response (downloads/create-download ticket (model/->CreateDownloadBody [node-id1 node-id2]))]
             (is (= (:status create-response) 202))
             (let [get-response
-                  ;; poll download while status is "PENDING"
-                  (loop [get-response (downloads/get-download ticket (get-in create-response [:body :entry :id]))]
-                    (if (= (get-in get-response [:body :entry :status]) "PENDING")
-                      (do
-                        (Thread/sleep 100)
-                        (recur (downloads/get-download ticket (get-in get-response [:body :entry :id]))))
-                      get-response))]
+                  ;; wait until the download is complete
+                  (tu/poll #(downloads/get-download ticket (get-in create-response [:body :entry :id]))
+                           #(= (get-in % [:body :entry :status]) "DONE")
+                           {:interval-ms 100
+                            :failed? #(contains? #{"CANCELLED" "MAX_CONTENT_SIZE_EXCEEDED"}
+                                                 (get-in % [:body :entry :status]))})]
               (is (= (:status get-response) 200))
               get-response))]
       ;; more check for get download response

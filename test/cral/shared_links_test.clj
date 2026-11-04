@@ -64,12 +64,9 @@
                                     (shared-links/create-shared-link ticket)
                                     (#(get-in % [:body :entry :id])))
         ;; list shared links
-        list-shared-link-response (loop [list-shared-link-response (shared-links/list-shared-links ticket)]
-                                    (if (some #(= created-node-id %) (map #(get-in % [:entry :node-id]) (get-in list-shared-link-response [:body :list :entries])))
-                                      list-shared-link-response
-                                      (do
-                                        (Thread/sleep 1000)
-                                        (recur (shared-links/list-shared-links ticket)))))]
+        list-shared-link-response (tu/poll #(shared-links/list-shared-links ticket)
+                                           #(some (fn [entry] (= created-node-id (get-in entry [:entry :node-id])))
+                                                  (get-in % [:body :list :entries])))]
     (is (= (:status list-shared-link-response) 200))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
@@ -149,12 +146,10 @@
         created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
                                     (shared-links/create-shared-link ticket)
                                     (#(get-in % [:body :entry :id])))]
-    (loop [list-shared-link-renditions-response nil]
-      (if (empty? (get-in list-shared-link-renditions-response [:body :list :entries]))
-        (do
-          (Thread/sleep 1000)
-          (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
-        (is (some true? (map #(= (get-in % [:entry :id]) "doclib") (get-in list-shared-link-renditions-response [:body :list :entries]))))))
+    (let [list-shared-link-renditions-response (tu/poll #(shared-links/list-shared-link-renditions created-shared-link-id)
+                                                        #(tu/rendition-created? % "doclib"))]
+      (is (= (:status list-shared-link-renditions-response) 200))
+      (is (tu/rendition-created? list-shared-link-renditions-response "doclib")))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
@@ -173,15 +168,12 @@
         created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
                                     (shared-links/create-shared-link ticket)
                                     (#(get-in % [:body :entry :id])))]
-    (loop [list-shared-link-renditions-response nil]
-      (if (empty? (get-in list-shared-link-renditions-response [:body :list :entries]))
-        (do
-          (Thread/sleep 1000)
-          (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
-        ;; when we have at least one rendition with status CREATED
-        (when (some true? (map #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries])))
-          (let [created-rendition-id (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries]))) [:entry :id])]
-            (is (= (:status (shared-links/get-shared-link-rendition-info created-shared-link-id created-rendition-id)) 200))))))
+    (let [list-shared-link-renditions-response (tu/poll #(shared-links/list-shared-link-renditions created-shared-link-id)
+                                                        #(tu/rendition-created? % "doclib"))
+          get-shared-link-rendition-info-response (shared-links/get-shared-link-rendition-info created-shared-link-id "doclib")]
+      (is (= (:status list-shared-link-renditions-response) 200))
+      (is (= (:status get-shared-link-rendition-info-response) 200))
+      (is (tu/rendition-created? get-shared-link-rendition-info-response "doclib")))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
@@ -200,17 +192,13 @@
         created-shared-link-id (->> (model/map->CreateSharedLinkBody {:node-id created-node-id})
                                     (shared-links/create-shared-link ticket)
                                     (#(get-in % [:body :entry :id])))]
-    (loop [list-shared-link-renditions-response nil]
-      (if (empty? (get-in list-shared-link-renditions-response [:body :list :entries]))
-        (do
-          (Thread/sleep 1000)
-          (recur (shared-links/list-shared-link-renditions created-shared-link-id)))
-        ;; when we have at least one rendition with status CREATED
-        (when-let [created-rendition-id (get-in (first (filter #(= (get-in % [:entry :status]) "CREATED") (get-in list-shared-link-renditions-response [:body :list :entries]))) [:entry :id])]
-          (let [get-shared-link-rendition-content-response (shared-links/get-shared-link-rendition-content created-shared-link-id created-rendition-id)]
-            (is (= (:status get-shared-link-rendition-content-response) 200))
-            (is (bytes? (:body get-shared-link-rendition-content-response)))
-            (is (> (alength (:body get-shared-link-rendition-content-response)) 0))))))
+    (let [list-shared-link-renditions-response (tu/poll #(shared-links/list-shared-link-renditions created-shared-link-id)
+                                                        #(tu/rendition-created? % "doclib"))
+          get-shared-link-rendition-content-response (shared-links/get-shared-link-rendition-content created-shared-link-id "doclib")]
+      (is (= (:status list-shared-link-renditions-response) 200))
+      (is (= (:status get-shared-link-rendition-content-response) 200))
+      (is (bytes? (:body get-shared-link-rendition-content-response)))
+      (is (> (alength (:body get-shared-link-rendition-content-response)) 0)))
     ;; clean up
     (is (= (:status (shared-links/delete-shared-link ticket created-shared-link-id)) 204))
     (is (= (:status (nodes/delete-node ticket created-node-id {:permanent true})) 204))))
