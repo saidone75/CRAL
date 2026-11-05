@@ -31,6 +31,7 @@
   (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (def ^:const content-file "Elkjaer_Briegel.jpg")
 

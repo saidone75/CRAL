@@ -20,6 +20,7 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Fixed
 
+- Clean up integration-test resources after failures and restore audit/configuration state.
 - Bound integration-test polling with a configurable timeout and report the last
   response on failure. Wait for completed downloads and shared-link renditions.
 - Preserve HTTP errors with empty or non-JSON bodies, fall back to Alfresco's

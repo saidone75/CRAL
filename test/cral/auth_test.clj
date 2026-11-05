@@ -24,6 +24,7 @@
             [cral.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (deftest create-ticket-test
   ;; create ticket

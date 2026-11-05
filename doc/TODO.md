@@ -1,6 +1,6 @@
 # TODO
 
-Aggiornato al 2026-11-03 dopo il completamento del primo blocco operativo.
+Ricontrollato al 2026-11-05 sul commit `3c13836`.
 I percorsi riportati sono relativi alla radice del repository. Priorità basate su impatto,
 certezza del problema e costo della correzione, non sul numero di funzionalità.
 
@@ -14,7 +14,10 @@ Clojure CLI/tools.build, deploy Clojars, timeout HTTP e streaming sono già
 implementati. Non vanno rifatti. La suite di integrazione non è stata rieseguita
 per questa revisione; il precedente esito positivo non dimostra la copertura
 completa. Dopo le correzioni: 4 test unitari passati, namespace di test caricati
-e costruttori degli esempi verificati; integrazione da rieseguire.
+e costruttori degli esempi verificati; integrazione da rieseguire. Nel ricontrollo
+del 2026-11-05 passano ancora i quattro test di `cral.utils-test`; il runner non
+segnala errore se si seleziona un namespace inesistente, quindi il solo exit code
+non prova che una suite sia stata eseguita.
 
 Verifiche locali iniziali, prima delle correzioni (senza Alfresco):
 
@@ -34,8 +37,9 @@ Verifiche locali iniziali, prima delle correzioni (senza Alfresco):
   HTML/testo, JSON malformato e stream di errore senza nascondere l’errore HTTP
   originale. Il messaggio usa `errorKey`, poi `briefSummary`, poi il messaggio
   dell’eccezione. Gli stream di errore vengono chiusi anche in caso di fallimento;
-  byte array e stream di successo restano invariati. Verificati i casi con test
-  locali, anche attraverso `call-rest`. Gli errori senza status HTTP mantengono
+  byte array e stream di successo restano invariati. I test di regressione citati
+  in precedenza non sono presenti nel repository: aggiungerli alla voce 7.
+  Gli errori senza status HTTP mantengono
   il fallback a 500; un nuovo schema degli errori di rete resta una decisione
   di compatibilità separata.
 
@@ -52,13 +56,19 @@ Verifiche locali iniziali, prima delle correzioni (senza Alfresco):
   HTTP e sugli stati terminali di fallimento dei download. I download attendono
   `DONE` anche passando per `IN_PROGRESS`; le rendition attendono `doclib` in
   stato `CREATED`, senza saltare le asserzioni nei test dei link condivisi.
-  Aggiunti test locali in `polling_test.clj`; integrazione da rieseguire.
+  `polling_test.clj` non è presente: restano da aggiungere test locali per
+  successo, timeout, errori HTTP e stati terminali. Il limite di polling non
+  interrompe una chiamata HTTP già in corso. Integrazione da rieseguire.
 
-- [ ] **5. Garantire cleanup e ripristino dello stato.** Usare fixture o `try/finally`
-  per nodi, utenti, siti, gruppi, ticket e file temporanei; ripristinare anche lo
-  stato precedente delle applicazioni audit. Il cleanup attuale è spesso in fondo
-  al test e viene saltato se il setup o una chiamata sollevano un'eccezione.
-  Le normali asserzioni `is` fallite non interrompono il test: il problema riguarda eccezioni, attese indefinite e setup parziali.
+- [ ] **5. Garantire cleanup e ripristino dello stato — implementato, integrazione da verificare.**
+  Fixture per test con cleanup in ordine inverso anche dopo eccezioni e setup
+  parziali; errori di pulizia segnalati senza interrompere le altre operazioni.
+  Coperti nodi (anche nel cestino), copie, siti, gruppi, tag, categorie, link,
+  download, ticket e file temporanei. Audit e configurazione vengono ripristinati.
+  Gli account hanno ID dedicati e vengono disabilitati solo se creati dal test:
+  manca un wrapper per eliminarli in `src/cral/api`, quindi restano nel repository.
+  Non aggiunti nuovi test. Caricamento dei namespace e test unitari esistenti
+  verificati; Alfresco non raggiungibile per la verifica di integrazione.
 
 - [ ] **6. Eliminare la dipendenza da dati casuali o preesistenti.** Rivedere
   `rand-nth` e selezioni del primo elemento in preferenze, categorie, audit,
@@ -72,9 +82,17 @@ Verifiche locali iniziali, prima delle correzioni (senza Alfresco):
   `ok-response`, `ex-response`, autenticazione, query param, header e wrapper
   rappresentativi con metodi HTTP sostituiti e, dove serve, un server locale.
   Verificare timeout globali/per chiamata, byte array/stream, chiusura degli stream
-  di errore e download binari identici all'originale. `utils_test.clj` copre ora
-  conversione delle chiavi e gestione delle risposte; resta da estendere la
-  verifica ad autenticazione, opzioni e wrapper rappresentativi.
+  di errore e download binari identici all'originale. `utils_test.clj` contiene
+  soltanto quattro test di conversione delle chiavi: mancano anche le regressioni
+  per la gestione delle risposte già implementata alla voce 2.
+
+- [ ] **25. Evitare segreti nei log trace.** `call-rest` registra richieste e
+  risposte integrali; login e creazione utenti possono includere password e
+  ticket. `ex-response` registra anche l’eccezione. Limitare i log a metadati
+  sicuri e aggiungere regressioni con trace attivo. Il livello predefinito è
+  `:info`: il problema si manifesta abilitando trace. Voce ripristinata perché
+  il comportamento è ancora presente; numero mantenuto separato per non
+  rinumerare le attività esistenti.
 
 ## P2 — Consolidamento di sviluppo e rilascio
 
@@ -86,9 +104,7 @@ Le correzioni locali e gli esempi possono procedere indipendentemente.
   scoprire tutti i test locali senza mantenere una lista manuale in CI.
 
 - [ ] **9. Ripristinare la configurazione nelle fixture e chiarirne il contratto.**
-  `test/cral/fixtures.clj` modifica `cral.config/alfresco` e le radici di
-  `user`/`password` senza ripristinarle. Salvare e ripristinare lo stato con
-  `finally`. Il README ora distingue la chiamata a `configure` dalla lettura
+  `test/cral/fixtures.clj` ora ripristina atom e credenziali con `finally`. Il README ora distingue la chiamata a `configure` dalla lettura
   dell’atom. Restano da validare timeout e path con test mirati. Un client multi-repository è invece un’estensione opzionale (P3).
 
 - [ ] **10. Uniformare le opzioni delle funzioni pubbliche.** Per esempio
@@ -187,8 +203,8 @@ non trattare queste voci come autorizzazione a introdurre breaking change.
 ## Ordine operativo suggerito
 
 1. **Completato:** correggere asserzioni e documentazione palesemente errate.
-2. Aggiungere regressioni per errori HTTP, poi correggere il trasporto.
-3. Limitare il polling, assicurare cleanup e rendere deterministici i dati dei test.
+2. Trasporto corretto; aggiungere le regressioni HTTP mancanti e correggere i log trace.
+3. Polling limitato; aggiungere i test mancanti, assicurare cleanup e rendere deterministici i dati.
 4. Separare le suite e automatizzare l’integrazione su un ambiente dedicato.
 5. Affrontare le verifiche di serializzazione e ricerca con test mirati;
    scegliere le estensioni P3 in base alle esigenze effettive.

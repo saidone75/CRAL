@@ -24,6 +24,7 @@
             [cral.model.core]))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (deftest get-probes
   (is (= (:status (probes/probes "-ready-")) 200))

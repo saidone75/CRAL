@@ -34,6 +34,7 @@
            (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (deftest get-node-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
@@ -170,7 +171,7 @@
                              (nodes/create-node ticket (tu/get-guest-home ticket))
                              (#(get-in % [:body :entry :id])))
         ;; create a temp file
-        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
+        file-to-be-uploaded (fixtures/temp-file "tmp." ".txt")]
     (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
     ;; update the node content
     (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded)) 200))
@@ -180,7 +181,7 @@
           downloaded-file (->> response
                                (#(get-in % [:headers "content-disposition"]))
                                (#(second (re-matches #".*\"([^\"]+)\".*" (second (str/split % #";")))))
-                               (#(File. (str (System/getProperty "java.io.tmpdir") "/" %)))
+                               (#(fixtures/temp-file "cral-download." ".txt"))
                                (#(with-open [w (clojure.java.io/output-stream %)]
                                    (.write w (bytes (:body response)))
                                    %)))]
@@ -200,7 +201,7 @@
                              (nodes/create-node ticket (tu/get-guest-home ticket))
                              (#(get-in % [:body :entry :id])))
         ;; create a temp file
-        file-to-be-uploaded (File/createTempFile "tmp." ".txt")]
+        file-to-be-uploaded (fixtures/temp-file "tmp." ".txt")]
     (spit file-to-be-uploaded (.toString (UUID/randomUUID)))
     ;; update the node content
     (is (= (:status (nodes/update-node-content ticket created-node-id file-to-be-uploaded)) 200))
