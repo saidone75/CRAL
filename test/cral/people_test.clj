@@ -28,7 +28,11 @@
   (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
-(def saidone "saidone")
+(def saidone (str "cral-test-" (UUID/randomUUID)))
+(use-fixtures :each fixtures/resources
+  (fn [f]
+    (with-redefs [saidone (str "cral-test-" (UUID/randomUUID))]
+      (f))))
 
 (deftest create-person-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])

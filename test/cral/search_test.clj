@@ -26,6 +26,7 @@
             [cral.model.search :as search-model]))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (deftest search-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])

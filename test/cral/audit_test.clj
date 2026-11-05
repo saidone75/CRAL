@@ -30,6 +30,7 @@
   (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 (def alfresco-access "alfresco-access")
 
 (deftest list-audit-applications1-test
@@ -47,16 +48,21 @@
 (deftest update-audit-application-info-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
         ;; get an audit application id
-        audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])]
-    (is (= (get-in (audit/get-audit-application-info ticket audit-application-id) [:body :entry :is-enabled]) true))
-    ;; disable audit application
-    (is (= (:status (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled false})
-                         (audit/update-audit-application-info ticket audit-application-id))) 200))
-    ;; check if application has been disabled
-    (is (= (get-in (audit/get-audit-application-info ticket audit-application-id) [:body :entry :is-enabled]) false))
-    ;; re-enable audit application
-    (is (= (:status (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled true})
-                         (audit/update-audit-application-info ticket audit-application-id))) 200))))
+        audit-application-id (get-in (rand-nth (get-in (audit/list-audit-applications ticket) [:body :list :entries])) [:entry :id])
+        ;; get initial state
+        get-audit-application-info-response (audit/get-audit-application-info ticket audit-application-id)
+        initial-enabled (get-in get-audit-application-info-response [:body :entry :is-enabled])]
+    (is (= (:status get-audit-application-info-response) 200))
+    (when (and (= (:status get-audit-application-info-response) 200) (boolean? initial-enabled))
+      ;; restore initial state after the test
+      (fixtures/on-cleanup #(->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled initial-enabled})
+                                 (audit/update-audit-application-info ticket audit-application-id)))
+      ;; update audit application
+      (let [update-audit-application-info-response (->> (model/map->UpdateAuditApplicationInfoBody {:is-enabled (not initial-enabled)})
+                                                        (audit/update-audit-application-info ticket audit-application-id))]
+        (is (= (:status update-audit-application-info-response) 200))
+        ;; check if state has changed
+        (is (= (get-in (audit/get-audit-application-info ticket audit-application-id) [:body :entry :is-enabled]) (not initial-enabled)))))))
 
 (deftest list-audit-application-entries-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])

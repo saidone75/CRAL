@@ -156,6 +156,8 @@ clojure -T:build clean                  # delete target/
 The full test suite uses the Alfresco environment configured in `resources/config.edn`.
 Start the Docker environment with `./alfresco.sh start` (requires Docker Compose),
 and wait for Alfresco to be ready before running integration tests.
+Test fixtures release resources after each test and restore audit/configuration state.
+Temporary users are disabled; their accounts remain in the repository.
 CI runs the unit tests and builds the library JAR. Test sources and fixtures are excluded from the JAR.
 For editor REPLs, enable the `:dev` alias to include `test` and `test-resources`.
 

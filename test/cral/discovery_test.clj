@@ -25,6 +25,7 @@
             [cral.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (deftest discovery-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])

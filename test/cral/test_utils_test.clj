@@ -26,6 +26,7 @@
             [cral.test-utils :as test-utils]))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (deftest get-guest-home
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])

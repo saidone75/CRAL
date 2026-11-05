@@ -33,6 +33,7 @@
            (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (def ^:const content-file "Elkjaer_Briegel.jpg")
 
@@ -87,7 +88,7 @@
         created-node-id (->> (model/map->CreateNodeBody {:name (.toString (UUID/randomUUID)) :node-type cm/type-content})
                              (nodes/create-node ticket (tu/get-guest-home ticket))
                              (#(get-in % [:body :entry :id])))
-        file-to-be-uploaded (File/createTempFile "tmp." ".txt")
+        file-to-be-uploaded (fixtures/temp-file "tmp." ".txt")
         file-content (.toString (UUID/randomUUID))
         _ (spit file-to-be-uploaded file-content)
         ;; update node content

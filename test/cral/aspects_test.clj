@@ -27,6 +27,7 @@
             [cral.config :as c]))
 
 (use-fixtures :once fixtures/setup)
+(use-fixtures :each fixtures/resources)
 
 (deftest list-aspects-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
