@@ -1,4 +1,3 @@
-version: '2'
 services:
   alfresco:
     mem_limit: 1500m
