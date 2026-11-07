@@ -19,10 +19,15 @@
 
 (ns cral.preferences-test
   (:require [clojure.test :refer :all]
+            [clojure.string :as str]
             [cral.api.auth :as auth]
             [cral.api.core.preferences :as preferences]
+            [cral.api.core.favorites :as favorites]
+            [cral.api.core.nodes :as nodes]
+            [cral.test-utils :as tu]
             [cral.config :as c]
-            [cral.fixtures :as fixtures]))
+            [cral.fixtures :as fixtures])
+  (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
 (use-fixtures :each fixtures/resources)
@@ -35,7 +40,14 @@
 
 (deftest get-preference-test
   (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
-        ;; list preferences
-        preferences (get-in (preferences/list-preferences ticket "-me-") [:body :list :entries])]
-    ;; get random preference
-    (is (= (:status (preferences/get-preference ticket "-me-" (get-in (rand-nth preferences) [:entry :id]))) 200))))
+        node (nodes/create-node ticket (tu/get-guest-home ticket) {:name (str (UUID/randomUUID)) :node-type "cm:content"})
+        node-id (get-in node [:body :entry :id])
+        preference-name "org.alfresco.share.documents.favourites"]
+    (is (= 201 (:status node)))
+    (when (= 201 (:status node))
+      (fixtures/on-cleanup #(favorites/delete-favorite ticket "-me-" node-id))
+      (is (= 201 (:status (favorites/create-favorite ticket "-me-" [{:target {:file {:guid node-id}}}]))))
+      (let [response (preferences/get-preference ticket "-me-" preference-name)]
+        (is (= 200 (:status response)))
+        (is (= preference-name (get-in response [:body :entry :id])))
+        (is (str/includes? (str (get-in response [:body :entry :value])) node-id))))))
