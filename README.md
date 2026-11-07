@@ -162,8 +162,8 @@ Temporary users are disabled; their accounts remain in the repository.
 Run the full suite in an isolated Docker environment:
 
 ```sh
-./integration-test.sh                 # Bash (Linux/macOS)
-integration-test.bat                  # Windows cmd
+./integration-tests.sh                 # Bash (Linux/macOS)
+integration-tests.bat                  # Windows cmd
 ```
 
 Requires Docker with Linux containers, Compose **2.24.4+** and at least 8 GB of
