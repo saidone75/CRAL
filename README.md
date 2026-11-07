@@ -172,7 +172,8 @@ in a separate container. Containers and dedicated volumes are removed afterward;
 logs remain in `integration-results/<project>/`. Failures return a nonzero exit code.
 Override `STARTUP_TIMEOUT` (900s) and `TEST_TIMEOUT` (1800s) as needed.
 
-CI runs the unit tests and builds the library JAR. Test sources and fixtures are excluded from the JAR.
+CI runs unit tests and builds the JAR. Integration tests run on pushes to `main`
+or manually, with logs retained for 7 days.
 For editor REPLs, enable the `:dev` alias to include `test` and `test-resources`.
 
 To preview documentation locally, run `./cljdoc-preview.sh` (requires Docker).
