@@ -3,6 +3,9 @@
 
 [![Clojars Version](https://img.shields.io/clojars/v/org.saidone/cral)](https://clojars.org/org.saidone/cral)
 [![cljdoc badge](https://cljdoc.org/badge/org.saidone/cral)](https://cljdoc.org/d/org.saidone/cral)
+[![CI](https://github.com/saidone75/CRAL/actions/workflows/clojure.yml/badge.svg?branch=main&event=push)](https://github.com/saidone75/CRAL/actions/workflows/clojure.yml)
+[![Integration tests](https://github.com/saidone75/CRAL/actions/workflows/integration.yml/badge.svg?branch=main&event=push)](https://github.com/saidone75/CRAL/actions/workflows/integration.yml)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 
 CRAL is a Clojure library for consuming Alfresco Content Services public REST API in an idiomatic way.
 ## Outline
