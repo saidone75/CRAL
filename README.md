@@ -158,6 +158,20 @@ Start the Docker environment with `./alfresco.sh start` (requires Docker Compose
 and wait for Alfresco to be ready before running integration tests.
 Test fixtures release resources after each test and restore audit/configuration state.
 Temporary users are disabled; their accounts remain in the repository.
+
+Run the full suite in an isolated Docker environment:
+
+```sh
+./integration-test.sh                 # Bash (Linux/macOS)
+integration-test.bat                  # Windows cmd
+```
+
+Requires Docker with Linux containers, Compose **2.24.4+** and at least 8 GB of
+memory. Scripts start Alfresco, Solr and ATS, then build the JAR and run all tests
+in a separate container. Containers and dedicated volumes are removed afterward;
+logs remain in `integration-results/<project>/`. Failures return a nonzero exit code.
+Override `STARTUP_TIMEOUT` (900s) and `TEST_TIMEOUT` (1800s) as needed.
+
 CI runs the unit tests and builds the library JAR. Test sources and fixtures are excluded from the JAR.
 For editor REPLs, enable the `:dev` alias to include `test` and `test-resources`.
 

@@ -1,0 +1,49 @@
+# Override for docker/docker-compose.yml. Requires Docker Compose >= 2.24.4.
+services:
+  alfresco:
+    ports: !reset []
+    environment:
+      # Use ATS in local AIO mode; this stack has no transform router/SFS.
+      JAVA_OPTS: >-
+        -Ddb.driver=org.postgresql.Driver
+        -Ddb.username=alfresco -Ddb.password=alfresco
+        -Ddb.url=jdbc:postgresql://postgres:5432/alfresco
+        -Dsolr.host=solr6 -Dsolr.port=8983
+        -Dsolr.secureComms=secret -Dsolr.sharedSecret=secret
+        -Dsolr.base.url=/solr -Dindex.subsystem.name=solr6
+        -Dmessaging.broker.url=tcp://activemq:61616
+        -Ddeployment.method=DOCKER_COMPOSE
+        -Dtransform.service.enabled=false
+        -DlocalTransform.core-aio.url=http://transform-core-aio:8090/
+        -Dcsrf.filter.enabled=false
+        -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=80
+  share:
+    profiles: [ui]
+    ports: !reset []
+  postgres:
+    ports: !reset []
+  solr6:
+    ports: !reset []
+  activemq:
+    ports: !reset []
+  integration:
+    build:
+      context: ./integration
+    init: true
+    profiles: [test]
+    environment:
+      STARTUP_TIMEOUT: ${STARTUP_TIMEOUT:-900}
+      TEST_TIMEOUT: ${TEST_TIMEOUT:-1800}
+    volumes:
+      - ../:/source:ro
+    command: [bash, /source/docker/integration/run.sh]
+volumes:
+  cral-acs-volume:
+    external: false
+    name: ${COMPOSE_PROJECT_NAME}-acs
+  cral-db-volume:
+    external: false
+    name: ${COMPOSE_PROJECT_NAME}-db
+  cral-ass-volume:
+    external: false
+    name: ${COMPOSE_PROJECT_NAME}-solr
