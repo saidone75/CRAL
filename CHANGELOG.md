@@ -10,16 +10,19 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Added
 
+- Docker integration-test scripts for Bash and Windows, with isolated volumes,
+  readiness checks, timeouts, logs and automatic cleanup.
 - Configurable connection and read timeouts in milliseconds, with per-call
   overrides through `:conn-timeout` and `:socket-timeout` options. Defaults are
   5 seconds for connections and 60 seconds for reads.
 - Optional streaming downloads with `{:as :stream}` for node, version, rendition,
   shared-link and trashcan content. Byte-array downloads remain the default.
-- Interactive Bash script for Clojars deployment, with username and hidden token
-  prompts.
+- Interactive Bash script for Clojars deployment.
 
 ### Fixed
 
+- Make the preference test deterministic and fix node-download and secondary-child assertions.
+- Remove the obsolete Docker Compose version field.
 - Clean up integration-test resources after failures and restore audit/configuration state.
 - Bound integration-test polling with a configurable timeout and report the last
   response on failure. Wait for completed downloads and shared-link renditions.
