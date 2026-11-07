@@ -232,7 +232,7 @@
                             (#(get-in % [:body :entry :id])))]
     ;; create secondary child
     (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
-                         (nodes/create-secondary-child ticket source-node-id))) 200))
+                         (nodes/create-secondary-child ticket source-node-id))) 201))
     (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
     ;; clean up
     (is (= (:status (nodes/delete-node ticket source-node-id {:permanent true})) 204))
@@ -251,7 +251,7 @@
                             (#(get-in % [:body :entry :id])))]
     ;; create secondary child
     (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
-                         (nodes/create-secondary-child ticket source-node-id))) 200))
+                         (nodes/create-secondary-child ticket source-node-id))) 201))
     ;; list secondary children
     (let [response (nodes/list-secondary-children ticket source-node-id)]
       (is (= (:status response) 200))
@@ -274,7 +274,7 @@
                             (#(get-in % [:body :entry :id])))]
     ;; create secondary child
     (is (= (:status (->> [(model/map->CreateSecondaryChildBody {:child-id target-node-id :assoc-type cm/assoc-rendition})]
-                         (nodes/create-secondary-child ticket source-node-id))) 200))
+                         (nodes/create-secondary-child ticket source-node-id))) 201))
     ;; check for target-node-id
     (is (= (get-in (first (get-in (nodes/list-secondary-children ticket source-node-id) [:body :list :entries])) [:entry :id]) target-node-id))
     ;; delete secondary child
