@@ -1,6 +1,6 @@
 # TODO
 
-Ricontrollato al 2026-11-05 sul commit `3c13836`.
+Aggiornato al 2026-11-07, inclusa la configurazione della CI di integrazione.
 I percorsi riportati sono relativi alla radice del repository. Priorità basate su impatto,
 certezza del problema e costo della correzione, non sul numero di funzionalità.
 
@@ -121,17 +121,19 @@ Le correzioni locali e gli esempi possono procedere indipendentemente.
 
 - [ ] **12. Rendere gli script portabili e gli ambienti isolabili.** Risolvere i
   percorsi rispetto allo script, propagare gli errori e allineare `alfresco.bat`
-  a Compose v2 e all'uso di `docker/.env`. Permettere un ambiente di test con
-  volumi dedicati, eliminabile senza coinvolgere i volumi di sviluppo; documentare
+  a Compose v2 e all'uso di `docker/.env`. Gli script `integration-tests.sh`
+  e `.bat` usano già percorsi relativi allo script e volumi dedicati; documentare
   che gli aggiornamenti major di PostgreSQL richiedono migrazione dei dati.
 
-- [ ] **13. Aggiungere una CI di integrazione riproducibile.** Dopo la fase 2,
-  avviare l'ambiente dedicato, attendere i servizi, eseguire la suite con timeout
-  globale, salvare log e risultati e garantire lo stop anche in caso di errore.
-  Valutare inizialmente esecuzione manuale o pianificata per il costo dello stack.
+- [ ] **13. CI di integrazione — implementata, prima esecuzione da verificare.**
+  Workflow separato su Ubuntu 24.04, a ogni push su `main` e su avvio manuale.
+  Usa `integration-tests.sh`; timeout di 55 minuti per lo script e 60 per il job,
+  log conservati per 7 giorni anche dopo errori. YAML, Bash e Compose validati
+  localmente; restano da verificare esito e risorse del runner su GitHub.
 
 - [ ] **14. Misurare la copertura e introdurre analisi statica.** La CI attuale
-  esegue solo `cral.utils-test` e crea il JAR. La dichiarazione non misurata
+  esegue `cral.utils-test` e crea il JAR; il workflow separato di integrazione
+  esegue la suite completa. La dichiarazione non misurata
   «100% test coverage» è stata rimossa dal README. Aggiungere un report
   riproducibile e configurare lint/formatting
   con attenzione alle asserzioni inefficaci e agli import inutilizzati.
@@ -205,6 +207,6 @@ non trattare queste voci come autorizzazione a introdurre breaking change.
 1. **Completato:** correggere asserzioni e documentazione palesemente errate.
 2. Trasporto corretto; aggiungere le regressioni HTTP mancanti e correggere i log trace.
 3. Polling limitato; aggiungere i test mancanti, assicurare cleanup e rendere deterministici i dati.
-4. Separare le suite e automatizzare l’integrazione su un ambiente dedicato.
+4. CI di integrazione configurata; verificarne la prima esecuzione e separare le suite.
 5. Affrontare le verifiche di serializzazione e ricerca con test mirati;
    scegliere le estensioni P3 in base alle esigenze effettive.

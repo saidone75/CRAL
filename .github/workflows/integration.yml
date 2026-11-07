@@ -1,0 +1,46 @@
+name: Integration tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Docker environment
+        run: |
+          docker version
+          compose_version=$(docker compose version --short)
+          dpkg --compare-versions "${compose_version#v}" ge 2.24.4
+          free -h
+          df -h /
+
+      - name: Run integration tests
+        timeout-minutes: 55
+        env:
+          STARTUP_TIMEOUT: '900'
+          TEST_TIMEOUT: '1800'
+        run: ./integration-tests.sh
+
+      - name: Upload integration logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: integration-results/
+          if-no-files-found: warn
+          retention-days: 7

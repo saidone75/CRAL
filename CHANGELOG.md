@@ -10,6 +10,7 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Added
 
+- GitHub Actions integration tests on pushes to main and manual runs, with downloadable logs.
 - Docker integration-test scripts for Bash and Windows, with isolated volumes,
   readiness checks, timeouts, logs and automatic cleanup.
 - Configurable connection and read timeouts in milliseconds, with per-call
