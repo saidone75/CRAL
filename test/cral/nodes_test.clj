@@ -19,7 +19,6 @@
 
 (ns cral.nodes-test
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
@@ -178,13 +177,9 @@
     (let [;; get node content
           response (nodes/get-node-content ticket created-node-id)
           ;; download content from the node
-          downloaded-file (->> response
-                               (#(get-in % [:headers "content-disposition"]))
-                               (#(second (re-matches #".*\"([^\"]+)\".*" (second (str/split % #";")))))
-                               (#(fixtures/temp-file "cral-download." ".txt"))
-                               (#(with-open [w (clojure.java.io/output-stream %)]
-                                   (.write w (bytes (:body response)))
-                                   %)))]
+          downloaded-file (fixtures/temp-file "cral-download." ".txt")]
+      (with-open [w (io/output-stream downloaded-file)]
+        (.write w (bytes (:body response))))
       (is (= (:status response) 200))
       ;; check if the content is the same of the uploaded file
       (is (= (apply str (map char (:body response))) (slurp (.getPath file-to-be-uploaded))))
