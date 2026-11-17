@@ -21,7 +21,8 @@
   (:require [clj-http.lite.client :as client]
             [cral.config :as config]
             [cral.model.core]
-            [cral.utils.utils :as utils]))
+            [cral.utils.utils :as utils])
+  (:import (clojure.lang PersistentHashMap)))
 
 (defn probes
   "Check readiness and liveness of the repository.\\
@@ -31,10 +32,10 @@
   The liveness probe should then be used to check the repository is still responding to requests.\\
   **Note:** No authentication is required to call this endpoint.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/probes/getProbe)."
-  ([^String probe-id]
+  ([^String probe-id & [^PersistentHashMap opts]]
    (utils/call-rest
      client/get
      (format "%s/probes/%s" (config/get-url 'core) probe-id)
      nil
      nil
-     nil)))
+     opts)))

@@ -77,10 +77,10 @@
 (defn delete-rating
   "Deletes rating `rating-id` from node `node-id`.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Core%20API#/ratings/deleteRating)."
-  [^Ticket ticket ^String node-id ^String rating-id]
+  [^Ticket ticket ^String node-id ^String rating-id & [^PersistentHashMap opts]]
   (utils/call-rest
     client/delete
     (format "%s/nodes/%s/ratings/%s" (config/get-url 'core) node-id rating-id)
     ticket
     nil
-    nil))
+    opts))

@@ -21,15 +21,16 @@
   (:require [clj-http.lite.client :as client]
             [cral.config :as config]
             [cral.utils.utils :as utils])
-  (:import (cral.model.auth Ticket)))
+  (:import (clojure.lang PersistentHashMap)
+           (cral.model.auth Ticket)))
 
 (defn get-repo-info
   "Retrieves the capabilities and detailed version information from the repository.\\
   More info [here](https://api-explorer.alfresco.com/api-explorer/?urls.primaryName=Discovery%20API#/discovery/getRepositoryInformation)."
-  [^Ticket ticket]
+  [^Ticket ticket & [^PersistentHashMap opts]]
   (utils/call-rest
     client/get
     (config/get-url 'discovery)
     ticket
     nil
-    nil))
+    opts))

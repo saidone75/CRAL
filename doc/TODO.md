@@ -107,10 +107,10 @@ Le correzioni locali e gli esempi possono procedere indipendentemente.
   `test/cral/fixtures.clj` ora ripristina atom e credenziali con `finally`. Il README ora distingue la chiamata a `configure` dalla lettura
   dell’atom. Restano da validare timeout e path con test mirati. Un client multi-repository è invece un’estensione opzionale (P3).
 
-- [ ] **10. Uniformare le opzioni delle funzioni pubbliche.** Per esempio
-  `delete-rating` in `api/core/ratings.clj` non accetta `opts`, diversamente dagli
-  altri wrapper: verificare tutte le arità e rendere coerenti override dei timeout,
-  header restituiti e opzioni di download.
+- [x] **10. Uniformare le opzioni delle funzioni pubbliche.** Tutti i wrapper
+  accettano `opts`; aggiunto a `delete-rating`, `get-repo-info` e `probes` senza
+  cambiare le chiamate esistenti. Verificati default, `nil`, override dei timeout
+  e restituzione degli header con test locali: 5 test, 22 asserzioni superate.
 
 - [ ] **11. Automatizzare la disponibilità dei servizi.** In
   `docker/docker-compose.yml` e `alfresco.sh` aggiungere healthcheck, attesa con
