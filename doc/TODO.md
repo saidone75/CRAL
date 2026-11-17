@@ -174,13 +174,14 @@ non trattare queste voci come autorizzazione a introdurre breaking change.
   omesso e cancellazione esplicita; non rimuovere indiscriminatamente i `nil`.
   È un comportamento da caratterizzare, non una prova che ogni record attuale generi richieste errate.
 
-- [ ] **20. Verificare il modello di ordinamento della ricerca.** In
-  `src/cral/model/search.clj`, `QueryBody.sort` e `make-query-body` indicano un
-  singolo `Sort`; i test coprono solo query semplici. Confrontare il payload con
-  lo schema della versione Alfresco supportata e aggiungere casi con paging e
-  ordinamenti multipli. È una verifica di contratto, non un bug già riprodotto.
-  Il record `Company` mancante è invece un miglioramento ergonomico P3: il campo
-  `company` accetta già una mappa.
+- [x] **20. Correggere il modello di ordinamento della ricerca.** Lo schema
+  Search richiede un array ordinato di criteri. `QueryBody.sort` ora è un vettore;
+  `make-query-body` accetta anche un singolo criterio e lo racchiude in un vettore.
+  Verificato il JSON inviato con paging, criteri multipli, mappe/record e valori
+  `false`: 5 test locali, 20 asserzioni superate. Aggiunto un test d’integrazione
+  con dati dedicati e attesa dell’indicizzazione. Eseguiti su Alfresco locale
+  tutti i test di ricerca: 3 test, 13 asserzioni, nessun fallimento o errore.
+
 
 ## P3 — Estensioni opzionali
 

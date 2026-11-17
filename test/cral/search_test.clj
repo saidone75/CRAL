@@ -21,9 +21,12 @@
   (:require [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.search :as search]
+            [cral.api.core.nodes :as nodes]
+            [cral.test-utils :as tu]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
-            [cral.model.search :as search-model]))
+            [cral.model.search :as search-model])
+  (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
 (use-fixtures :each fixtures/resources)
@@ -42,3 +45,29 @@
         response (search/search ticket (search-model/make-query-body "PATH:'app:company_home'"))]
     (is (= (:status response) 200))
     (is (= (get-in (first (get-in response [:body :list :entries])) [:entry :name]) "Company Home"))))
+
+(deftest search-sorting-and-paging-test
+  (let [ticket (get-in (auth/create-ticket c/user c/password) [:body :entry])
+        ;; create a dedicated folder and documents with two sorting groups
+        folder-response (nodes/create-node ticket (tu/get-guest-home ticket)
+                                           {:name (.toString (UUID/randomUUID)) :node-type "cm:folder"})
+        folder-id (get-in folder-response [:body :entry :id])]
+    (is (= (:status folder-response) 201))
+    (when (= (:status folder-response) 201)
+      (doseq [[name title] [["a.txt" "A"] ["b.txt" "A"] ["c.txt" "B"] ["d.txt" "B"]]]
+        (is (= (:status (nodes/create-node ticket folder-id
+                                          {:name name :node-type "cm:content"
+                                           :aspect-names ["cm:titled"] :properties {"cm:title" title}})) 201)))
+      (let [body (search-model/make-query-body
+                   (format "PARENT:'workspace://SpacesStore/%s' AND TYPE:'cm:content'" folder-id)
+                   (search-model/map->Paging {:max-items 2 :skip-count 1})
+                   [(search-model/map->Sort {:type "FIELD" :field "cm:title" :ascending true})
+                    (search-model/map->Sort {:type "FIELD" :field "cm:name" :ascending false})])
+            ;; wait for all documents to become searchable
+            response (tu/poll #(search/search ticket body)
+                              #(= (get-in % [:body :list :pagination :total-items]) 4))]
+        (is (= (:status response) 200))
+        (is (= (get-in response [:body :list :pagination :skip-count]) 1))
+        (is (= (get-in response [:body :list :pagination :count]) 2))
+        (is (= (map #(get-in % [:entry :name]) (get-in response [:body :list :entries]))
+               ["a.txt" "d.txt"]))))))

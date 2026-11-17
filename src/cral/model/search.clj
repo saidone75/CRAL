@@ -39,11 +39,12 @@
    ^Paging paging
    ^PersistentVector include
    ^PersistentVector fields
-   ^Sort sort])
+   ^PersistentVector sort])
 
 (defn make-query-body
-  "Constructor for a simple AFTS query body that takes only a `query` string with optional `paging` and `sort`."
-  [^String query & [^Paging paging ^Sort sort]]
+  "Constructor for a simple AFTS query body with optional `paging` and ordered `sort` criteria.
+  A single sort map or record is also accepted and wrapped in a vector."
+  [^String query & [^Paging paging sort]]
   (map->QueryBody {:query  (map->RequestQuery {:query query})
                    :paging paging
-                   :sort   sort}))
+                   :sort   (if (map? sort) [sort] sort)}))
