@@ -107,10 +107,10 @@ Le correzioni locali e gli esempi possono procedere indipendentemente.
   `test/cral/fixtures.clj` ora ripristina atom e credenziali con `finally`. Il README ora distingue la chiamata a `configure` dalla lettura
   dell’atom. Restano da validare timeout e path con test mirati. Un client multi-repository è invece un’estensione opzionale (P3).
 
-- [ ] **10. Uniformare le opzioni delle funzioni pubbliche.** Per esempio
-  `delete-rating` in `api/core/ratings.clj` non accetta `opts`, diversamente dagli
-  altri wrapper: verificare tutte le arità e rendere coerenti override dei timeout,
-  header restituiti e opzioni di download.
+- [x] **10. Uniformare le opzioni delle funzioni pubbliche.** Tutti i wrapper
+  accettano `opts`; aggiunto a `delete-rating`, `get-repo-info` e `probes` senza
+  cambiare le chiamate esistenti. Verificati default, `nil`, override dei timeout
+  e restituzione degli header con test locali: 5 test, 22 asserzioni superate.
 
 - [ ] **11. Automatizzare la disponibilità dei servizi.** In
   `docker/docker-compose.yml` e `alfresco.sh` aggiungere healthcheck, attesa con
@@ -174,13 +174,14 @@ non trattare queste voci come autorizzazione a introdurre breaking change.
   omesso e cancellazione esplicita; non rimuovere indiscriminatamente i `nil`.
   È un comportamento da caratterizzare, non una prova che ogni record attuale generi richieste errate.
 
-- [ ] **20. Verificare il modello di ordinamento della ricerca.** In
-  `src/cral/model/search.clj`, `QueryBody.sort` e `make-query-body` indicano un
-  singolo `Sort`; i test coprono solo query semplici. Confrontare il payload con
-  lo schema della versione Alfresco supportata e aggiungere casi con paging e
-  ordinamenti multipli. È una verifica di contratto, non un bug già riprodotto.
-  Il record `Company` mancante è invece un miglioramento ergonomico P3: il campo
-  `company` accetta già una mappa.
+- [x] **20. Correggere il modello di ordinamento della ricerca.** Lo schema
+  Search richiede un array ordinato di criteri. `QueryBody.sort` ora è un vettore;
+  `make-query-body` accetta anche un singolo criterio e lo racchiude in un vettore.
+  Verificato il JSON inviato con paging, criteri multipli, mappe/record e valori
+  `false`: 5 test locali, 20 asserzioni superate. Aggiunto un test d’integrazione
+  con dati dedicati e attesa dell’indicizzazione. Eseguiti su Alfresco locale
+  tutti i test di ricerca: 3 test, 13 asserzioni, nessun fallimento o errore.
+
 
 ## P3 — Estensioni opzionali
 

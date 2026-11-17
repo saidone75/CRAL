@@ -22,6 +22,8 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Fixed
 
+- Model search sorting as an ordered array; keep single-criterion helper calls compatible.
+- Accept per-call options in discovery, probes and rating deletion.
 - Make the preference test deterministic and fix node-download and secondary-child assertions.
 - Remove the obsolete Docker Compose version field.
 - Clean up integration-test resources after failures and restore audit/configuration state.
