@@ -1,6 +1,6 @@
 # TODO
 
-Aggiornato al 2026-11-17 sul commit `a15db21`. Solo attività ancora aperte;
+Aggiornato al 2026-11-18. Attività aperte e verifiche completate;
 percorsi relativi alla radice del repository. Numerazione riorganizzata.
 
 Priorità: **P1** affidabilità e regressioni; **P2** consolidamento;
@@ -48,10 +48,12 @@ prima un caso riproducibile e una scelta di compatibilità.
   `custom:my-field` diventa `custom:myField`. Definire i confini della conversione
   con casi reali e prevedere compatibilità o opt-out prima di cambiarla.
 
-- [ ] **7. P2 — Chiarire campi assenti e `nil`.** I record serializzano anche
-  i campi non valorizzati come `null`. Confrontare mappe e record nelle operazioni
-  di creazione e aggiornamento, distinguendo omissione e cancellazione esplicita.
-  Non rimuovere indiscriminatamente i `nil`: l’effetto dipende dall’endpoint.
+- [x] **7. P2 — Chiarire campi assenti e `nil`.** I costruttori `map->...` dei
+  record di richiesta conservano i campi omessi nei metadati: esclusi dal JSON,
+  mentre i `nil` espliciti restano `null`, anche nei record annidati. Documentati
+  costruttori posizionali e aggiornamenti dei record. Verificati i payload con
+  test locali e, contro Alfresco, creazione, aggiornamento, conservazione delle
+  proprietà omesse e cancellazione esplicita di `cm:title`, con mappe e record.
 
 - [ ] **8. P2 — Codificare i segmenti degli URL.** I wrapper interpolano ID e
   nomi con `format`, per esempio in `api/core/preferences.clj`. Verificare i
