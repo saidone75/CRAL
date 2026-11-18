@@ -22,15 +22,14 @@
             [clojure.test :refer :all]
             [cral.api.auth :as auth]
             [cral.api.core.nodes :as nodes]
-            [cral.model.alfresco.permissions :as permissions]
-            [cral.model.alfresco.access-status :as status]
             [cral.config :as c]
             [cral.fixtures :as fixtures]
+            [cral.model.alfresco.access-status :as status]
             [cral.model.alfresco.cm :as cm]
+            [cral.model.alfresco.permissions :as permissions]
             [cral.model.core :as model]
             [cral.test-utils :as tu])
-  (:import (java.io File)
-           (java.util UUID)))
+  (:import (java.util UUID)))
 
 (use-fixtures :once fixtures/setup)
 (use-fixtures :each fixtures/resources)

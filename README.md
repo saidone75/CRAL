@@ -50,9 +50,9 @@ and can be overwritten by passing a map with the new values to `config/configure
 =>
 {:scheme "https",
  :host "localhost",
- :port 8983
- :conn-timeout 5000
- :socket-timeout 60000
+ :port 8983,
+ :conn-timeout 5000,
+ :socket-timeout 60000,
  :core-path "alfresco/api/-default-/public/alfresco/versions/1",
  :search-path "alfresco/api/-default-/public/search/versions/1",
  :auth-path "alfresco/api/-default-/public/authentication/versions/1"}
@@ -107,11 +107,11 @@ POST/PUT bodies and request parameters with well known keys are modeled as recor
 =>
 #cral.model.core.GetNodeQueryParams{:include ["path" "permissions"], :relative-path nil, :fields nil}
 
-(select-keys
-  (model/map->CreateNodeBody {:name "example.txt" :node-type "cm:content"})
-  [:name :node-type :properties])
-=>
-{:name "example.txt", :node-type "cm:content", :properties nil}
+(model/map->CreateNodeBody {:name "example.txt" :node-type "cm:content"})
+;; JSON body: {"name":"example.txt","nodeType":"cm:content"}
+
+(model/map->UpdateNodeBody {:properties {:cm:title nil}})
+;; JSON body: {"properties":{"cm:title":null}}
 ```
 but plain maps can be used as well if desired:
 ```clojure

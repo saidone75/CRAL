@@ -22,6 +22,7 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Fixed
 
+- Omit unspecified request fields while preserving explicit `nil` values as JSON `null`.
 - Model search sorting as an ordered array; keep single-criterion helper calls compatible.
 - Accept per-call options in discovery, probes and rating deletion.
 - Make the preference test deterministic and fix node-download and secondary-child assertions.

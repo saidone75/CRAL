@@ -18,23 +18,24 @@
 ;
 
 (ns cral.model.search
+  (:require [cral.model.body :refer [defbody]])
   (:import (clojure.lang PersistentVector)))
 
-(defrecord RequestQuery
+(defbody RequestQuery
   [^String language
    ^String user-query
    ^String query])
 
-(defrecord Paging
+(defbody Paging
   [^Integer max-items
    ^Integer skip-count])
 
-(defrecord Sort
+(defbody Sort
   [^String type
    ^String field
    ^Boolean ascending])
 
-(defrecord QueryBody
+(defbody QueryBody
   [^RequestQuery query
    ^Paging paging
    ^PersistentVector include
@@ -44,7 +45,7 @@
 (defn make-query-body
   "Constructor for a simple AFTS query body with optional `paging` and ordered `sort` criteria.
   A single sort map or record is also accepted and wrapped in a vector."
-  [^String query & [^Paging paging sort]]
-  (map->QueryBody {:query  (map->RequestQuery {:query query})
-                   :paging paging
-                   :sort   (if (map? sort) [sort] sort)}))
+  [^String query & [^Paging paging sort :as options]]
+  (map->QueryBody (cond-> {:query (map->RequestQuery {:query query})}
+                   (seq options) (assoc :paging paging)
+                   (next options) (assoc :sort (if (map? sort) [sort] sort)))))

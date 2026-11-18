@@ -1,213 +1,119 @@
 # TODO
 
-Aggiornato al 2026-11-07, inclusa la configurazione della CI di integrazione.
-I percorsi riportati sono relativi alla radice del repository. Priorità basate su impatto,
-certezza del problema e costo della correzione, non sul numero di funzionalità.
+Aggiornato al 2026-11-18. Attività aperte e verifiche completate;
+percorsi relativi alla radice del repository. Numerazione riorganizzata.
 
-- **P1:** difetti confermati o controlli essenziali per evitare risultati ingannevoli.
-- **P2:** consolidamento e verifiche di contratto; una verifica può produrre solo
-  test e documentazione, senza richiedere modifiche all’API.
-- **P3:** estensioni opzionali da motivare con un caso d’uso.
+Priorità: **P1** affidabilità e regressioni; **P2** consolidamento;
+**P3** proposte opzionali o rimandate. Le verifiche di contratto richiedono
+prima un caso riproducibile e una scelta di compatibilità.
 
-Nessuna voce P0: non è stato accertato un incidente in produzione.
-Clojure CLI/tools.build, deploy Clojars, timeout HTTP e streaming sono già
-implementati. Non vanno rifatti. La suite di integrazione non è stata rieseguita
-per questa revisione; il precedente esito positivo non dimostra la copertura
-completa. Dopo le correzioni: 4 test unitari passati, namespace di test caricati
-e costruttori degli esempi verificati; integrazione da rieseguire. Nel ricontrollo
-del 2026-11-05 passano ancora i quattro test di `cral.utils-test`; il runner non
-segnala errore se si seleziona un namespace inesistente, quindi il solo exit code
-non prova che una suite sia stata eseguita.
+## Test e affidabilità
 
-Verifiche locali iniziali, prima delle correzioni (senza Alfresco):
+- [ ] **1. P1 — Rendere deterministici i dati di integrazione.** Eliminare le
+  selezioni casuali in `audit_test.clj`, `categories_test.clj`, `actions_test.clj`
+  e `sites_test.clj`, usando risorse dedicate o identificatori espliciti.
+  I test audit devono generare e cancellare le proprie entry. Conservare `first`
+  quando la lista è controllata dal test. Le preferenze sono già state sistemate.
 
-- L’asserzione con `=` a un solo argomento restituisce `true` anche con status 404.
-- `ex-response` solleva una nuova eccezione con body `nil`, vuoto o HTML.
-- La chiave `custom:my-field` viene trasformata in `custom:myField` anche sotto `properties`.
-- `(configure {})` restituisce `nil`, non la mappa di configurazione.
+- [ ] **2. P1 — Coprire il contratto HTTP con regressioni locali.** Verificare
+  `call-rest`, `ok-response`, `ex-response`, autenticazione, query param, header,
+  timeout globali/per chiamata e wrapper rappresentativi. Includere errori vuoti,
+  non JSON e stream, chiusura delle risorse e download byte-array/stream.
+  `utils_test.clj` contiene attualmente solo quattro test di conversione: le
+  verifiche locali svolte durante le modifiche non sono tutte conservate in CI.
+  Aggiungere anche verifiche del payload JSON di ricerca con paging e sort;
+  il relativo test contro Alfresco esiste già in `search_test.clj`.
 
-## P1 — Correzioni confermate e affidabilità dei test
+- [ ] **3. P2 — Separare unit test e integrazione.** Definire alias, directory
+  o metadata in `deps.edn`, con comandi documentati e discovery automatica.
+  La CI veloce deve eseguire tutti i test locali, non un namespace fissato a mano.
 
-- [x] **1. Correggere le asserzioni inefficaci.** Corretti 16 confronti in audit,
-  nodes, versions, shared_links, sites, comments e tags, su status, contenuto e ID.
-  Verificata l’assenza di uguaglianze unarie nell’intera suite e il rifiuto degli
-  status 404/500 nei confronti di successo.
+- [ ] **4. P2 — Consolidare le verifiche di polling e cleanup.** Il codice è
+  già implementato in `test_utils.clj` e `fixtures.clj`. Restano regressioni su
+  timeout, errori HTTP, stati terminali, setup parziali e pulizie che falliscono.
+  Verificare che tutte le pulizie vengano tentate e che i fallimenti originali
+  restino visibili. Gli utenti temporanei sono disabilitati e restano nel
+  repository: è un limite noto, non una cancellazione ancora da implementare.
 
-- [x] **2. Rendere robusta la gestione delle risposte.** Gestiti body vuoti,
-  HTML/testo, JSON malformato e stream di errore senza nascondere l’errore HTTP
-  originale. Il messaggio usa `errorKey`, poi `briefSummary`, poi il messaggio
-  dell’eccezione. Gli stream di errore vengono chiusi anche in caso di fallimento;
-  byte array e stream di successo restano invariati. I test di regressione citati
-  in precedenza non sono presenti nel repository: aggiungerli alla voce 7.
-  Gli errori senza status HTTP mantengono
-  il fallback a 500; un nuovo schema degli errori di rete resta una decisione
-  di compatibilità separata.
+- [ ] **5. P2 — Verificare l’esito completo della pipeline.** Il workflow
+  `integration.yml` e gli script Docker esistono già, con isolamento, attese,
+  timeout e log. Controllare un’esecuzione recente su `main`, compresi cleanup,
+  artifact e risorse del runner. La verifica locale del 17 novembre riguarda
+  i tre test di ricerca, non l’intera suite dopo tutte le modifiche.
 
-- [x] **3. Correggere gli esempi e i riferimenti del README.** Sistemati namespace,
-  costruttori Ticket/QueryBody, configurazione, esempi dei nodi e percorso del JAR.
-  Rimossa la dichiarazione di copertura non misurata. README e CHANGELOG aggiornati
-  con descrizioni sintetiche; esempi remoti da verificare contro Alfresco.
+## Contratto pubblico e serializzazione
 
-- [x] **4. Centralizzare il polling con una scadenza.** Sostituiti i 15 cicli senza
-  limite in `actions_test`, `downloads_test`, `groups_test`, `renditions_test`,
-  `shared_links_test`, `trashcan_test` e `versions_test` con `poll` in
-  `test/cral/test_utils.clj`: timeout predefinito di 60 secondi, intervallo
-  configurabile, ultimo risultato nel messaggio di errore e arresto sugli errori
-  HTTP e sugli stati terminali di fallimento dei download. I download attendono
-  `DONE` anche passando per `IN_PROGRESS`; le rendition attendono `doclib` in
-  stato `CREATED`, senza saltare le asserzioni nei test dei link condivisi.
-  `polling_test.clj` non è presente: restano da aggiungere test locali per
-  successo, timeout, errori HTTP e stati terminali. Il limite di polling non
-  interrompe una chiamata HTTP già in corso. Integrazione da rieseguire.
+- [ ] **6. P2 — Preservare le chiavi dei dati applicativi.** Le conversioni in
+  `src/cral/utils/utils.clj` raggiungono anche `properties` e valori arbitrari:
+  `custom:my-field` diventa `custom:myField`. Definire i confini della conversione
+  con casi reali e prevedere compatibilità o opt-out prima di cambiarla.
 
-- [ ] **5. Garantire cleanup e ripristino dello stato — implementato, integrazione da verificare.**
-  Fixture per test con cleanup in ordine inverso anche dopo eccezioni e setup
-  parziali; errori di pulizia segnalati senza interrompere le altre operazioni.
-  Coperti nodi (anche nel cestino), copie, siti, gruppi, tag, categorie, link,
-  download, ticket e file temporanei. Audit e configurazione vengono ripristinati.
-  Gli account hanno ID dedicati e vengono disabilitati solo se creati dal test:
-  manca un wrapper per eliminarli in `src/cral/api`, quindi restano nel repository.
-  Non aggiunti nuovi test. Caricamento dei namespace e test unitari esistenti
-  verificati; Alfresco non raggiungibile per la verifica di integrazione.
+- [x] **7. P2 — Chiarire campi assenti e `nil`.** I costruttori `map->...` dei
+  record di richiesta conservano i campi omessi nei metadati: esclusi dal JSON,
+  mentre i `nil` espliciti restano `null`, anche nei record annidati. Documentati
+  costruttori posizionali e aggiornamenti dei record. Verificati i payload con
+  test locali e, contro Alfresco, creazione, aggiornamento, conservazione delle
+  proprietà omesse e cancellazione esplicita di `cm:title`, con mappe e record.
 
-- [ ] **6. Eliminare la dipendenza da dati casuali o preesistenti.** Rivedere
-  `rand-nth` e selezioni del primo elemento in preferenze, categorie, audit,
-  azioni e contenitori dei siti con fixture dedicate o identificatori espliciti.
-  Riprodurre il 404 intermittente di `get-preference-test` prima di attribuirlo
-  al server; includere il caso di lista vuota e identificatori con caratteri speciali.
-  I test audit devono generare e cancellare le proprie entry, non entry arbitrarie.
-  Non eliminare ogni uso di `first`: resta corretto per una lista creata e controllata dal test. La causa del 404 delle preferenze non è ancora accertata.
+- [ ] **8. P2 — Codificare i segmenti degli URL.** I wrapper interpolano ID e
+  nomi con `format`, per esempio in `api/core/preferences.clj`. Verificare i
+  caratteri ammessi e introdurre encoding condiviso per spazi, Unicode, `%`, `?`,
+  `#` e `/`, preservando gli ID speciali ed evitando doppia codifica.
 
-- [ ] **7. Aggiungere test locali del contratto HTTP.** Coprire `call-rest`,
-  `ok-response`, `ex-response`, autenticazione, query param, header e wrapper
-  rappresentativi con metodi HTTP sostituiti e, dove serve, un server locale.
-  Verificare timeout globali/per chiamata, byte array/stream, chiusura degli stream
-  di errore e download binari identici all'originale. `utils_test.clj` contiene
-  soltanto quattro test di conversione delle chiavi: mancano anche le regressioni
-  per la gestione delle risposte già implementata alla voce 2.
+- [ ] **9. P2 — Validare la configurazione.** In `cral.config` verificare
+  timeout, schema, host, porta e path, con errori comprensibili. Il ripristino
+  della configurazione nelle fixture e la documentazione di `configure` sono
+  già sistemati; non occorre rifarli.
 
-- [ ] **25. Evitare segreti nei log trace.** `call-rest` registra richieste e
-  risposte integrali; login e creazione utenti possono includere password e
-  ticket. `ex-response` registra anche l’eccezione. Limitare i log a metadati
-  sicuri e aggiungere regressioni con trace attivo. Il livello predefinito è
-  `:info`: il problema si manifesta abilitando trace. Voce ripristinata perché
-  il comportamento è ancora presente; numero mantenuto separato per non
-  rinumerare le attività esistenti.
+## Ambiente di sviluppo, qualità e release
 
-## P2 — Consolidamento di sviluppo e rilascio
+- [ ] **10. P2 — Allineare gli script di sviluppo.** Risolvere i percorsi
+  rispetto ad `alfresco.sh`/`alfresco.bat`, propagare gli errori e uniformare
+  Compose v2 e `docker/.env`. Gli script `integration-tests.*` gestiscono già
+  percorsi e volumi isolati. Documentare la migrazione dei dati tra major di PostgreSQL.
 
-Per la CI completa servono polling limitato, cleanup e ambiente isolato.
-Le correzioni locali e gli esempi possono procedere indipendentemente.
+- [ ] **11. P2 — Rendere affidabile l’avvio dello stack di sviluppo.** Aggiungere
+  attesa con scadenza e diagnostica in `alfresco.sh`. Chiarire i riferimenti a
+  `transform-router` e `shared-file-store` nel Compose principale, che non li
+  definisce. Lo stack di integrazione usa già ATS locale e controlli di readiness:
+  riutilizzare quella soluzione dove appropriato, senza aggiungere servizi inutili.
 
-- [ ] **8. Separare unit test e integrazione con comandi documentati.** Introdurre
-  alias, directory o metadata espliciti in `deps.edn`; il comando unitario deve
-  scoprire tutti i test locali senza mantenere una lista manuale in CI.
+- [ ] **12. P2 — Misurare copertura e introdurre analisi statica.** Produrre
+  un report ripetibile e configurare lint/formatting, iniziando da asserzioni
+  inefficaci e import inutilizzati. Evitare un reformat globale. Non dichiarare
+  una percentuale di copertura prima di averla misurata.
 
-- [ ] **9. Ripristinare la configurazione nelle fixture e chiarirne il contratto.**
-  `test/cral/fixtures.clj` ora ripristina atom e credenziali con `finally`. Il README ora distingue la chiamata a `configure` dalla lettura
-  dell’atom. Restano da validare timeout e path con test mirati. Un client multi-repository è invece un’estensione opzionale (P3).
+- [ ] **13. P2 — Aggiungere controlli prima del deploy.** `build/deploy`,
+  `deploy.sh` e la procedura manuale sono presenti. Verificare working tree,
+  coerenza versione/tag e contenuto JAR/POM prima della pubblicazione; rendere
+  i controlli eseguibili anche senza credenziali e senza pubblicare.
 
-- [x] **10. Uniformare le opzioni delle funzioni pubbliche.** Tutti i wrapper
-  accettano `opts`; aggiunto a `delete-rating`, `get-repo-info` e `probes` senza
-  cambiare le chiamate esistenti. Verificati default, `nil`, override dei timeout
-  e restituzione degli header con test locali: 5 test, 22 asserzioni superate.
+- [ ] **14. P2 — Verificare la compatibilità dichiarata.** Documentare le
+  versioni Java/Alfresco effettivamente provate e aggiungere uno smoke test
+  GraalVM per caricamento namespace, JSON e HTTP. Nel repository manca una
+  verifica automatica della compatibilità GraalVM citata nel README.
 
-- [ ] **11. Automatizzare la disponibilità dei servizi.** In
-  `docker/docker-compose.yml` e `alfresco.sh` aggiungere healthcheck, attesa con
-  scadenza e diagnostica su PostgreSQL, Alfresco e trasformazioni. Verificare la
-  configurazione di `transform-router` e `shared-file-store`: sono referenziati
-  nelle proprietà ma non definiti nel Compose attuale; chiarire il percorso di
-  trasformazione effettivamente usato prima di aggiungere servizi.
+## Proposte opzionali e attività rimandate
 
-- [ ] **12. Rendere gli script portabili e gli ambienti isolabili.** Risolvere i
-  percorsi rispetto allo script, propagare gli errori e allineare `alfresco.bat`
-  a Compose v2 e all'uso di `docker/.env`. Gli script `integration-tests.sh`
-  e `.bat` usano già percorsi relativi allo script e volumi dedicati; documentare
-  che gli aggiornamenti major di PostgreSQL richiedono migrazione dei dati.
+- [ ] **15. P3 — Redazione dei log, rimandata.** Conservare il dettaglio utile
+  di richieste, risposte ed eccezioni, oscurando password, ticket e token nelle
+  sole copie per logging. Le precedenti implementazioni sono state annullate;
+  definire prima comportamento ed esempi attesi. I log integrali sono ancora
+  presenti e il livello predefinito è `:info`.
 
-- [ ] **13. CI di integrazione — implementata, prima esecuzione da verificare.**
-  Workflow separato su Ubuntu 24.04, a ogni push su `main` e su avvio manuale.
-  Usa `integration-tests.sh`; timeout di 55 minuti per lo script e 60 per il job,
-  log conservati per 7 giorni anche dopo errori. YAML, Bash e Compose validati
-  localmente; restano da verificare esito e risorse del runner su GitHub.
+- [ ] **16. P3 — Helper di paginazione.** Se emerge un caso d’uso, offrire
+  iterazione lazy o riduzione su più pagine, con propagazione degli errori e
+  condizioni di arresto, mantenendo i wrapper a pagina singola.
 
-- [ ] **14. Misurare la copertura e introdurre analisi statica.** La CI attuale
-  esegue `cral.utils-test` e crea il JAR; il workflow separato di integrazione
-  esegue la suite completa. La dichiarazione non misurata
-  «100% test coverage» è stata rimossa dal README. Aggiungere un report
-  riproducibile e configurare lint/formatting
-  con attenzione alle asserzioni inefficaci e agli import inutilizzati.
-  Iniziare con un controllo mirato delle asserzioni, senza un reformat globale.
+- [ ] **17. P3 — Helper pubblici per operazioni asincrone.** Valutare attese
+  per download e rendition con scadenza e stati terminali. Il polling dei test
+  esiste già; non trasferirlo automaticamente nell’API pubblica né aggiungere
+  retry alle scritture senza una politica di idempotenza.
 
-- [ ] **15. Automatizzare i controlli prima della pubblicazione.** `deploy` e
-  `deploy.sh` esistono già: aggiungere controlli su working tree, versione/tag
-  e validazione del JAR/POM, mantenendo i controlli locali eseguibili senza
-  pubblicare. Documentare la sequenza di release e le modifiche incompatibili.
-  La sequenza manuale di release è già documentata: aggiungere soltanto i controlli mancanti, senza riscrivere il flusso esistente.
+- [ ] **18. P3 — Configurazione per client.** Solo se serve usare più repository
+  nello stesso processo, introdurre un contesto esplicito preservando le chiamate
+  attuali. L’atom globale non è un difetto nell’uso con un solo server.
 
-- [ ] **16. Rendere verificabile la compatibilità dichiarata.** Documentare le
-  versioni di Java e Alfresco effettivamente provate e aggiungere uno smoke test
-  GraalVM per caricamento namespace, JSON e HTTP. La dichiarazione GraalVM nel
-  README oggi non è accompagnata da una verifica automatica nel repository.
-
-## P2 — Verifiche prima di cambiare il contratto pubblico
-
-Riprodurre i casi problematici e verificare lo schema Alfresco supportato;
-non trattare queste voci come autorizzazione a introdurre breaking change.
-
-- [ ] **17. Definire quali chiavi JSON convertire.** Le conversioni in
-  `src/cral/utils/utils.clj` sono ricorsive anche dentro mappe di proprietà e
-  valori arbitrari delle preferenze. Verificare la conservazione di nomi custom,
-  prefissi Alfresco, acronimi e chiavi con trattini: convertire i campi del
-  protocollo senza alterare involontariamente i dati applicativi.
-  La conversione ricorsiva è documentata: prima di cambiarla, definire una modalità compatibile o un opt-out. Il fatto che modifichi le chiavi è certo; l’impatto sui modelli Alfresco va verificato con casi reali.
-
-- [ ] **18. Codificare gli identificatori nei segmenti URL.** I wrapper interpolano
-  direttamente nomi e ID con `format`, per esempio in `api/core/preferences.clj`.
-  Introdurre una funzione condivisa per i segmenti, con test per spazi, Unicode,
-  `%`, `?`, `#` e `/`, evitando doppia codifica e preservando gli ID speciali.
-  L’interpolazione senza encoding è confermata; verificare quali caratteri siano ammessi per ciascun identificatore prima di modificare tutti gli endpoint.
-
-- [ ] **19. Definire la semantica dei campi assenti e `nil`.** I costruttori
-  `map->...` producono record con campi `nil`, serializzati come `null` dai wrapper.
-  Confrontare mappe e record per creazione e aggiornamento, distinguendo campo
-  omesso e cancellazione esplicita; non rimuovere indiscriminatamente i `nil`.
-  È un comportamento da caratterizzare, non una prova che ogni record attuale generi richieste errate.
-
-- [x] **20. Correggere il modello di ordinamento della ricerca.** Lo schema
-  Search richiede un array ordinato di criteri. `QueryBody.sort` ora è un vettore;
-  `make-query-body` accetta anche un singolo criterio e lo racchiude in un vettore.
-  Verificato il JSON inviato con paging, criteri multipli, mappe/record e valori
-  `false`: 5 test locali, 20 asserzioni superate. Aggiunto un test d’integrazione
-  con dati dedicati e attesa dell’indicizzazione. Eseguiti su Alfresco locale
-  tutti i test di ricerca: 3 test, 13 asserzioni, nessun fallimento o errore.
-
-
-## P3 — Estensioni opzionali
-
-- [ ] **21. Aggiungere un helper di paginazione opzionale.** Riutilizzare
-  `skip-count`, `max-items` e `has-more-items` delle risposte senza modificare
-  i wrapper a pagina singola. Definire valutazione lazy o riduzione, propagazione
-  degli errori e condizioni di arresto; testare pagine vuote e più pagine.
-
-- [ ] **22. Valutare helper per operazioni asincrone.** Solo dopo aver consolidato
-  il polling dei test, offrire attese esplicite per download e rendition con
-  scadenza e gestione degli stati di errore. Evitare retry automatici delle
-  operazioni di scrittura senza una politica esplicita di idempotenza.
-
-- [ ] **23. Valutare un client con configurazione esplicita per repository.**
-  L’atom globale è una scelta attuale, non un bug nell’uso con un solo server.
-  Introdurre un contesto per client soltanto se serve usare più repository nello
-  stesso processo; preservare le chiamate esistenti.
-- [ ] **24. Valutare un record `Company`.** I TODO in `model/core.clj` sono reali,
-  ma la mappa già accettata permette di inviare i dati: nessun blocco funzionale
-  dimostrato. Implementarlo se migliora esempi e discoverability.
-
-## Ordine operativo suggerito
-
-1. **Completato:** correggere asserzioni e documentazione palesemente errate.
-2. Trasporto corretto; aggiungere le regressioni HTTP mancanti e correggere i log trace.
-3. Polling limitato; aggiungere i test mancanti, assicurare cleanup e rendere deterministici i dati.
-4. CI di integrazione configurata; verificarne la prima esecuzione e separare le suite.
-5. Affrontare le verifiche di serializzazione e ricerca con test mirati;
-   scegliere le estensioni P3 in base alle esigenze effettive.
+- [ ] **19. P3 — Record `Company`.** I TODO in `model/core.clj` sono ancora
+  presenti, ma il campo accetta già una mappa. Aggiungere il record solo se
+  migliora l’uso della libreria; nessun blocco funzionale dimostrato.

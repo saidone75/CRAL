@@ -18,15 +18,16 @@
 ;
 
 (ns cral.model.core
+  (:require [cral.model.body :refer [defbody]])
   (:import (clojure.lang PersistentHashMap PersistentVector)))
 
 ;; permissions
-(defrecord LocallySet
+(defbody LocallySet
   [^String authority-id
    ^String name
    ^String access-status])
 
-(defrecord Permissions
+(defbody Permissions
   [^Boolean is-inheritance-enabled
    ^PersistentVector locally-set])
 
@@ -42,7 +43,7 @@
   [^PersistentVector fields
    ^PersistentVector include])
 
-(defrecord UpdateAuditApplicationInfoBody
+(defbody UpdateAuditApplicationInfoBody
   [^Boolean is-enabled])
 
 (defrecord UpdateAuditApplicationInfoQueryParams
@@ -84,7 +85,7 @@
    ^PersistentVector order-by
    ^PersistentVector fields])
 
-(defrecord ExecuteActionBody
+(defbody ExecuteActionBody
   [^String action-definition-id
    ^String target-id
    ^PersistentHashMap params])
@@ -103,20 +104,20 @@
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreateCommentBody
+(defbody CreateCommentBody
   [^String content])
 
 (defrecord CreateCommentQueryParams
   [^PersistentVector fields])
 
-(defrecord UpdateCommentBody
+(defbody UpdateCommentBody
   [^String content])
 
 (defrecord UpdateCommentQueryParams
   [^PersistentVector fields])
 
 ;; downloads
-(defrecord CreateDownloadBody
+(defbody CreateDownloadBody
   [^PersistentVector node-ids])
 
 (defrecord CreateDownloadQueryParams
@@ -134,7 +135,7 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord CreateFavoriteBody
+(defbody CreateFavoriteBody
   [^PersistentHashMap target])
 
 (defrecord CreateFavoriteQueryParams
@@ -151,7 +152,7 @@
    ^String relative-path
    ^PersistentVector fields])
 
-(defrecord UpdateNodeBody
+(defbody UpdateNodeBody
   [^String name
    ^String node-type
    ^PersistentVector aspect-names
@@ -175,7 +176,7 @@
    ^Boolean include-source
    ^PersistentVector fields])
 
-(defrecord CreateNodeBody
+(defbody CreateNodeBody
   [^String name
    ^String node-type
    ^PersistentHashMap properties])
@@ -187,7 +188,7 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord CopyNodeBody
+(defbody CopyNodeBody
   [^String target-parent-id
    ^String name])
 
@@ -195,7 +196,7 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord LockNodeBody
+(defbody LockNodeBody
   [^Integer time-to-expire
    ^String type
    ^String lifetime])
@@ -208,7 +209,7 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord MoveNodeBody
+(defbody MoveNodeBody
   [^String target-parent-id
    ^String name])
 
@@ -226,10 +227,10 @@
    ^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord RequestDirectAccessUrlBody
+(defbody RequestDirectAccessUrlBody
   [^Boolean attachment])
 
-(defrecord CreateSecondaryChildBody
+(defbody CreateSecondaryChildBody
   [^String child-id
    ^String assoc-type])
 
@@ -255,7 +256,7 @@
    ^Boolean include-source
    ^PersistentVector fields])
 
-(defrecord CreateNodeAssocsBody
+(defbody CreateNodeAssocsBody
   [^String target-id
    ^String assoc-type])
 
@@ -280,7 +281,7 @@
    ^PersistentVector fields])
 
 ;; people
-(defrecord CreatePersonBody
+(defbody CreatePersonBody
   ;; TODO Company definition missing
   [^String id
    ^String first-name
@@ -315,7 +316,7 @@
 (defrecord GetPersonQueryParams
   [^PersistentVector fields])
 
-(defrecord UpdatePersonBody
+(defbody UpdatePersonBody
   ;; TODO Company definition missing
   [^String first-name
    ^String last-name
@@ -357,7 +358,7 @@
    ^String where
    ^PersistentVector fields])
 
-(defrecord CreateGroupBody
+(defbody CreateGroupBody
   [^String id
    ^String display-name
    ^String description
@@ -371,7 +372,7 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord UpdateGroupBody
+(defbody UpdateGroupBody
   [^String display-name
    ^String description])
 
@@ -382,7 +383,7 @@
 (defrecord DeleteGroupQueryParams
   [^Boolean cascade])
 
-(defrecord CreateGroupMembershipBody
+(defbody CreateGroupMembershipBody
   [^String id
    ^String member-type])
 
@@ -436,7 +437,7 @@
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreateRatingBody
+(defbody CreateRatingBody
   [^String id
    ^Object my-rating])
 
@@ -447,7 +448,7 @@
   [^PersistentVector fields])
 
 ;; renditions
-(defrecord CreateRenditionBody
+(defbody CreateRenditionBody
   [^String id])
 
 (defrecord ListRenditionsQueryParams
@@ -458,7 +459,7 @@
    ^Boolean placeholder])
 
 ;; shared-links
-(defrecord CreateSharedLinkBody
+(defbody CreateSharedLinkBody
   [^String node-id
    ^String expires-at])
 
@@ -482,7 +483,7 @@
 (defrecord GetSharedLinkRenditionContentQueryParams
   [^Boolean attachment])
 
-(defrecord EmailSharedLinkBody
+(defbody EmailSharedLinkBody
   [^String client
    ^String message
    ^String locale
@@ -494,7 +495,7 @@
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreatePersonSiteMembershipRequestBody
+(defbody CreatePersonSiteMembershipRequestBody
   [^String message
    ^String id
    ^String title
@@ -506,7 +507,7 @@
 (defrecord GetPersonSiteMembershipRequestsQueryParams
   [^PersistentVector fields])
 
-(defrecord UpdatePersonSiteMembershipRequestBody
+(defbody UpdatePersonSiteMembershipRequestBody
   [^String message])
 
 (defrecord UpdatePersonSiteMembershipRequestQueryParams
@@ -528,7 +529,7 @@
    ^PersistentVector fields
    ^String where])
 
-(defrecord CreateSiteBody
+(defbody CreateSiteBody
   [^String id
    ^String title
    ^String description
@@ -543,7 +544,7 @@
   [^PersistentHashMap relations
    ^PersistentVector fields])
 
-(defrecord UpdateSiteBody
+(defbody UpdateSiteBody
   [^String title
    ^String description
    ^String visibility])
@@ -568,10 +569,10 @@
    ^String where
    ^PersistentVector fields])
 
-(defrecord ApproveSiteMembershipBody
+(defbody ApproveSiteMembershipBody
   [^String role])
 
-(defrecord RejectSiteMembershipBody
+(defbody RejectSiteMembershipBody
   [^String comment])
 
 (defrecord ListSiteMembershipsQueryParams
@@ -580,7 +581,7 @@
    ^PersistentVector fields
    ^String where])
 
-(defrecord CreateSiteMembershipBody
+(defbody CreateSiteMembershipBody
   [^String role
    ^String id])
 
@@ -590,7 +591,7 @@
 (defrecord GetSiteMembershipsQueryParams
   [^PersistentVector fields])
 
-(defrecord UpdateSiteMembershipBody
+(defbody UpdateSiteMembershipBody
   [^String role])
 
 (defrecord UpdateSiteMembershipQueryParams
@@ -601,7 +602,7 @@
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreateGroupSiteMembershipBody
+(defbody CreateGroupSiteMembershipBody
   [^String role
    ^String id])
 
@@ -611,7 +612,7 @@
 (defrecord GetGroupSiteMembershipQueryParams
   [^PersistentVector fields])
 
-(defrecord UpdateGroupSiteMembershipBody
+(defbody UpdateGroupSiteMembershipBody
   [^String role])
 
 (defrecord UpdateGroupSiteMembershipQueryParams
@@ -623,7 +624,7 @@
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord CreateNodeTagBody
+(defbody CreateNodeTagBody
   [^String tag])
 
 (defrecord CreateNodeTagQueryParams
@@ -637,7 +638,7 @@
    ^PersistentVector order-by
    ^String where])
 
-(defrecord CreateTagBody
+(defbody CreateTagBody
   [^String tag])
 
 (defrecord CreateTagQueryParams
@@ -648,7 +649,7 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord UpdateTagBody
+(defbody UpdateTagBody
   [^String tag])
 
 (defrecord UpdateTagQueryParams
@@ -666,7 +667,7 @@
   [^PersistentVector include
    ^PersistentVector fields])
 
-(defrecord UpdateCategoryBody
+(defbody UpdateCategoryBody
   [^String name])
 
 (defrecord UpdateCategoryQueryParams
@@ -679,10 +680,10 @@
    ^Integer max-items
    ^PersistentVector fields])
 
-(defrecord AssignNodeCategoryBody
+(defbody AssignNodeCategoryBody
   [^String category-id])
 
-(defrecord CreateCategoryBody
+(defbody CreateCategoryBody
   [^String name])
 
 (defrecord CreateCategoryQueryParams
@@ -701,7 +702,7 @@
 (defrecord GetDeletedNodeContentQueryParams
   [^Boolean attachment])
 
-(defrecord RestoreDeletedNodeBody
+(defbody RestoreDeletedNodeBody
   [^String target-parent-id
    ^String assoc-type])
 
@@ -725,14 +726,14 @@
 (defrecord GetVersionContentQueryParams
   [^Boolean attachment])
 
-(defrecord RevertVersionBody
+(defbody RevertVersionBody
   [^Boolean major-version
    ^String comment])
 
 (defrecord RevertVersionQueryParams
   [^PersistentVector fields])
 
-(defrecord CreateVersionRenditionBody
+(defbody CreateVersionRenditionBody
   [^String id])
 
 (defrecord ListVersionRenditionsQueryParams

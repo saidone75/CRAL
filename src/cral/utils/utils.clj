@@ -23,6 +23,7 @@
             [clojure.java.io :as io]
             [clojure.walk :as walk]
             [cral.model.auth]
+            [cral.model.body :as body]
             [cral.config :as config]
             [taoensso.telemere :as t])
   (:import (clojure.lang PersistentHashMap)
@@ -77,7 +78,7 @@
   ([m exclude]
    (let [f (fn [[k v]] [(if-not (contains? exclude k) (camel-case (if (keyword? k) (subs (str k) 1) k)) (name k)) v])]
      ;; only apply to maps
-     (walk/postwalk (fn [x] (if (map? x) (into {} (map f x)) x)) m))))
+     (walk/postwalk (fn [x] (if (map? x) (into {} (map f (body/supplied-fields x))) x)) m))))
 
 (defn join-vector-vals
   "Recursively transforms all `m` map vector values to comma separated strings."
