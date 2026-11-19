@@ -19,7 +19,7 @@
 
 (ns cral.model.core
   (:require [cral.model.body :refer [defbody]])
-  (:import (clojure.lang PersistentHashMap PersistentVector)))
+  (:import (clojure.lang IPersistentMap PersistentHashMap PersistentVector)))
 
 ;; permissions
 (defbody LocallySet
@@ -281,8 +281,17 @@
    ^PersistentVector fields])
 
 ;; people
+(defbody Company
+  [^String organization
+   ^String address1
+   ^String address2
+   ^String address3
+   ^String postcode
+   ^String telephone
+   ^String fax
+   ^String email])
+
 (defbody CreatePersonBody
-  ;; TODO Company definition missing
   [^String id
    ^String first-name
    ^String last-name
@@ -293,7 +302,7 @@
    ^String instant-message-id
    ^String job-title
    ^String location
-   ^PersistentHashMap company
+   ^IPersistentMap company
    ^String mobile
    ^String telephone
    ^String user-status
@@ -317,7 +326,6 @@
   [^PersistentVector fields])
 
 (defbody UpdatePersonBody
-  ;; TODO Company definition missing
   [^String first-name
    ^String last-name
    ^String description
@@ -327,7 +335,7 @@
    ^String instant-message-id
    ^String job-title
    ^String location
-   ^PersistentHashMap company
+   ^IPersistentMap company
    ^String mobile
    ^String telephone
    ^String user-status
