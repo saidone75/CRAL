@@ -114,6 +114,7 @@ prima un caso riproducibile e una scelta di compatibilità.
   nello stesso processo, introdurre un contesto esplicito preservando le chiamate
   attuali. L’atom globale non è un difetto nell’uso con un solo server.
 
-- [ ] **19. P3 — Record `Company`.** I TODO in `model/core.clj` sono ancora
-  presenti, ma il campo accetta già una mappa. Aggiungere il record solo se
-  migliora l’uso della libreria; nessun blocco funzionale dimostrato.
+- [x] **19. P3 — Record `Company`.** Aggiunto con gli otto campi dello schema
+  Alfresco, usando `defbody` per distinguere campi omessi e `nil` espliciti.
+  `CreatePersonBody` e `UpdatePersonBody` accettano mappe e record. Verificata
+  la serializzazione JSON: 5 test locali, 12 asserzioni superate.
