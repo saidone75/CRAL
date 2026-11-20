@@ -1,6 +1,6 @@
 # TODO
 
-Aggiornato al 2026-11-19.
+Aggiornato al 2026-11-20. Solo attività e verifiche ancora aperte.
 
 ## Test e affidabilità
 
@@ -16,7 +16,9 @@ Aggiornato al 2026-11-19.
   `integration.yml` e gli script Docker esistono già, con isolamento, attese,
   timeout e log. Controllare un’esecuzione recente su `main`, compresi cleanup,
   artifact e risorse del runner. La verifica locale del 17 novembre riguarda
-  i tre test di ricerca, non l’intera suite dopo tutte le modifiche.
+  i tre test di ricerca, non l’intera suite dopo tutte le modifiche. Eseguire
+  anche `cral.pagination-test` contro Alfresco: l’helper è implementato, ma la
+  verifica reale è ancora aperta.
 
 ## Contratto pubblico e serializzazione
 
@@ -71,15 +73,11 @@ Aggiornato al 2026-11-19.
   definire prima comportamento ed esempi attesi. I log integrali sono ancora
   presenti e il livello predefinito è `:info`.
 
-- [ ] **12. P3 — Helper di paginazione.** Se emerge un caso d’uso, offrire
-  iterazione lazy o riduzione su più pagine, con propagazione degli errori e
-  condizioni di arresto, mantenendo i wrapper a pagina singola.
-
-- [ ] **13. P3 — Helper pubblici per operazioni asincrone.** Valutare attese
+- [ ] **12. P3 — Helper pubblici per operazioni asincrone.** Valutare attese
   per download e rendition con scadenza e stati terminali. Il polling dei test
   esiste già; non trasferirlo automaticamente nell’API pubblica né aggiungere
   retry alle scritture senza una politica di idempotenza.
 
-- [ ] **14. P3 — Configurazione per client.** Solo se serve usare più repository
+- [ ] **13. P3 — Configurazione per client.** Solo se serve usare più repository
   nello stesso processo, introdurre un contesto esplicito preservando le chiamate
   attuali. L’atom globale non è un difetto nell’uso con un solo server.
