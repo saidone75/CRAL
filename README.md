@@ -127,6 +127,21 @@ but plain maps can be used as well if desired:
  :id "68d9d0e3-8830-427e-b04e-c0109b02a539",
  :parent-id "a29adc70-0639-416a-9660-4ed7f247b5a9"}
 ```
+## Pagination
+
+`cral.pagination/entries` lazily reads list pages, preserving query parameters
+and the `{:entry ...}` wrappers. Errors throw `ex-info` when the page is consumed.
+
+```clojure
+(require '[cral.pagination :as pagination])
+
+(pagination/entries #(nodes/list-node-children ticket parent-id %)
+                    {:max-items 100 :order-by ["name ASC"]})
+```
+
+Use `take` to stop early and `doall` to fetch everything. Choose stable ordering;
+concurrent repository changes can still affect offset-based pagination.
+
 ## Streaming downloads
 
 Content downloads return byte arrays by default. Pass `{:as :stream}` as the

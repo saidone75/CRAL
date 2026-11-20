@@ -10,6 +10,8 @@ Dates reflect the commits referenced by the tags on GitHub.
 
 ### Added
 
+- Lazy pagination helper for Alfresco list endpoints, preserving filters and ordering.
+
 - Company model for person creation and updates, preserving plain-map support.
 - GitHub Actions integration tests on pushes to main and manual runs, with downloadable logs.
 - Docker integration-test scripts for Bash and Windows, with isolated volumes,
