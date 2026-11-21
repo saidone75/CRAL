@@ -12,6 +12,8 @@ services:
         -Dsolr.secureComms=secret -Dsolr.sharedSecret=secret
         -Dsolr.base.url=/solr -Dindex.subsystem.name=solr6
         -Dmessaging.broker.url=tcp://activemq:61616
+        -Dmessaging.broker.username=admin
+        -Dmessaging.broker.password=admin
         -Ddeployment.method=DOCKER_COMPOSE
         -Dtransform.service.enabled=false
         -DlocalTransform.core-aio.url=http://transform-core-aio:8090/
